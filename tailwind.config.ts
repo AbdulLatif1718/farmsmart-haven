@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,43 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// AgriAI Custom Colors
+				'leaf': {
+					50: '#f0f7e6',
+					100: '#e0f0cd',
+					200: '#c2e29e',
+					300: '#a3d46f',
+					400: '#85c540',
+					500: '#67b711', // Main brand green
+					600: '#509109',
+					700: '#3d7007',
+					800: '#294e04',
+					900: '#162c02',
+				},
+				'soil': {
+					50: '#f9f6f2',
+					100: '#f2ede5',
+					200: '#e5dbcb',
+					300: '#d8c9b1',
+					400: '#c1ac8a', // Earthy brown
+					500: '#aa8f63',
+					600: '#8c7552',
+					700: '#6e5b40',
+					800: '#50422f',
+					900: '#32281d',
+				},
+				'sky': {
+					50: '#f2f9ff',
+					100: '#e6f2ff',
+					200: '#bfdfff',
+					300: '#99ccff',
+					400: '#66b3ff',
+					500: '#3399ff', // Weather blue
+					600: '#007fff',
+					700: '#0066cc',
+					800: '#004c99',
+					900: '#003366',
 				}
 			},
 			borderRadius: {
@@ -84,11 +122,16 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'pulse-slow': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.5' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-slow': 'pulse-slow 3s ease-in-out infinite'
 			}
 		}
 	},
