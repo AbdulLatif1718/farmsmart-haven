@@ -3,7 +3,7 @@ import React from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Leaf, Plant, Sprout, Wheat } from 'lucide-react';
+import { Leaf, Plane, Sprout, Wheat } from 'lucide-react';
 
 const Crops = () => {
   return (
@@ -41,7 +41,7 @@ const Crops = () => {
               },
               { 
                 title: "Sweet Potato", 
-                icon: Plant, 
+                icon: Plane, 
                 description: "Suitable for your sandy soil and current season",
                 confidence: "65%",
                 color: "amber"

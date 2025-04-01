@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { BookOpen, Video, FileText, Clock, Star, Download, ChevronRight } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 
 const Knowledge = () => {
   return (
