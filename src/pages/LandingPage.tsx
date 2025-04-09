@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -5,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
-import { Cloud, Leaf, ShoppingCart, Tractor, BookOpen, Check, ArrowRight } from 'lucide-react';
+import { Cloud, Leaf, ShoppingCart, Tractor, BookOpen, Check, ArrowRight, Truck, MapPin } from 'lucide-react';
 
 const LandingPage = () => {
   const [email, setEmail] = useState('');
@@ -74,7 +75,7 @@ const LandingPage = () => {
               Transform Your Farming with AI-Powered Solutions
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-8">
-              Get personalized crop recommendations, real-time weather alerts, and access to market opportunities - all in one platform.
+              Get personalized crop recommendations, real-time weather alerts, access to market opportunities, and reliable transport solutions - all in one platform.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="gap-2" onClick={() => document.getElementById('auth-section')?.scrollIntoView({ behavior: 'smooth' })}>
@@ -121,14 +122,14 @@ const LandingPage = () => {
                 description: "Rent farming equipment when you need it, without the high cost of ownership."
               },
               {
+                icon: Truck,
+                title: "Transport & Logistics",
+                description: "Book reliable transport services to move your produce to markets efficiently and track deliveries in real-time."
+              },
+              {
                 icon: BookOpen,
                 title: "Knowledge Hub",
                 description: "Access farming guides, tutorials, and best practices in your local language."
-              },
-              {
-                icon: Check,
-                title: "Offline Access",
-                description: "Use core features even without internet connection, perfect for remote areas."
               }
             ].map((feature, index) => (
               <Card key={index} className="border-leaf-200 hover:border-leaf-400 transition-colors">
@@ -169,6 +170,7 @@ const LandingPage = () => {
                 "Reduce post-harvest losses through better storage practices",
                 "Access new markets and sell at fair prices",
                 "Make informed decisions with real-time weather alerts",
+                "Transport produce reliably with verified logistics providers",
                 "Learn new farming techniques through the knowledge hub"
               ].map((benefit, index) => (
                 <div key={index} className="flex items-start gap-4">
@@ -183,8 +185,106 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* Transport & Logistics Section - NEW SECTION */}
+      <section id="transport" className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold mb-4">Reliable Transport & Logistics</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Move your produce to market efficiently with our trusted transport network
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <Card className="border-leaf-200 hover:border-leaf-400 transition-colors">
+              <CardHeader>
+                <div className="h-16 w-16 rounded-full bg-leaf-100 flex items-center justify-center mb-4">
+                  <Truck className="h-8 w-8 text-leaf-600" />
+                </div>
+                <CardTitle>Verified Transporters</CardTitle>
+                <CardDescription>
+                  All transport providers are vetted and rated by other farmers
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-leaf-600" />
+                    <span>Identity verified</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-leaf-600" />
+                    <span>Vehicle inspections</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-leaf-600" />
+                    <span>Transparent pricing</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="border-leaf-200 hover:border-leaf-400 transition-colors">
+              <CardHeader>
+                <div className="h-16 w-16 rounded-full bg-leaf-100 flex items-center justify-center mb-4">
+                  <MapPin className="h-8 w-8 text-leaf-600" />
+                </div>
+                <CardTitle>Real-Time Tracking</CardTitle>
+                <CardDescription>
+                  Know exactly where your produce is at all times
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-leaf-600" />
+                    <span>GPS tracking</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-leaf-600" />
+                    <span>Automated alerts</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-leaf-600" />
+                    <span>ETA updates</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="border-leaf-200 hover:border-leaf-400 transition-colors">
+              <CardHeader>
+                <div className="h-16 w-16 rounded-full bg-leaf-100 flex items-center justify-center mb-4">
+                  <ShoppingCart className="h-8 w-8 text-leaf-600" />
+                </div>
+                <CardTitle>Market Delivery</CardTitle>
+                <CardDescription>
+                  Connect directly with buyers at major markets
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-leaf-600" />
+                    <span>Direct market access</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-leaf-600" />
+                    <span>Bulk transport options</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-leaf-600" />
+                    <span>Group shipping discounts</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials Section */}
-      <section id="testimonials" className="py-20 bg-background">
+      <section id="testimonials" className="py-20 bg-leaf-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4">Hear from Our Farmers</h2>
@@ -208,7 +308,7 @@ const LandingPage = () => {
               {
                 name: "Kwame Owusu",
                 location: "Central Region",
-                quote: "The knowledge hub has taught me new techniques for sustainable farming. I now use less water and fertilizer while growing more crops."
+                quote: "The transport booking system has solved my biggest challenge - getting my produce to market. Now I can find reliable trucks with just a few clicks."
               }
             ].map((testimonial, index) => (
               <Card key={index} className="border-none bg-muted">
@@ -351,6 +451,7 @@ const LandingPage = () => {
             <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
               <a href="#features" className="text-sm hover:text-leaf-600 transition-colors">Features</a>
               <a href="#benefits" className="text-sm hover:text-leaf-600 transition-colors">Benefits</a>
+              <a href="#transport" className="text-sm hover:text-leaf-600 transition-colors">Transport</a>
               <a href="#testimonials" className="text-sm hover:text-leaf-600 transition-colors">Testimonials</a>
               <Button variant="outline" size="sm" onClick={() => document.getElementById('auth-section')?.scrollIntoView({ behavior: 'smooth' })}>
                 Get Started
