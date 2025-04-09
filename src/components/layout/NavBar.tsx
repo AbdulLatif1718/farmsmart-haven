@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Menu, Sun, Moon, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
@@ -11,6 +11,17 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface NavBarProps {
   onMenuToggle: () => void;
@@ -18,7 +29,12 @@ interface NavBarProps {
 
 export const NavBar = ({ onMenuToggle }: NavBarProps) => {
   const [theme, setTheme] = useState('light');
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -29,6 +45,30 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
       title: `${newTheme === 'dark' ? 'Dark' : 'Light'} mode enabled`,
       duration: 2000,
     });
+  };
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
+    // Accept any credentials during development
+    setTimeout(() => {
+      setIsLoading(false);
+      setIsLoggedIn(true);
+      toast({
+        title: "Login successful",
+        description: "Welcome to AgriAI-Ghana!",
+      });
+    }, 1000);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    toast({
+      title: "Logged out",
+      description: "You have been logged out of your account",
+    });
+    navigate('/landing');
   };
   
   return (
@@ -80,25 +120,72 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
           </DropdownMenuContent>
         </DropdownMenu>
         
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative flex items-center ml-1.5" size="sm">
-              <Avatar className="h-8 w-8 mr-2">
-                <AvatarFallback className="bg-leaf-100 text-leaf-800">KA</AvatarFallback>
-              </Avatar>
-              <span className="hidden sm:inline text-sm font-medium">Kofi Adjei</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-[200px] mt-1">
-            <DropdownMenuItem asChild>
-              <Link to="/profile">My Profile</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link to="/settings">Settings</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">Logout</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {isLoggedIn ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative flex items-center ml-1.5" size="sm">
+                <Avatar className="h-8 w-8 mr-2">
+                  <AvatarFallback className="bg-leaf-100 text-leaf-800">KA</AvatarFallback>
+                </Avatar>
+                <span className="hidden sm:inline text-sm font-medium">Kofi Adjei</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[200px] mt-1">
+              <DropdownMenuItem asChild>
+                <Link to="/profile">My Profile</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/settings">Settings</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-destructive" onClick={handleLogout}>Logout</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="default" size="sm">Login</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <form onSubmit={handleLogin}>
+                <DialogHeader>
+                  <DialogTitle>Login to your account</DialogTitle>
+                  <DialogDescription>
+                    Enter any email and password for development
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="name@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="password">Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button type="submit" disabled={isLoading}>
+                    {isLoading ? "Logging in..." : "Login"}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     </nav>
   );
