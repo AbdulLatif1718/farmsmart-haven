@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -26,7 +25,7 @@ const LandingPage = () => {
         title: "Login successful",
         description: "Welcome to AgriAI-Ghana!",
       });
-      navigate('/');
+      navigate('/dashboard');
     }, 1000);
   };
 
@@ -41,7 +40,7 @@ const LandingPage = () => {
         title: "Account created",
         description: "Welcome to AgriAI-Ghana!",
       });
-      navigate('/');
+      navigate('/dashboard');
     }, 1000);
   };
 

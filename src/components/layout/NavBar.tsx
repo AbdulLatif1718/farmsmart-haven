@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, Sun, Moon, Bell } from 'lucide-react';
@@ -59,6 +58,7 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
         title: "Login successful",
         description: "Welcome to AgriAI-Ghana!",
       });
+      navigate('/dashboard');
     }, 1000);
   };
 
@@ -79,7 +79,7 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
           <span className="sr-only">Menu</span>
         </Button>
         
-        <Link to="/" className="flex items-center">
+        <Link to="/dashboard" className="flex items-center">
           <span className="font-bold text-xl text-leaf-600">Agri</span>
           <span className="font-bold text-xl text-sky-600">AI</span>
           <span className="text-sm font-medium ml-1">Ghana</span>
