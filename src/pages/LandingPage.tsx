@@ -170,7 +170,7 @@ const LandingPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
               <img 
-                src="https://images.unsplash.com/photo-1518495973542-4542c06a5843" 
+                src="/images/image.png" 
                 alt="Farmer in field" 
                 className="rounded-xl shadow-xl w-full h-auto object-cover"
               />
