@@ -63,42 +63,54 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// AgriAI Custom Colors
+				// Agricultural themed colors
 				'leaf': {
-					50: '#f0f7e6',
-					100: '#e0f0cd',
-					200: '#c2e29e',
-					300: '#a3d46f',
-					400: '#85c540',
-					500: '#67b711', // Main brand green
-					600: '#509109',
-					700: '#3d7007',
-					800: '#294e04',
-					900: '#162c02',
+					50: '#f1f8e9',
+					100: '#dcedc8',
+					200: '#c5e1a5',
+					300: '#aed581',
+					400: '#9ccc65',
+					500: '#8bc34a', // Main brand green
+					600: '#7cb342',
+					700: '#689f38',
+					800: '#558b2f',
+					900: '#33691e',
 				},
 				'soil': {
-					50: '#f9f6f2',
-					100: '#f2ede5',
-					200: '#e5dbcb',
-					300: '#d8c9b1',
-					400: '#c1ac8a', // Earthy brown
-					500: '#aa8f63',
-					600: '#8c7552',
-					700: '#6e5b40',
-					800: '#50422f',
-					900: '#32281d',
+					50: '#efebe9',
+					100: '#d7ccc8',
+					200: '#bcaaa4',
+					300: '#a1887f',
+					400: '#8d6e63', // Earthy brown
+					500: '#795548',
+					600: '#6d4c41',
+					700: '#5d4037',
+					800: '#4e342e',
+					900: '#3e2723',
+				},
+				'wheat': {
+					50: '#fff8e1',
+					100: '#ffecb3',
+					200: '#ffe082',
+					300: '#ffd54f',
+					400: '#ffca28',
+					500: '#ffc107', // Golden wheat
+					600: '#ffb300',
+					700: '#ffa000',
+					800: '#ff8f00',
+					900: '#ff6f00',
 				},
 				'sky': {
-					50: '#f2f9ff',
-					100: '#e6f2ff',
-					200: '#bfdfff',
-					300: '#99ccff',
-					400: '#66b3ff',
-					500: '#3399ff', // Weather blue
-					600: '#007fff',
-					700: '#0066cc',
-					800: '#004c99',
-					900: '#003366',
+					50: '#e3f2fd',
+					100: '#bbdefb',
+					200: '#90caf9',
+					300: '#64b5f6',
+					400: '#42a5f5',
+					500: '#2196f3', // Clear sky blue
+					600: '#1e88e5',
+					700: '#1976d2',
+					800: '#1565c0',
+					900: '#0d47a1',
 				}
 			},
 			borderRadius: {
@@ -132,6 +144,12 @@ export default {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'pulse-slow': 'pulse-slow 3s ease-in-out infinite'
+			},
+			backgroundImage: {
+				'gradient-farm': 'linear-gradient(90deg, hsla(139, 70%, 75%, 1) 0%, hsla(63, 90%, 76%, 1) 100%)',
+				'gradient-soil': 'linear-gradient(90deg, hsla(22, 100%, 78%, 1) 0%, hsla(2, 78%, 62%, 1) 100%)',
+				'gradient-wheat': 'linear-gradient(90deg, hsla(46, 73%, 75%, 1) 0%, hsla(39, 100%, 77%, 1) 100%)',
+				'grain-texture': "url('data:image/svg+xml;charset=utf8,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22 opacity=%220.1%22%2F%3E%3C%2Fsvg%3E')"
 			}
 		}
 	},
