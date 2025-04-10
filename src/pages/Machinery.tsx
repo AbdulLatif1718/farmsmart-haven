@@ -34,7 +34,7 @@ const Machinery = () => {
                 owner: "AgriRent Solutions",
                 distance: "5.2 km away",
                 availability: "Available from tomorrow",
-                image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b"
+                image: "https://d1ssu070pg2v9i.cloudfront.net/pex/gammies/2023/04/27135243/69.png"
               },
               {
                 name: "Irrigation Pump",
@@ -42,7 +42,7 @@ const Machinery = () => {
                 owner: "WaterTech Ghana",
                 distance: "8.7 km away",
                 availability: "Available now",
-                image: "https://images.unsplash.com/photo-1518770660439-4636190af475"
+                image: "https://grekkon-eldoret.co.ke/wp-content/uploads/2019/11/Diesel-Water-Pumps-in-Kenya-7-1024x768.jpeg"
               },
               {
                 name: "Seed Planter",
@@ -50,7 +50,7 @@ const Machinery = () => {
                 owner: "Modern Farming Tools",
                 distance: "12 km away",
                 availability: "Available now",
-                image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d"
+                image: "https://image.made-in-china.com/365f3j00dGMtLoYRgcqB/Small-Seed-Planter-Hand-Seed-Planters-Corn-Seed-Planter.webp"
               },
             ].map((equipment, index) => (
               <Card key={index} className="overflow-hidden">

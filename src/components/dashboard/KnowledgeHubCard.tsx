@@ -39,7 +39,9 @@ export const KnowledgeHubCard = ({ isLoading = false }: KnowledgeHubCardProps) =
         
         <div className="border border-border rounded-md overflow-hidden mb-3">
           <div className="h-32 bg-muted flex items-center justify-center text-muted-foreground">
-            Sustainable farming practices image
+            <img
+            src='/images/knowledge-hub.jpg'
+            />
           </div>
           <div className="p-3">
             <h4 className="font-medium text-sm">Sustainable Farming Practices for Ghanaian Climate</h4>

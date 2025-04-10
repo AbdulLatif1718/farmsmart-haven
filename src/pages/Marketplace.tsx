@@ -35,7 +35,7 @@ const Marketplace = () => {
                 reviews: 24,
                 distance: "12 km",
                 seller: "AgriTech Solutions",
-                image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7"
+                image: "https://safalseeds.in/public/images/maize-seeds.jpg"
               },
               {
                 title: "Organic Fertilizer (50kg)",
@@ -44,7 +44,7 @@ const Marketplace = () => {
                 reviews: 18,
                 distance: "8 km",
                 seller: "Green Earth Supplies",
-                image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d"
+                image: "https://img2.exportersindia.com/product_images/bc-full/2023/11/12487805/organic-fertilizer-manure-1698829857-7062539.jpeg"
               },
               {
                 title: "Irrigation Drip Tape (100m)",
@@ -53,7 +53,7 @@ const Marketplace = () => {
                 reviews: 32,
                 distance: "15 km",
                 seller: "Water Solutions Ghana",
-                image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6"
+                image: "https://ksnmdrip.com/uploads/catalog/02%20Drip%20Tape/500-meter-roll-green.jpg"
               },
             ].map((product, index) => (
               <Card key={index} className="overflow-hidden">
