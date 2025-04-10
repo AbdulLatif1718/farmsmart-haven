@@ -5,19 +5,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Leaf, DollarSign, Globe } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import { UserRole } from '@/types/user';
-import { useToast } from '@/components/ui/use-toast';
 
 export const RoleSelector = () => {
   const { user, updateUserRole } = useUser();
-  const { toast } = useToast();
   
   const handleRoleSelect = (role: UserRole) => {
     updateUserRole(role);
-    
-    toast({
-      title: "Role selected",
-      description: `You've selected the ${role} role. Your dashboard will be personalized accordingly.`,
-    });
   };
   
   return (

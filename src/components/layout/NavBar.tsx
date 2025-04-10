@@ -5,7 +5,6 @@ import { Menu, Sun, Moon, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { useUser } from '@/contexts/UserContext';
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -37,20 +36,32 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
     // Check localStorage for saved theme
     return localStorage.getItem('theme') || 'light';
   });
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    // Check localStorage for login status
+    return localStorage.getItem('isLoggedIn') === 'true';
+  });
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { user, login, logout } = useUser();
   
   // Effect for setting up theme based on localStorage
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('theme', theme);
   }, [theme]);
+  
+  // Effect to redirect user if not logged in
+  useEffect(() => {
+    if (!isLoggedIn && window.location.pathname !== '/landing') {
+      navigate('/landing');
+    }
+    
+    // Save login status to localStorage
+    localStorage.setItem('isLoggedIn', isLoggedIn.toString());
+  }, [isLoggedIn, navigate]);
   
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -62,20 +73,21 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
     });
   };
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setLoginError('');
     
-    try {
-      const success = await login(email, password);
+    // Using the dummy credentials for login
+    setTimeout(() => {
+      setIsLoading(false);
       
-      if (success) {
+      if (email === DEMO_EMAIL && password === DEMO_PASSWORD) {
+        setIsLoggedIn(true);
         toast({
           title: "Login successful",
           description: "Welcome to AgriAI-Ghana!",
         });
-        setIsDialogOpen(false);
         navigate('/dashboard');
       } else {
         setLoginError('Invalid email or password. Try sulley@gmail.com / sulley1234');
@@ -85,24 +97,16 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
           variant: "destructive"
         });
       }
-    } catch (error) {
-      setLoginError('An error occurred. Please try again.');
-      toast({
-        title: "Login error",
-        description: "An unexpected error occurred",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    }, 1000);
   };
 
   const handleLogout = () => {
-    logout();
+    setIsLoggedIn(false);
     toast({
       title: "Logged out",
       description: "You have been logged out of your account",
     });
+    navigate('/landing');
   };
   
   return (
@@ -113,7 +117,7 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
           <span className="sr-only">Menu</span>
         </Button>
         
-        <Link to={user ? "/dashboard" : "/landing"} className="flex items-center">
+        <Link to={isLoggedIn ? "/dashboard" : "/landing"} className="flex items-center">
           <span className="font-bold text-xl text-leaf-600">Agri</span>
           <span className="font-bold text-xl text-sky-600">AI</span>
           <span className="text-sm font-medium ml-1">Ghana</span>
@@ -131,46 +135,42 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
           <span className="sr-only">Toggle theme</span>
         </Button>
         
-        {user && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative">
-                <Bell className="h-5 w-5" />
-                <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-leaf-500"></span>
-                <span className="sr-only">Notifications</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[300px] mt-1">
-              <div className="px-4 py-3 border-b border-border">
-                <h3 className="text-sm font-medium">Notifications</h3>
-              </div>
-              <div className="py-2 px-4 text-sm text-muted-foreground">
-                <p>Weather alert: Expect rain tomorrow afternoon</p>
-                <p className="text-xs mt-1">1 hour ago</p>
-              </div>
-              <div className="py-2 px-4 text-sm border-t border-border text-muted-foreground">
-                <p>New recommendations for maize available</p>
-                <p className="text-xs mt-1">3 hours ago</p>
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="relative">
+              <Bell className="h-5 w-5" />
+              <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-leaf-500"></span>
+              <span className="sr-only">Notifications</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-[300px] mt-1">
+            <div className="px-4 py-3 border-b border-border">
+              <h3 className="text-sm font-medium">Notifications</h3>
+            </div>
+            <div className="py-2 px-4 text-sm text-muted-foreground">
+              <p>Weather alert: Expect rain tomorrow afternoon</p>
+              <p className="text-xs mt-1">1 hour ago</p>
+            </div>
+            <div className="py-2 px-4 text-sm border-t border-border text-muted-foreground">
+              <p>New recommendations for maize available</p>
+              <p className="text-xs mt-1">3 hours ago</p>
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
         
-        {user ? (
+        {isLoggedIn ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative flex items-center ml-1.5" size="sm">
                 <Avatar className="h-8 w-8 mr-2">
-                  <AvatarFallback className="bg-leaf-100 text-leaf-800">
-                    {user.fullName.split(' ').map(name => name[0]).join('')}
-                  </AvatarFallback>
+                  <AvatarFallback className="bg-leaf-100 text-leaf-800">SU</AvatarFallback>
                 </Avatar>
-                <span className="hidden sm:inline text-sm font-medium">{user.fullName}</span>
+                <span className="hidden sm:inline text-sm font-medium">Sulley User</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[200px] mt-1">
               <DropdownMenuItem asChild>
-                <Link to="/settings">My Profile</Link>
+                <Link to="/profile">My Profile</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link to="/settings">Settings</Link>
@@ -179,7 +179,7 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <Dialog>
             <DialogTrigger asChild>
               <Button variant="default" size="sm">Login</Button>
             </DialogTrigger>
