@@ -31,7 +31,7 @@ const Index = () => {
       }, 1000);
       
       return () => clearTimeout(timer);
-    } else {
+    } else if (user && user.role) {
       // User is logged in and has a role
       // Simulate data loading
       const timer = setTimeout(() => {
