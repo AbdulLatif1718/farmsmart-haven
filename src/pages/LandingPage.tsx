@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,46 +7,68 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
 import { Cloud, Leaf, ShoppingCart, Tractor, BookOpen, Check, ArrowRight, Truck, MapPin } from 'lucide-react';
 
+const DEMO_EMAIL = 'sulley@gmail.com';
+const DEMO_PASSWORD = 'sulley1234';
+
 const LandingPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [loginError, setLoginError] = useState('');
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (localStorage.getItem('isLoggedIn') === 'true') {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setLoginError('');
     
-    // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
-      toast({
-        title: "Login successful",
-        description: "Welcome to AgriAI-Ghana!",
-      });
-      navigate('/dashboard');
+      
+      if (email === DEMO_EMAIL && password === DEMO_PASSWORD) {
+        localStorage.setItem('isLoggedIn', 'true');
+        toast({
+          title: "Login successful",
+          description: "Welcome to AgriAI-Ghana!",
+        });
+        navigate('/dashboard');
+      } else {
+        setLoginError('Invalid email or password. Try sulley@gmail.com / sulley1234');
+        toast({
+          title: "Login failed",
+          description: "Invalid credentials",
+          variant: "destructive"
+        });
+      }
     }, 1000);
   };
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setLoginError('');
     
-    // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
       toast({
-        title: "Account created",
-        description: "Welcome to AgriAI-Ghana!",
+        title: "Please use the demo account",
+        description: "Use sulley@gmail.com / sulley1234 to login",
       });
-      navigate('/dashboard');
+      
+      const loginTab = document.querySelector('[data-state="inactive"][value="login"]') as HTMLElement;
+      if (loginTab) loginTab.click();
     }, 1000);
   };
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Navigation */}
       <header className="bg-background/90 backdrop-blur-sm border-b border-soil-200 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex items-center">
@@ -69,7 +90,6 @@ const LandingPage = () => {
         </div>
       </header>
 
-      {/* Hero Section */}
       <section className="relative py-20 md:py-32 bg-gradient-wheat overflow-hidden">
         <div className="absolute inset-0 bg-grain-texture"></div>
         <div className="container mx-auto px-4 relative">
@@ -100,7 +120,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Features Section */}
       <section id="features" className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -157,7 +176,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Benefits Section */}
       <section id="benefits" className="py-20 bg-wheat-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -196,7 +214,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Transport & Logistics Section */}
       <section id="transport" className="py-20 bg-gradient-farm bg-opacity-10">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -294,7 +311,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Testimonials Section */}
       <section id="testimonials" className="py-20 bg-wheat-100">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -336,7 +352,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Auth Section */}
       <section id="auth-section" className="py-20 bg-gradient-wheat">
         <div className="container mx-auto px-4">
           <div className="max-w-md mx-auto">
@@ -350,7 +365,7 @@ const LandingPage = () => {
                   <CardHeader>
                     <CardTitle className="text-soil-800">Login to your account</CardTitle>
                     <CardDescription className="text-soil-600">
-                      Enter your credentials to access your dashboard
+                      Use demo credentials: sulley@gmail.com / sulley1234
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -363,7 +378,7 @@ const LandingPage = () => {
                           <Input
                             id="email"
                             type="email"
-                            placeholder="name@example.com"
+                            placeholder="sulley@gmail.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
@@ -384,6 +399,9 @@ const LandingPage = () => {
                             className="border-soil-300 focus-visible:ring-leaf-500"
                           />
                         </div>
+                        {loginError && (
+                          <p className="text-sm text-destructive">{loginError}</p>
+                        )}
                         <Button 
                           type="submit" 
                           disabled={isLoading} 
@@ -406,7 +424,7 @@ const LandingPage = () => {
                   <CardHeader>
                     <CardTitle className="text-soil-800">Create an account</CardTitle>
                     <CardDescription className="text-soil-600">
-                      Join thousands of farmers using AgriAI-Ghana
+                      For demo purposes, please use the login tab with demo credentials
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -447,6 +465,9 @@ const LandingPage = () => {
                         >
                           {isLoading ? "Creating account..." : "Sign Up"}
                         </Button>
+                        <p className="text-sm text-center text-soil-600">
+                          For demo, please use the login with sulley@gmail.com / sulley1234
+                        </p>
                       </div>
                     </form>
                   </CardContent>
@@ -462,7 +483,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="bg-soil-800 py-12 text-wheat-100">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">

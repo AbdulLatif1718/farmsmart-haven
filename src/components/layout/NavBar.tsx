@@ -1,4 +1,5 @@
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, Sun, Moon, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -26,19 +27,45 @@ interface NavBarProps {
   onMenuToggle: () => void;
 }
 
+// Demo credentials
+const DEMO_EMAIL = 'sulley@gmail.com';
+const DEMO_PASSWORD = 'sulley1234';
+
 export const NavBar = ({ onMenuToggle }: NavBarProps) => {
-  const [theme, setTheme] = useState('light');
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [theme, setTheme] = useState(() => {
+    // Check localStorage for saved theme
+    return localStorage.getItem('theme') || 'light';
+  });
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    // Check localStorage for login status
+    return localStorage.getItem('isLoggedIn') === 'true';
+  });
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [loginError, setLoginError] = useState('');
   const { toast } = useToast();
   const navigate = useNavigate();
+  
+  // Effect for setting up theme based on localStorage
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+  
+  // Effect to redirect user if not logged in
+  useEffect(() => {
+    if (!isLoggedIn && window.location.pathname !== '/landing') {
+      navigate('/landing');
+    }
+    
+    // Save login status to localStorage
+    localStorage.setItem('isLoggedIn', isLoggedIn.toString());
+  }, [isLoggedIn, navigate]);
   
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
-    document.documentElement.classList.toggle('dark', newTheme === 'dark');
     
     toast({
       title: `${newTheme === 'dark' ? 'Dark' : 'Light'} mode enabled`,
@@ -49,16 +76,27 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setLoginError('');
     
-    // Accept any credentials during development
+    // Using the dummy credentials for login
     setTimeout(() => {
       setIsLoading(false);
-      setIsLoggedIn(true);
-      toast({
-        title: "Login successful",
-        description: "Welcome to AgriAI-Ghana!",
-      });
-      navigate('/dashboard');
+      
+      if (email === DEMO_EMAIL && password === DEMO_PASSWORD) {
+        setIsLoggedIn(true);
+        toast({
+          title: "Login successful",
+          description: "Welcome to AgriAI-Ghana!",
+        });
+        navigate('/dashboard');
+      } else {
+        setLoginError('Invalid email or password. Try sulley@gmail.com / sulley1234');
+        toast({
+          title: "Login failed",
+          description: "Invalid credentials",
+          variant: "destructive"
+        });
+      }
     }, 1000);
   };
 
@@ -79,7 +117,7 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
           <span className="sr-only">Menu</span>
         </Button>
         
-        <Link to="/dashboard" className="flex items-center">
+        <Link to={isLoggedIn ? "/dashboard" : "/landing"} className="flex items-center">
           <span className="font-bold text-xl text-leaf-600">Agri</span>
           <span className="font-bold text-xl text-sky-600">AI</span>
           <span className="text-sm font-medium ml-1">Ghana</span>
@@ -125,9 +163,9 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative flex items-center ml-1.5" size="sm">
                 <Avatar className="h-8 w-8 mr-2">
-                  <AvatarFallback className="bg-leaf-100 text-leaf-800">KA</AvatarFallback>
+                  <AvatarFallback className="bg-leaf-100 text-leaf-800">SU</AvatarFallback>
                 </Avatar>
-                <span className="hidden sm:inline text-sm font-medium">Kofi Adjei</span>
+                <span className="hidden sm:inline text-sm font-medium">Sulley User</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[200px] mt-1">
@@ -150,7 +188,7 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
                 <DialogHeader>
                   <DialogTitle>Login to your account</DialogTitle>
                   <DialogDescription>
-                    Enter any email and password for development
+                    Use demo credentials: sulley@gmail.com / sulley1234
                   </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
@@ -159,7 +197,7 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
                     <Input
                       id="email"
                       type="email"
-                      placeholder="name@example.com"
+                      placeholder="sulley@gmail.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
@@ -176,6 +214,9 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
                       required
                     />
                   </div>
+                  {loginError && (
+                    <p className="text-sm text-destructive">{loginError}</p>
+                  )}
                 </div>
                 <DialogFooter>
                   <Button type="submit" disabled={isLoading}>
