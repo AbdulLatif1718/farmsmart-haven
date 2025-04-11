@@ -1,11 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
-import { MainLayout } from '@/components/layout/MainLayout';
-import { Card, CardContent } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
+import { Card, CardContent } from '@/components/ui/card';
 
-// Import our new components
+// Import our business components
 import RoleSelector, { BusinessRole } from '@/components/business/RoleSelector';
 import InvestorDashboard from '@/components/business/dashboards/InvestorDashboard';
 import LandownerDashboard from '@/components/business/dashboards/LandownerDashboard';
@@ -13,6 +12,7 @@ import FarmerDashboard from '@/components/business/dashboards/FarmerDashboard';
 import BuyerDashboard from '@/components/business/dashboards/BuyerDashboard';
 import BusinessNavigation, { BusinessSection } from '@/components/business/BusinessNavigation';
 import VerificationStatus, { VerificationLevel } from '@/components/business/VerificationStatus';
+import { BusinessLayout } from '@/components/layout/BusinessLayout';
 
 const BusinessDashboard = () => {
   const [activeRole, setActiveRole] = useState<BusinessRole>('investor');
@@ -117,7 +117,7 @@ const BusinessDashboard = () => {
   };
 
   return (
-    <MainLayout>
+    <BusinessLayout activeRole={activeRole}>
       <div className="mb-6">
         <h1 className="text-2xl font-bold mb-2">Business Platform</h1>
         <p className="text-muted-foreground">
@@ -149,7 +149,7 @@ const BusinessDashboard = () => {
           />
         </div>
       </div>
-    </MainLayout>
+    </BusinessLayout>
   );
 };
 
