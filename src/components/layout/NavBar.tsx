@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, Sun, Moon, Bell, UserCircle } from 'lucide-react';
+import { Menu, Sun, Moon, Bell, UserCircle, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -129,6 +128,7 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('userRole');
     toast({
       title: "Logged out",
@@ -221,7 +221,13 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
               <DropdownMenuItem asChild>
                 <Link to="/settings">Settings</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-destructive" onClick={handleLogout}>Logout</DropdownMenuItem>
+              <DropdownMenuItem 
+                className="text-destructive flex items-center gap-2" 
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
