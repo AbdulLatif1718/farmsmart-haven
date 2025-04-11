@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { initializeTheme } from "./utils/themeUtils";
 import LandingPage from "./pages/LandingPage";
 import Index from "./pages/Index";
+import BusinessDashboard from "./pages/BusinessDashboard";
 import Weather from "./pages/Weather"; 
 import Crops from "./pages/Crops";
 import Marketplace from "./pages/Marketplace";
@@ -28,6 +29,7 @@ const App = () => {
 
   // Check if user is logged in
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  const userRole = localStorage.getItem('userRole') || 'farmer';
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -38,10 +40,15 @@ const App = () => {
           <Routes>
             <Route 
               path="/" 
-              element={isLoggedIn ? <Navigate to="/dashboard" replace /> : <Navigate to="/landing" replace />} 
+              element={
+                isLoggedIn 
+                  ? <Navigate to={userRole === 'farmer' ? "/dashboard" : "/business"} replace /> 
+                  : <Navigate to="/landing" replace />
+              } 
             />
             <Route path="/landing" element={<LandingPage />} />
             <Route path="/dashboard" element={<Index />} />
+            <Route path="/business" element={<BusinessDashboard />} />
             <Route path="/weather" element={<Weather />} />
             <Route path="/crops" element={<Crops />} />
             <Route path="/marketplace" element={<Marketplace />} />

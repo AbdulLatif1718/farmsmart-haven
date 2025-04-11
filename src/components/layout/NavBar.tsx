@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, Sun, Moon, Bell } from 'lucide-react';
+import { Menu, Sun, Moon, Bell, UserCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -20,6 +20,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -30,6 +37,8 @@ interface NavBarProps {
 // Demo credentials
 const DEMO_EMAIL = 'sulley@gmail.com';
 const DEMO_PASSWORD = 'sulley1234';
+const BUSINESS_EMAIL = 'business@example.com';
+const BUSINESS_PASSWORD = 'business1234';
 
 export const NavBar = ({ onMenuToggle }: NavBarProps) => {
   const [theme, setTheme] = useState(() => {
@@ -40,8 +49,12 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
     // Check localStorage for login status
     return localStorage.getItem('isLoggedIn') === 'true';
   });
+  const [userRole, setUserRole] = useState(() => {
+    return localStorage.getItem('userRole') || 'farmer';
+  });
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loginRole, setLoginRole] = useState('farmer');
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
   const { toast } = useToast();
@@ -82,15 +95,29 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
     setTimeout(() => {
       setIsLoading(false);
       
-      if (email === DEMO_EMAIL && password === DEMO_PASSWORD) {
+      if (loginRole === 'farmer' && email === DEMO_EMAIL && password === DEMO_PASSWORD) {
         setIsLoggedIn(true);
+        setUserRole('farmer');
+        localStorage.setItem('userRole', 'farmer');
         toast({
           title: "Login successful",
           description: "Welcome to AgriAI-Ghana!",
         });
         navigate('/dashboard');
+      } else if (loginRole === 'business' && email === BUSINESS_EMAIL && password === BUSINESS_PASSWORD) {
+        setIsLoggedIn(true);
+        setUserRole('business');
+        localStorage.setItem('userRole', 'business');
+        toast({
+          title: "Business login successful",
+          description: "Welcome to the Business Dashboard!",
+        });
+        navigate('/business');
       } else {
-        setLoginError('Invalid email or password. Try sulley@gmail.com / sulley1234');
+        const credentialHint = loginRole === 'farmer' 
+          ? 'Try sulley@gmail.com / sulley1234' 
+          : 'Try business@example.com / business1234';
+        setLoginError(`Invalid email or password. ${credentialHint}`);
         toast({
           title: "Login failed",
           description: "Invalid credentials",
@@ -102,11 +129,30 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    localStorage.removeItem('userRole');
     toast({
       title: "Logged out",
       description: "You have been logged out of your account",
     });
     navigate('/landing');
+  };
+  
+  const getUserDisplayName = () => {
+    if (userRole === 'farmer') {
+      return 'Sulley User';
+    } else if (userRole === 'business') {
+      return 'Business User';
+    }
+    return 'User';
+  };
+  
+  const getUserInitials = () => {
+    if (userRole === 'farmer') {
+      return 'SU';
+    } else if (userRole === 'business') {
+      return 'BU';
+    }
+    return 'U';
   };
   
   return (
@@ -117,7 +163,7 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
           <span className="sr-only">Menu</span>
         </Button>
         
-        <Link to={isLoggedIn ? "/dashboard" : "/landing"} className="flex items-center">
+        <Link to={isLoggedIn ? (userRole === 'farmer' ? "/dashboard" : "/business") : "/landing"} className="flex items-center">
           <span className="font-bold text-xl text-leaf-600">Agri</span>
           <span className="font-bold text-xl text-sky-600">AI</span>
           <span className="text-sm font-medium ml-1">Ghana</span>
@@ -163,9 +209,9 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative flex items-center ml-1.5" size="sm">
                 <Avatar className="h-8 w-8 mr-2">
-                  <AvatarFallback className="bg-leaf-100 text-leaf-800">SU</AvatarFallback>
+                  <AvatarFallback className="bg-leaf-100 text-leaf-800">{getUserInitials()}</AvatarFallback>
                 </Avatar>
-                <span className="hidden sm:inline text-sm font-medium">Sulley User</span>
+                <span className="hidden sm:inline text-sm font-medium">{getUserDisplayName()}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[200px] mt-1">
@@ -188,16 +234,33 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
                 <DialogHeader>
                   <DialogTitle>Login to your account</DialogTitle>
                   <DialogDescription>
-                    Use demo credentials: sulley@gmail.com / sulley1234
+                    Select your role and login with the demo credentials
                   </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="role">Role</Label>
+                    <Select defaultValue={loginRole} onValueChange={setLoginRole}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="farmer">Farmer</SelectItem>
+                        <SelectItem value="business">Business (Investor/Landowner)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <div className="text-xs text-muted-foreground">
+                      {loginRole === 'farmer' 
+                        ? "Use sulley@gmail.com / sulley1234" 
+                        : "Use business@example.com / business1234"}
+                    </div>
+                  </div>
                   <div className="grid gap-2">
                     <Label htmlFor="email">Email</Label>
                     <Input
                       id="email"
                       type="email"
-                      placeholder="sulley@gmail.com"
+                      placeholder={loginRole === 'farmer' ? "sulley@gmail.com" : "business@example.com"}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required

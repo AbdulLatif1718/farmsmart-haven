@@ -14,7 +14,8 @@ const LandingPage = () => {
 
   useEffect(() => {
     if (localStorage.getItem('isLoggedIn') === 'true') {
-      navigate('/dashboard');
+      const userRole = localStorage.getItem('userRole') || 'farmer';
+      navigate(userRole === 'farmer' ? '/dashboard' : '/business');
     }
   }, [navigate]);
 
