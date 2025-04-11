@@ -1,25 +1,52 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { WeatherCard } from '@/components/dashboard/WeatherCard';
-import { Cloud, CloudRain, CloudSun, Sun, Droplets, Wind, AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { 
+  Cloud, 
+  CloudRain, 
+  CloudSun, 
+  Sun, 
+  Droplets, 
+  Wind, 
+  AlertCircle, 
+  Calendar, 
+  ArrowRight,
+  BarChart,
+  TrendingUp,
+  Tractor
+} from 'lucide-react';
 
 const Weather = () => {
+  const [userRole, setUserRole] = useState(() => localStorage.getItem('userRole') || 'farmer');
+  
   return (
     <MainLayout>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-2">Weather Forecast</h1>
-        <p className="text-muted-foreground">
-          Access detailed weather information for your farm location and plan your activities accordingly.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+          <h1 className="text-2xl font-bold mb-2">Weather Intelligence</h1>
+          <p className="text-muted-foreground">
+            Get accurate weather data and smart agricultural insights to optimize your farming decisions.
+          </p>
+        </div>
+        
+        {userRole === 'business' && (
+          <Button className="bg-leaf-600 hover:bg-leaf-700">
+            Weather Risk Assessment
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        )}
       </div>
       
       <Tabs defaultValue="forecast" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-6">
+        <TabsList className="grid w-full grid-cols-4 mb-6">
           <TabsTrigger value="forecast">Daily Forecast</TabsTrigger>
           <TabsTrigger value="alerts">Weather Alerts</TabsTrigger>
+          <TabsTrigger value="impact">Business Impact</TabsTrigger>
           <TabsTrigger value="history">Historical Data</TabsTrigger>
         </TabsList>
         
@@ -149,20 +176,225 @@ const Weather = () => {
           </div>
         </TabsContent>
         
+        <TabsContent value="impact">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg font-medium flex items-center">
+                    <TrendingUp className="h-5 w-5 mr-2 text-leaf-600" />
+                    Weather Impact on Investments
+                  </CardTitle>
+                  <CardDescription>
+                    How current weather patterns affect agricultural investments
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="p-4 border rounded-lg">
+                      <div className="flex justify-between items-center mb-3">
+                        <div className="flex items-center">
+                          <div className="w-10 h-10 bg-leaf-100 rounded-full flex items-center justify-center mr-3">
+                            <Tractor className="h-5 w-5 text-leaf-600" />
+                          </div>
+                          <div>
+                            <h3 className="font-medium">Maize Cultivation Projects</h3>
+                            <p className="text-xs text-muted-foreground">3 active investments</p>
+                          </div>
+                        </div>
+                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                          Low Risk
+                        </Badge>
+                      </div>
+                      
+                      <div className="text-sm text-muted-foreground mb-3">
+                        Current rainfall patterns are favorable for maize growth in the Northern Region. Expected yield increase of 5-10%.
+                      </div>
+                      
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Projected ROI:</span>
+                        <span className="font-medium text-green-600">+23% (↑3%)</span>
+                      </div>
+                    </div>
+                    
+                    <div className="p-4 border rounded-lg">
+                      <div className="flex justify-between items-center mb-3">
+                        <div className="flex items-center">
+                          <div className="w-10 h-10 bg-leaf-100 rounded-full flex items-center justify-center mr-3">
+                            <Tractor className="h-5 w-5 text-leaf-600" />
+                          </div>
+                          <div>
+                            <h3 className="font-medium">Rice Farming Projects</h3>
+                            <p className="text-xs text-muted-foreground">2 active investments</p>
+                          </div>
+                        </div>
+                        <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
+                          Moderate Risk
+                        </Badge>
+                      </div>
+                      
+                      <div className="text-sm text-muted-foreground mb-3">
+                        Expected heavy rainfall may affect rice paddies in Volta Region. Consider drainage solutions for optimal yields.
+                      </div>
+                      
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Projected ROI:</span>
+                        <span className="font-medium text-yellow-600">+18% (↓2%)</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button variant="outline" className="w-full">
+                    View All Investment Weather Impacts
+                  </Button>
+                </CardFooter>
+              </Card>
+            </div>
+            
+            <div>
+              <Card className="mb-6">
+                <CardHeader>
+                  <CardTitle className="text-base font-medium">Weather Risk Index</CardTitle>
+                  <CardDescription>
+                    Current risk level for agricultural investments
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col items-center">
+                    <div className="w-32 h-32 rounded-full border-8 border-green-100 flex items-center justify-center mb-4">
+                      <span className="text-3xl font-bold text-green-600">Low</span>
+                    </div>
+                    <p className="text-sm text-center text-muted-foreground mb-4">
+                      Overall weather conditions are favorable for most agricultural activities in your invested regions.
+                    </p>
+                    <div className="w-full grid grid-cols-3 gap-2 text-center">
+                      <div className="p-2 bg-muted rounded-md">
+                        <div className="text-xs text-muted-foreground">Crops</div>
+                        <div className="font-medium text-green-600">Low</div>
+                      </div>
+                      <div className="p-2 bg-muted rounded-md">
+                        <div className="text-xs text-muted-foreground">Livestock</div>
+                        <div className="font-medium text-green-600">Low</div>
+                      </div>
+                      <div className="p-2 bg-muted rounded-md">
+                        <div className="text-xs text-muted-foreground">Transport</div>
+                        <div className="font-medium text-yellow-600">Medium</div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base font-medium">Weather Alerts for Landowners</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="p-3 border rounded-lg">
+                      <h4 className="font-medium text-sm flex items-center">
+                        <AlertCircle className="h-4 w-4 mr-2 text-yellow-500" />
+                        Soil Erosion Risk
+                      </h4>
+                      <p className="text-xs text-muted-foreground my-1">
+                        Moderate risk of soil erosion in Eastern Region due to expected rainfall.
+                      </p>
+                      <Button variant="ghost" size="sm" className="w-full mt-1 text-xs">
+                        View Prevention Measures
+                      </Button>
+                    </div>
+                    
+                    <div className="p-3 border rounded-lg">
+                      <h4 className="font-medium text-sm flex items-center">
+                        <AlertCircle className="h-4 w-4 mr-2 text-green-500" />
+                        Irrigation Alert
+                      </h4>
+                      <p className="text-xs text-muted-foreground my-1">
+                        No irrigation needed for Northern Region properties this week.
+                      </p>
+                      <Button variant="ghost" size="sm" className="w-full mt-1 text-xs">
+                        View Water Management
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </TabsContent>
+        
         <TabsContent value="history">
           <Card>
             <CardHeader>
-              <CardTitle>Historical Weather Data</CardTitle>
+              <CardTitle className="flex items-center">
+                <BarChart className="h-5 w-5 mr-2 text-leaf-600" />
+                Historical Weather Analysis
+              </CardTitle>
+              <CardDescription>
+                Access weather patterns and agricultural performance data to inform your investment decisions.
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">
-                Access historical weather patterns to better plan your farming activities.
-                Historical data helps in understanding seasonal patterns and making informed decisions.
-              </p>
-              
-              <div className="h-64 bg-muted rounded-md flex items-center justify-center">
-                Weather history chart will be displayed here
+              <div className="mb-6">
+                <h3 className="text-base font-medium mb-2">Select Parameters</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium">Region</label>
+                    <select className="w-full h-10 px-3 rounded-md border border-input bg-background">
+                      <option>All Regions</option>
+                      <option>Accra Region</option>
+                      <option>Northern Region</option>
+                      <option>Volta Region</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium">Metric</label>
+                    <select className="w-full h-10 px-3 rounded-md border border-input bg-background">
+                      <option>Rainfall</option>
+                      <option>Temperature</option>
+                      <option>Humidity</option>
+                      <option>Soil Moisture</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium">Time Period</label>
+                    <select className="w-full h-10 px-3 rounded-md border border-input bg-background">
+                      <option>Last 12 Months</option>
+                      <option>Last 3 Years</option>
+                      <option>Last 5 Years</option>
+                      <option>Last 10 Years</option>
+                    </select>
+                  </div>
+                </div>
+                <Button className="bg-leaf-600 hover:bg-leaf-700">
+                  Generate Analysis
+                </Button>
               </div>
+              
+              <div className="h-64 bg-muted rounded-md flex items-center justify-center mb-4">
+                <div className="text-center">
+                  <Calendar className="h-10 w-10 mx-auto mb-2 text-muted-foreground" />
+                  <p className="text-muted-foreground">
+                    Weather history chart will be displayed here
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Select parameters and generate analysis to view data
+                  </p>
+                </div>
+              </div>
+              
+              {userRole === 'business' && (
+                <div className="mt-6 p-4 border rounded-lg">
+                  <h3 className="font-medium mb-2">Investment Intelligence</h3>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Analyze weather patterns against crop yields and investment returns to optimize your agricultural portfolio.
+                  </p>
+                  <Button variant="outline">
+                    View Investment-Weather Correlation
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
