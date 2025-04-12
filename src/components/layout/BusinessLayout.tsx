@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Menu, Bell, X } from 'lucide-react';
+import { Menu, Bell, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -17,6 +17,7 @@ interface BusinessLayoutProps {
 
 export const BusinessLayout = ({ children, activeRole }: BusinessLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -36,6 +37,14 @@ export const BusinessLayout = ({ children, activeRole }: BusinessLayoutProps) =>
     }
   };
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  const toggleCollapse = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950">
       {/* Header */}
@@ -45,11 +54,21 @@ export const BusinessLayout = ({ children, activeRole }: BusinessLayoutProps) =>
             <Button 
               variant="ghost" 
               size="icon" 
-              onClick={() => setSidebarOpen(!sidebarOpen)} 
-              className="mr-3 lg:mr-4"
+              onClick={toggleSidebar} 
+              className="mr-3 lg:mr-4 md:hidden"
               aria-label="Toggle sidebar"
             >
               {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+            
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleCollapse}
+              className="mr-3 lg:mr-4 hidden md:flex"
+              aria-label="Collapse sidebar"
+            >
+              {sidebarCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
             </Button>
             
             <h1 className="text-xl font-semibold hidden md:block">
@@ -98,9 +117,17 @@ export const BusinessLayout = ({ children, activeRole }: BusinessLayoutProps) =>
       </header>
       
       <div className="flex flex-1 relative">
-        <BusinessSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} activeRole={activeRole} />
+        <BusinessSidebar 
+          open={sidebarOpen} 
+          onClose={() => setSidebarOpen(false)} 
+          activeRole={activeRole} 
+          collapsed={sidebarCollapsed}
+        />
         
-        <main className="flex-1 p-4 md:p-6 overflow-y-auto">
+        <main className={cn(
+          "flex-1 p-4 md:p-6 overflow-y-auto transition-all duration-300",
+          sidebarCollapsed ? "md:ml-20" : "md:ml-0"
+        )}>
           <div className="max-w-7xl mx-auto">
             {children}
           </div>
