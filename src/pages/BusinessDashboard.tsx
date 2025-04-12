@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
@@ -129,7 +128,8 @@ const BusinessDashboard = () => {
         <div className="lg:col-span-3">
           <BusinessNavigation 
             activeSection={activeSection} 
-            onSectionChange={setActiveSection} 
+            onSectionChange={setActiveSection}
+            activeRole={activeRole}
           />
           
           {activeSection === 'dashboard' && (
