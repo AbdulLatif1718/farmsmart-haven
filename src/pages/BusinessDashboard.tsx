@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
@@ -29,6 +30,14 @@ const BusinessDashboard = () => {
       navigate('/landing');
     }
   }, [navigate]);
+
+  // Handle section changes
+  useEffect(() => {
+    if (activeSection !== 'dashboard') {
+      // Navigate to the corresponding page
+      navigate(`/business/${activeSection}`);
+    }
+  }, [activeSection, navigate]);
 
   const handleVerify = () => {
     if (verificationLevel === 'none') {
@@ -66,55 +75,6 @@ const BusinessDashboard = () => {
     }
   };
 
-  const renderMainContent = () => {
-    switch (activeSection) {
-      case 'dashboard':
-        return renderDashboard();
-      case 'projects':
-        return (
-          <Card>
-            <CardContent className="p-6">
-              <div className="h-64 flex items-center justify-center">
-                <p className="text-muted-foreground">Projects section coming soon.</p>
-              </div>
-            </CardContent>
-          </Card>
-        );
-      case 'marketplace':
-        return (
-          <Card>
-            <CardContent className="p-6">
-              <div className="h-64 flex items-center justify-center">
-                <p className="text-muted-foreground">Marketplace section coming soon.</p>
-              </div>
-            </CardContent>
-          </Card>
-        );
-      case 'messages':
-        return (
-          <Card>
-            <CardContent className="p-6">
-              <div className="h-64 flex items-center justify-center">
-                <p className="text-muted-foreground">Messages section coming soon.</p>
-              </div>
-            </CardContent>
-          </Card>
-        );
-      case 'settings':
-        return (
-          <Card>
-            <CardContent className="p-6">
-              <div className="h-64 flex items-center justify-center">
-                <p className="text-muted-foreground">Settings section coming soon.</p>
-              </div>
-            </CardContent>
-          </Card>
-        );
-      default:
-        return renderDashboard();
-    }
-  };
-
   return (
     <BusinessLayout activeRole={activeRole}>
       <div className="mb-6">
@@ -132,14 +92,12 @@ const BusinessDashboard = () => {
             activeRole={activeRole}
           />
           
-          {activeSection === 'dashboard' && (
-            <RoleSelector 
-              activeRole={activeRole} 
-              onRoleChange={setActiveRole} 
-            />
-          )}
+          <RoleSelector 
+            activeRole={activeRole} 
+            onRoleChange={setActiveRole} 
+          />
           
-          {renderMainContent()}
+          {renderDashboard()}
         </div>
         
         <div className="lg:col-span-1">

@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Home, TrendingUp, Landmark, MessageSquare, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -15,6 +16,8 @@ interface BusinessNavigationProps {
 }
 
 export const BusinessNavigation = ({ activeSection, onSectionChange, activeRole }: BusinessNavigationProps) => {
+  const navigate = useNavigate();
+  
   // Color based on active role
   const getRoleColor = (isActive: boolean) => {
     if (!isActive) return '';
@@ -25,6 +28,16 @@ export const BusinessNavigation = ({ activeSection, onSectionChange, activeRole 
       case 'farmer': return 'bg-amber-600';
       case 'buyer': return 'bg-purple-600';
       default: return 'bg-blue-600';
+    }
+  };
+
+  const handleSectionChange = (section: BusinessSection) => {
+    onSectionChange(section);
+    
+    if (section === 'dashboard') {
+      navigate('/business');
+    } else {
+      navigate(`/business/${section}`);
     }
   };
 
@@ -44,7 +57,7 @@ export const BusinessNavigation = ({ activeSection, onSectionChange, activeRole 
       <CardContent className="pt-2">
         <Tabs 
           defaultValue={activeSection} 
-          onValueChange={(value) => onSectionChange(value as BusinessSection)} 
+          onValueChange={(value) => handleSectionChange(value as BusinessSection)} 
           className="w-full"
         >
           <TabsList className="grid w-full" style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}>
