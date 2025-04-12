@@ -29,16 +29,16 @@ const BusinessMarketplace = () => {
         <div className="w-full md:w-1/3 flex gap-2">
           <Button variant="outline" className="flex-1">
             <Filter className="h-4 w-4 mr-2" />
-            Filter
+            <span className="hidden sm:inline">Filter</span>
           </Button>
           <Button variant="outline" className="flex-1">
             <SlidersHorizontal className="h-4 w-4 mr-2" />
-            Sort
+            <span className="hidden sm:inline">Sort</span>
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         {/* Product 1 */}
         <Card>
           <CardHeader className="pb-2">
@@ -62,11 +62,11 @@ const BusinessMarketplace = () => {
               </div>
             </div>
           </CardContent>
-          <CardFooter className="flex gap-2">
-            <Button variant="outline" className="flex-1">View Details</Button>
-            <Button className="flex-1">
+          <CardFooter className="flex gap-2 flex-wrap sm:flex-nowrap">
+            <Button variant="outline" className="flex-1 w-full sm:w-auto">View Details</Button>
+            <Button className="flex-1 w-full sm:w-auto">
               <ShoppingCart className="h-4 w-4 mr-2" />
-              Add to Cart
+              <span>Add to Cart</span>
             </Button>
           </CardFooter>
         </Card>
@@ -94,11 +94,11 @@ const BusinessMarketplace = () => {
               </div>
             </div>
           </CardContent>
-          <CardFooter className="flex gap-2">
-            <Button variant="outline" className="flex-1">View Details</Button>
-            <Button className="flex-1">
+          <CardFooter className="flex gap-2 flex-wrap sm:flex-nowrap">
+            <Button variant="outline" className="flex-1 w-full sm:w-auto">View Details</Button>
+            <Button className="flex-1 w-full sm:w-auto">
               <ShoppingCart className="h-4 w-4 mr-2" />
-              Add to Cart
+              <span>Add to Cart</span>
             </Button>
           </CardFooter>
         </Card>
@@ -126,11 +126,11 @@ const BusinessMarketplace = () => {
               </div>
             </div>
           </CardContent>
-          <CardFooter className="flex gap-2">
-            <Button variant="outline" className="flex-1">View Details</Button>
-            <Button className="flex-1">
+          <CardFooter className="flex gap-2 flex-wrap sm:flex-nowrap">
+            <Button variant="outline" className="flex-1 w-full sm:w-auto">View Details</Button>
+            <Button className="flex-1 w-full sm:w-auto">
               <ShoppingCart className="h-4 w-4 mr-2" />
-              Add to Cart
+              <span>Add to Cart</span>
             </Button>
           </CardFooter>
         </Card>
