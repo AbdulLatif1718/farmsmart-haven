@@ -15,7 +15,8 @@ import {
   Wallet,
   Leaf,
   X,
-  Home
+  Home,
+  ShoppingCart
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -67,7 +68,7 @@ export const BusinessSidebar = ({ open, onClose, activeRole }: BusinessSidebarPr
       case 'buyer':
         return [
           { icon: Home, label: 'Dashboard', path: '/business' },
-          { icon: Landmark, label: 'Marketplace', path: '/business/marketplace' },
+          { icon: ShoppingCart, label: 'Marketplace', path: '/business/marketplace' },
           { icon: TrendingUp, label: 'Orders', path: '/business/orders' },
           { icon: Wallet, label: 'Payment Methods', path: '/business/payments' },
           ...commonItems

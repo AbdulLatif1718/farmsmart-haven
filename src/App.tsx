@@ -19,6 +19,14 @@ import Knowledge from "./pages/Knowledge";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
+// Import business pages
+import Investments from "./pages/business/Investments";
+import Properties from "./pages/business/Properties";
+import Projects from "./pages/business/Projects";
+import BusinessMarketplace from "./pages/business/Marketplace";
+import Messages from "./pages/business/Messages";
+import BusinessSettings from "./pages/business/Settings";
+
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -47,8 +55,9 @@ const App = () => {
               } 
             />
             <Route path="/landing" element={<LandingPage />} />
+            
+            {/* Farmer Platform Routes */}
             <Route path="/dashboard" element={<Index />} />
-            <Route path="/business" element={<BusinessDashboard />} />
             <Route path="/weather" element={<Weather />} />
             <Route path="/crops" element={<Crops />} />
             <Route path="/marketplace" element={<Marketplace />} />
@@ -57,7 +66,26 @@ const App = () => {
             <Route path="/storage" element={<Storage />} />
             <Route path="/knowledge" element={<Knowledge />} />
             <Route path="/settings" element={<Settings />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            
+            {/* Business Platform Routes */}
+            <Route path="/business" element={<BusinessDashboard />} />
+            <Route path="/business/investments" element={<Investments />} />
+            <Route path="/business/properties" element={<Properties />} />
+            <Route path="/business/projects" element={<Projects />} />
+            <Route path="/business/marketplace" element={<BusinessMarketplace />} />
+            <Route path="/business/messages" element={<Messages />} />
+            <Route path="/business/settings" element={<BusinessSettings />} />
+            
+            {/* Placeholder routes that will redirect to construction pages */}
+            <Route path="/business/contracts" element={<Navigate to="/business/settings" replace />} />
+            <Route path="/business/financials" element={<Navigate to="/business/settings" replace />} />
+            <Route path="/business/partnerships" element={<Navigate to="/business/settings" replace />} />
+            <Route path="/business/leases" element={<Navigate to="/business/settings" replace />} />
+            <Route path="/business/land" element={<Navigate to="/business/settings" replace />} />
+            <Route path="/business/orders" element={<Navigate to="/business/settings" replace />} />
+            <Route path="/business/payments" element={<Navigate to="/business/settings" replace />} />
+            
+            {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
