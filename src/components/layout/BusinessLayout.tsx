@@ -8,6 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { BusinessSidebar } from '../business/BusinessSidebar';
 import { BusinessRole } from '../business/RoleSelector';
 import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 interface BusinessLayoutProps {
   children: React.ReactNode;
