@@ -145,8 +145,8 @@ export const BusinessSidebar = ({ open, onClose, activeRole, collapsed = false }
           "fixed top-0 left-0 z-50 h-full bg-slate-900 text-white transition-all duration-300 ease-in-out",
           // Mobile view
           open ? "translate-x-0" : "-translate-x-full",
-          // Desktop view
-          "md:translate-x-0 md:static md:z-30",
+          // Desktop view - positioning and width
+          "md:relative md:translate-x-0 md:z-30",
           // Collapsed state
           collapsed ? "md:w-20" : "w-72"
         )}
