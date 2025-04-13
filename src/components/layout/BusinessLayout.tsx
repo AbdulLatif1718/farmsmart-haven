@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Menu, Bell, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Menu, Bell, X, ChevronLeft, ChevronRight, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -9,6 +9,7 @@ import { BusinessSidebar } from '../business/BusinessSidebar';
 import { BusinessRole } from '../business/RoleSelector';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { toggleTheme } from '@/utils/themeUtils';
 
 interface BusinessLayoutProps {
   children: React.ReactNode;
@@ -72,8 +73,8 @@ export const BusinessLayout = ({ children, activeRole }: BusinessLayoutProps) =>
             </Button>
             
             <h1 className="text-xl font-semibold hidden md:block">
-              <span className="text-green-600">Agri</span>
-              <span className="text-blue-600">Business</span>
+              <span className="text-green-600 dark:text-green-500">Agri</span>
+              <span className="text-blue-600 dark:text-blue-500">Business</span>
               <Badge className={cn("ml-2 text-white", getRoleColor())}>
                 {activeRole.charAt(0).toUpperCase() + activeRole.slice(1)}
               </Badge>
@@ -81,6 +82,17 @@ export const BusinessLayout = ({ children, activeRole }: BusinessLayoutProps) =>
           </div>
           
           <div className="flex items-center gap-3">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={toggleTheme}
+              className="relative"
+              aria-label="Toggle theme"
+            >
+              <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            </Button>
+            
             <Button 
               variant="ghost" 
               size="icon" 

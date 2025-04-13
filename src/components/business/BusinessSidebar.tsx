@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   BriefcaseBusiness, 
@@ -24,6 +24,10 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { BusinessRole } from './RoleSelector';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/components/ui/use-toast';
 
 interface BusinessSidebarProps {
   open: boolean;
@@ -34,6 +38,8 @@ interface BusinessSidebarProps {
 
 export const BusinessSidebar = ({ open, onClose, activeRole, collapsed = false }: BusinessSidebarProps) => {
   const location = useLocation();
+  const [isNetworkModalOpen, setIsNetworkModalOpen] = useState(false);
+  const { toast } = useToast();
   
   // Different menu items based on role
   const getMenuItems = () => {
@@ -127,6 +133,20 @@ export const BusinessSidebar = ({ open, onClose, activeRole, collapsed = false }
   };
 
   const roleDetails = getRoleDetails();
+  
+  // Handle connect now button click
+  const handleConnectNow = () => {
+    setIsNetworkModalOpen(true);
+  };
+
+  // Handle connect with user
+  const handleConnectWithUser = (userName: string) => {
+    toast({
+      title: "Connection Request Sent",
+      description: `You've sent a connection request to ${userName}. They will be notified shortly.`,
+    });
+    setIsNetworkModalOpen(false);
+  };
 
   return (
     <>
@@ -277,6 +297,7 @@ export const BusinessSidebar = ({ open, onClose, activeRole, collapsed = false }
                 variant="outline" 
                 size="sm" 
                 className="w-full mt-3 border-slate-700 text-white hover:bg-slate-700 hover:text-white"
+                onClick={handleConnectNow}
               >
                 Connect Now
                 <ChevronRight className="h-4 w-4 ml-1" />
@@ -285,7 +306,147 @@ export const BusinessSidebar = ({ open, onClose, activeRole, collapsed = false }
           </div>
         )}
       </aside>
+
+      {/* Agricultural Network Modal */}
+      <Dialog open={isNetworkModalOpen} onOpenChange={setIsNetworkModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center">
+              <Users className="h-5 w-5 mr-2 text-leaf-600" />
+              Agricultural Network
+            </DialogTitle>
+            <DialogDescription>
+              Connect with other agricultural professionals to expand your network
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
+            {/* Filter by role */}
+            <div className="flex flex-wrap gap-2 mb-2">
+              <Badge variant="outline" className="bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 cursor-pointer">
+                Investors
+              </Badge>
+              <Badge variant="outline" className="bg-green-50 dark:bg-green-900/20 hover:bg-green-100 cursor-pointer">
+                Landowners
+              </Badge>
+              <Badge variant="outline" className="bg-amber-50 dark:bg-amber-900/20 hover:bg-amber-100 cursor-pointer">
+                Farmers
+              </Badge>
+              <Badge variant="outline" className="bg-purple-50 dark:bg-purple-900/20 hover:bg-purple-100 cursor-pointer">
+                Buyers
+              </Badge>
+              <Badge variant="outline" className="bg-gray-50 dark:bg-gray-900/20 hover:bg-gray-100 cursor-pointer">
+                All
+              </Badge>
+            </div>
+
+            {/* Network connections */}
+            <UserCard 
+              name="John Kofi"
+              role="Investor"
+              location="Accra Region"
+              specialty="Grain Farming, Poultry"
+              avatarText="JK"
+              avatarColor="bg-blue-100 dark:bg-blue-800/30"
+              roleColor="text-blue-600 dark:text-blue-400"
+              onConnect={() => handleConnectWithUser("John Kofi")}
+            />
+            
+            <UserCard 
+              name="Sarah Mensah"
+              role="Landowner"
+              location="Western Region"
+              specialty="Cocoa Farms, Palm Oil Plantations"
+              avatarText="SM"
+              avatarColor="bg-green-100 dark:bg-green-800/30"
+              roleColor="text-green-600 dark:text-green-400"
+              onConnect={() => handleConnectWithUser("Sarah Mensah")}
+            />
+            
+            <UserCard 
+              name="Ibrahim Yakubu"
+              role="Farmer"
+              location="Northern Region"
+              specialty="Rice, Vegetables, Organic Farming"
+              avatarText="IY"
+              avatarColor="bg-amber-100 dark:bg-amber-800/30"
+              roleColor="text-amber-600 dark:text-amber-400"
+              onConnect={() => handleConnectWithUser("Ibrahim Yakubu")}
+            />
+            
+            <UserCard 
+              name="David Asare"
+              role="Buyer"
+              location="Greater Accra"
+              specialty="Food Processing, Export Markets"
+              avatarText="DA"
+              avatarColor="bg-purple-100 dark:bg-purple-800/30"
+              roleColor="text-purple-600 dark:text-purple-400"
+              onConnect={() => handleConnectWithUser("David Asare")}
+            />
+            
+            <UserCard 
+              name="Mary Osei"
+              role="Landowner"
+              location="Volta Region"
+              specialty="Timber, Mixed Farming Land"
+              avatarText="MO"
+              avatarColor="bg-green-100 dark:bg-green-800/30"
+              roleColor="text-green-600 dark:text-green-400"
+              onConnect={() => handleConnectWithUser("Mary Osei")}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
+  );
+};
+
+// User Card Component for Network
+interface UserCardProps {
+  name: string;
+  role: string;
+  location: string;
+  specialty: string;
+  avatarText: string;
+  avatarColor: string;
+  roleColor: string;
+  onConnect: () => void;
+}
+
+const UserCard = ({ 
+  name, 
+  role, 
+  location, 
+  specialty, 
+  avatarText, 
+  avatarColor, 
+  roleColor,
+  onConnect 
+}: UserCardProps) => {
+  return (
+    <Card className="border shadow-sm">
+      <CardContent className="p-4">
+        <div className="flex items-start gap-3">
+          <div className={`w-10 h-10 rounded-full ${avatarColor} flex items-center justify-center font-medium`}>
+            {avatarText}
+          </div>
+          <div className="flex-1">
+            <h3 className="font-medium">{name}</h3>
+            <p className={`text-xs ${roleColor}`}>{role}</p>
+            <p className="text-xs text-muted-foreground mt-1 flex items-center">
+              <Landmark className="h-3 w-3 mr-1" />
+              {location}
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5 mb-3">
+              Specializes in: {specialty}
+            </p>
+            <Button size="sm" variant="outline" className="w-full" onClick={onConnect}>
+              Connect
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
