@@ -11,7 +11,7 @@ const LandingLayout = ({ children }: LandingLayoutProps) => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-grow w-full overflow-x-hidden">
+      <main className="flex-grow">
         {children}
       </main>
       <Footer />

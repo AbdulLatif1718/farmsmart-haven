@@ -15,7 +15,6 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 interface SidebarProps {
   open: boolean;
@@ -35,14 +34,12 @@ const menuItems = [
 ];
 
 export const Sidebar = ({ open, onClose }: SidebarProps) => {
-  const isMobile = useIsMobile();
-
   return (
     <>
       {/* Overlay for mobile */}
-      {open && isMobile && (
+      {open && (
         <div 
-          className="fixed inset-0 bg-black/30 z-40"
+          className="fixed inset-0 bg-black/30 z-40 md:hidden"
           onClick={onClose}
         ></div>
       )}
@@ -50,9 +47,8 @@ export const Sidebar = ({ open, onClose }: SidebarProps) => {
       {/* Sidebar */}
       <aside 
         className={cn(
-          "fixed top-0 left-0 z-50 h-full w-64 bg-card border-r border-border transition-transform duration-300 ease-in-out transform",
-          open ? "translate-x-0" : "-translate-x-full",
-          "md:translate-x-0 md:static md:z-0"
+          "fixed top-0 left-0 z-50 h-full w-64 bg-card border-r border-border transition-transform duration-300 ease-in-out transform md:translate-x-0 md:static md:z-0 md:block",
+          open ? "translate-x-0 mt-0" : "-translate-x-full"
         )}
       >
         <div className="flex items-center justify-between p-4 md:pt-16">
@@ -61,12 +57,10 @@ export const Sidebar = ({ open, onClose }: SidebarProps) => {
             <span className="font-bold text-xl text-sky-600">AI</span>
             <span className="text-sm font-medium ml-1">Ghana</span>
           </Link>
-          {isMobile && (
-            <Button variant="ghost" size="icon" onClick={onClose} className="md:hidden">
-              <X className="h-5 w-5" />
-              <span className="sr-only">Close sidebar</span>
-            </Button>
-          )}
+          <Button variant="ghost" size="icon" onClick={onClose} className="md:hidden">
+            <X className="h-5 w-5" />
+            <span className="sr-only">Close sidebar</span>
+          </Button>
         </div>
         
         <nav className="mt-6 p-2">
@@ -76,7 +70,7 @@ export const Sidebar = ({ open, onClose }: SidebarProps) => {
                 <Link 
                   to={item.path}
                   className="flex items-center px-4 py-3 text-sm rounded-md hover:bg-leaf-50 hover:text-leaf-700 dark:hover:bg-leaf-900/20 dark:hover:text-leaf-300 transition-colors"
-                  onClick={() => isMobile && onClose()}
+                  onClick={() => onClose()}
                 >
                   <item.icon className="h-5 w-5 mr-3 text-leaf-600 dark:text-leaf-400" />
                   <span>{item.label}</span>

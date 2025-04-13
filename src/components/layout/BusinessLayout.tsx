@@ -9,7 +9,6 @@ import { BusinessSidebar } from '../business/BusinessSidebar';
 import { BusinessRole } from '../business/RoleSelector';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 interface BusinessLayoutProps {
   children: React.ReactNode;
@@ -20,7 +19,6 @@ export const BusinessLayout = ({ children, activeRole }: BusinessLayoutProps) =>
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
 
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
@@ -73,7 +71,7 @@ export const BusinessLayout = ({ children, activeRole }: BusinessLayoutProps) =>
               {sidebarCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
             </Button>
             
-            <h1 className="text-xl font-semibold flex items-center">
+            <h1 className="text-xl font-semibold hidden md:block">
               <span className="text-green-600">Agri</span>
               <span className="text-blue-600">Business</span>
               <Badge className={cn("ml-2 text-white", getRoleColor())}>
@@ -128,8 +126,7 @@ export const BusinessLayout = ({ children, activeRole }: BusinessLayoutProps) =>
         
         <main className={cn(
           "flex-1 p-4 md:p-6 overflow-y-auto transition-all duration-300",
-          !isMobile && !sidebarCollapsed ? "md:ml-72" : "",
-          !isMobile && sidebarCollapsed ? "md:ml-20" : ""
+          sidebarCollapsed ? "md:ml-20" : "md:ml-0"
         )}>
           <div className="max-w-7xl mx-auto">
             {children}

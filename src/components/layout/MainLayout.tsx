@@ -4,7 +4,6 @@ import { NavBar } from './NavBar';
 import { Sidebar } from './Sidebar';
 import { Footer } from './Footer';
 import { cn } from '@/lib/utils';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -13,7 +12,6 @@ interface MainLayoutProps {
 export const MainLayout = ({ children }: MainLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const isMobile = useIsMobile();
 
   // Handle online/offline status
   useEffect(() => {
@@ -45,10 +43,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
       
       <div className="flex flex-1 pt-16">
         <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-        <main className={cn(
-          "flex-1 p-4 md:p-6 overflow-y-auto",
-          isMobile ? "w-full" : ""
-        )}>
+        <main className="flex-1 p-4 md:p-6 overflow-y-auto">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>
