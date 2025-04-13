@@ -56,106 +56,37 @@ const App = () => {
             />
             <Route path="/landing" element={<LandingPage />} />
             
-            {/* Farmer Platform Routes - Redirect to landing if not logged in */}
-            <Route 
-              path="/dashboard" 
-              element={isLoggedIn ? <Index /> : <Navigate to="/landing#auth-section" replace />} 
-            />
-            <Route 
-              path="/weather" 
-              element={isLoggedIn ? <Weather /> : <Navigate to="/landing#auth-section" replace />} 
-            />
-            <Route 
-              path="/crops" 
-              element={isLoggedIn ? <Crops /> : <Navigate to="/landing#auth-section" replace />} 
-            />
-            <Route 
-              path="/marketplace" 
-              element={isLoggedIn ? <Marketplace /> : <Navigate to="/landing#auth-section" replace />} 
-            />
-            <Route 
-              path="/transport" 
-              element={isLoggedIn ? <Transport /> : <Navigate to="/landing#auth-section" replace />} 
-            />
-            <Route 
-              path="/machinery" 
-              element={isLoggedIn ? <Machinery /> : <Navigate to="/landing#auth-section" replace />} 
-            />
-            <Route 
-              path="/storage" 
-              element={isLoggedIn ? <Storage /> : <Navigate to="/landing#auth-section" replace />} 
-            />
-            <Route 
-              path="/knowledge" 
-              element={isLoggedIn ? <Knowledge /> : <Navigate to="/landing#auth-section" replace />} 
-            />
-            <Route 
-              path="/settings" 
-              element={isLoggedIn ? <Settings /> : <Navigate to="/landing#auth-section" replace />} 
-            />
+            {/* Farmer Platform Routes */}
+            <Route path="/dashboard" element={<Index />} />
+            <Route path="/weather" element={<Weather />} />
+            <Route path="/crops" element={<Crops />} />
+            <Route path="/marketplace" element={<Marketplace />} />
+            <Route path="/transport" element={<Transport />} />
+            <Route path="/machinery" element={<Machinery />} />
+            <Route path="/storage" element={<Storage />} />
+            <Route path="/knowledge" element={<Knowledge />} />
+            <Route path="/settings" element={<Settings />} />
             
-            {/* Business Platform Routes - Redirect to landing if not logged in */}
-            <Route 
-              path="/business" 
-              element={isLoggedIn ? <BusinessDashboard /> : <Navigate to="/landing#auth-section" replace />} 
-            />
-            <Route 
-              path="/business/investments" 
-              element={isLoggedIn ? <Investments /> : <Navigate to="/landing#auth-section" replace />} 
-            />
-            <Route 
-              path="/business/properties" 
-              element={isLoggedIn ? <Properties /> : <Navigate to="/landing#auth-section" replace />} 
-            />
-            <Route 
-              path="/business/projects" 
-              element={isLoggedIn ? <Projects /> : <Navigate to="/landing#auth-section" replace />} 
-            />
-            <Route 
-              path="/business/marketplace" 
-              element={isLoggedIn ? <BusinessMarketplace /> : <Navigate to="/landing#auth-section" replace />} 
-            />
-            <Route 
-              path="/business/messages" 
-              element={isLoggedIn ? <Messages /> : <Navigate to="/landing#auth-section" replace />} 
-            />
-            <Route 
-              path="/business/settings" 
-              element={isLoggedIn ? <BusinessSettings /> : <Navigate to="/landing#auth-section" replace />} 
-            />
+            {/* Business Platform Routes */}
+            <Route path="/business" element={<BusinessDashboard />} />
+            <Route path="/business/investments" element={<Investments />} />
+            <Route path="/business/properties" element={<Properties />} />
+            <Route path="/business/projects" element={<Projects />} />
+            <Route path="/business/marketplace" element={<BusinessMarketplace />} />
+            <Route path="/business/messages" element={<Messages />} />
+            <Route path="/business/settings" element={<BusinessSettings />} />
             
-            {/* Redirect all business placeholder routes to auth section if not logged in */}
-            <Route 
-              path="/business/contracts" 
-              element={isLoggedIn ? <Navigate to="/business/settings" replace /> : <Navigate to="/landing#auth-section" replace />} 
-            />
-            <Route 
-              path="/business/financials" 
-              element={isLoggedIn ? <Navigate to="/business/settings" replace /> : <Navigate to="/landing#auth-section" replace />} 
-            />
-            <Route 
-              path="/business/partnerships" 
-              element={isLoggedIn ? <Navigate to="/business/settings" replace /> : <Navigate to="/landing#auth-section" replace />} 
-            />
-            <Route 
-              path="/business/leases" 
-              element={isLoggedIn ? <Navigate to="/business/settings" replace /> : <Navigate to="/landing#auth-section" replace />} 
-            />
-            <Route 
-              path="/business/land" 
-              element={isLoggedIn ? <Navigate to="/business/settings" replace /> : <Navigate to="/landing#auth-section" replace />} 
-            />
-            <Route 
-              path="/business/orders" 
-              element={isLoggedIn ? <Navigate to="/business/settings" replace /> : <Navigate to="/landing#auth-section" replace />} 
-            />
-            <Route 
-              path="/business/payments" 
-              element={isLoggedIn ? <Navigate to="/business/settings" replace /> : <Navigate to="/landing#auth-section" replace />} 
-            />
+            {/* Placeholder routes that will redirect to construction pages */}
+            <Route path="/business/contracts" element={<Navigate to="/business/settings" replace />} />
+            <Route path="/business/financials" element={<Navigate to="/business/settings" replace />} />
+            <Route path="/business/partnerships" element={<Navigate to="/business/settings" replace />} />
+            <Route path="/business/leases" element={<Navigate to="/business/settings" replace />} />
+            <Route path="/business/land" element={<Navigate to="/business/settings" replace />} />
+            <Route path="/business/orders" element={<Navigate to="/business/settings" replace />} />
+            <Route path="/business/payments" element={<Navigate to="/business/settings" replace />} />
             
-            {/* Catch-all route - redirect to landing page instead of showing 404 */}
-            <Route path="*" element={<Navigate to="/landing" replace />} />
+            {/* Catch-all route */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
@@ -164,4 +95,3 @@ const App = () => {
 };
 
 export default App;
-
