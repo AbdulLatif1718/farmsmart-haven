@@ -28,6 +28,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/use-toast';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface BusinessSidebarProps {
   open: boolean;
@@ -162,7 +163,7 @@ export const BusinessSidebar = ({ open, onClose, activeRole, collapsed = false }
       {/* Sidebar */}
       <aside 
         className={cn(
-          "fixed top-0 left-0 z-50 h-full bg-slate-900 text-white transition-all duration-300 ease-in-out",
+          "fixed top-0 left-0 z-50 h-full bg-slate-900 text-white transition-all duration-300 ease-in-out flex flex-col",
           // Mobile view
           open ? "translate-x-0" : "-translate-x-full",
           // Desktop view - positioning and width
@@ -220,71 +221,73 @@ export const BusinessSidebar = ({ open, onClose, activeRole, collapsed = false }
         
         <Separator className="my-2 bg-slate-800" />
         
-        <div className="px-3 pt-2 pb-4">
-          {!collapsed && (
-            <div className="text-xs uppercase text-slate-500 font-semibold px-3 mb-2">
-              Navigation
-            </div>
-          )}
-          <nav>
-            <TooltipProvider>
-              <ul className="space-y-1.5">
-                {menuItems.map((item) => (
-                  <li key={item.path}>
-                    {collapsed ? (
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Link 
-                            to={item.path}
-                            className={cn(
-                              "flex items-center justify-center h-10 w-10 mx-auto rounded-md transition-colors hover:bg-slate-800",
-                              location.pathname === item.path 
-                                ? `bg-${activeRole === 'investor' ? 'blue' : activeRole === 'landowner' ? 'green' : activeRole === 'farmer' ? 'amber' : 'purple'}-600/20 text-white font-medium` 
-                                : "text-slate-300"
-                            )}
-                            onClick={() => onClose()}
-                          >
-                            <item.icon className={cn(
-                              "h-5 w-5",
-                              location.pathname === item.path
-                                ? activeRole === 'investor' ? 'text-blue-400' : activeRole === 'landowner' ? 'text-green-400' : activeRole === 'farmer' ? 'text-amber-400' : 'text-purple-400'
-                                : ''
-                            )} />
-                          </Link>
-                        </TooltipTrigger>
-                        <TooltipContent side="right">
-                          {item.label}
-                        </TooltipContent>
-                      </Tooltip>
-                    ) : (
-                      <Link 
-                        to={item.path}
-                        className={cn(
-                          "flex items-center px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-slate-800",
-                          location.pathname === item.path 
-                            ? `bg-${activeRole === 'investor' ? 'blue' : activeRole === 'landowner' ? 'green' : activeRole === 'farmer' ? 'amber' : 'purple'}-600/20 text-white font-medium` 
-                            : "text-slate-300"
-                        )}
-                        onClick={() => onClose()}
-                      >
-                        <item.icon className={cn(
-                          "h-5 w-5 mr-3",
-                          location.pathname === item.path
-                            ? activeRole === 'investor' ? 'text-blue-400' : activeRole === 'landowner' ? 'text-green-400' : activeRole === 'farmer' ? 'text-amber-400' : 'text-purple-400'
-                            : ''
-                        )} />
-                        <span>{item.label}</span>
-                      </Link>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </TooltipProvider>
-          </nav>
-        </div>
+        <ScrollArea className="flex-1">
+          <div className="px-3 pt-2 pb-4">
+            {!collapsed && (
+              <div className="text-xs uppercase text-slate-500 font-semibold px-3 mb-2">
+                Navigation
+              </div>
+            )}
+            <nav>
+              <TooltipProvider>
+                <ul className="space-y-1.5">
+                  {menuItems.map((item) => (
+                    <li key={item.path}>
+                      {collapsed ? (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Link 
+                              to={item.path}
+                              className={cn(
+                                "flex items-center justify-center h-10 w-10 mx-auto rounded-md transition-colors hover:bg-slate-800",
+                                location.pathname === item.path 
+                                  ? `bg-${activeRole === 'investor' ? 'blue' : activeRole === 'landowner' ? 'green' : activeRole === 'farmer' ? 'amber' : 'purple'}-600/20 text-white font-medium` 
+                                  : "text-slate-300"
+                              )}
+                              onClick={() => onClose()}
+                            >
+                              <item.icon className={cn(
+                                "h-5 w-5",
+                                location.pathname === item.path
+                                  ? activeRole === 'investor' ? 'text-blue-400' : activeRole === 'landowner' ? 'text-green-400' : activeRole === 'farmer' ? 'text-amber-400' : 'text-purple-400'
+                                  : ''
+                              )} />
+                            </Link>
+                          </TooltipTrigger>
+                          <TooltipContent side="right">
+                            {item.label}
+                          </TooltipContent>
+                        </Tooltip>
+                      ) : (
+                        <Link 
+                          to={item.path}
+                          className={cn(
+                            "flex items-center px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-slate-800",
+                            location.pathname === item.path 
+                              ? `bg-${activeRole === 'investor' ? 'blue' : activeRole === 'landowner' ? 'green' : activeRole === 'farmer' ? 'amber' : 'purple'}-600/20 text-white font-medium` 
+                              : "text-slate-300"
+                          )}
+                          onClick={() => onClose()}
+                        >
+                          <item.icon className={cn(
+                            "h-5 w-5 mr-3",
+                            location.pathname === item.path
+                              ? activeRole === 'investor' ? 'text-blue-400' : activeRole === 'landowner' ? 'text-green-400' : activeRole === 'farmer' ? 'text-amber-400' : 'text-purple-400'
+                              : ''
+                          )} />
+                          <span>{item.label}</span>
+                        </Link>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </TooltipProvider>
+            </nav>
+          </div>
+        </ScrollArea>
         
         {!collapsed && (
-          <div className="absolute bottom-4 left-0 right-0 px-4">
+          <div className="p-4">
             <div className="bg-slate-800 rounded-lg p-4 text-sm">
               <h4 className="font-medium text-green-400 flex items-center">
                 <Users className="h-4 w-4 mr-2" />
@@ -319,82 +322,84 @@ export const BusinessSidebar = ({ open, onClose, activeRole, collapsed = false }
               Connect with other agricultural professionals to expand your network
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
-            {/* Filter by role */}
-            <div className="flex flex-wrap gap-2 mb-2">
-              <Badge variant="outline" className="bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 cursor-pointer">
-                Investors
-              </Badge>
-              <Badge variant="outline" className="bg-green-50 dark:bg-green-900/20 hover:bg-green-100 cursor-pointer">
-                Landowners
-              </Badge>
-              <Badge variant="outline" className="bg-amber-50 dark:bg-amber-900/20 hover:bg-amber-100 cursor-pointer">
-                Farmers
-              </Badge>
-              <Badge variant="outline" className="bg-purple-50 dark:bg-purple-900/20 hover:bg-purple-100 cursor-pointer">
-                Buyers
-              </Badge>
-              <Badge variant="outline" className="bg-gray-50 dark:bg-gray-900/20 hover:bg-gray-100 cursor-pointer">
-                All
-              </Badge>
-            </div>
+          <ScrollArea className="max-h-[60vh] overflow-y-auto pr-1">
+            <div className="space-y-3">
+              {/* Filter by role */}
+              <div className="flex flex-wrap gap-2 mb-2">
+                <Badge variant="outline" className="bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 cursor-pointer">
+                  Investors
+                </Badge>
+                <Badge variant="outline" className="bg-green-50 dark:bg-green-900/20 hover:bg-green-100 cursor-pointer">
+                  Landowners
+                </Badge>
+                <Badge variant="outline" className="bg-amber-50 dark:bg-amber-900/20 hover:bg-amber-100 cursor-pointer">
+                  Farmers
+                </Badge>
+                <Badge variant="outline" className="bg-purple-50 dark:bg-purple-900/20 hover:bg-purple-100 cursor-pointer">
+                  Buyers
+                </Badge>
+                <Badge variant="outline" className="bg-gray-50 dark:bg-gray-900/20 hover:bg-gray-100 cursor-pointer">
+                  All
+                </Badge>
+              </div>
 
-            {/* Network connections */}
-            <UserCard 
-              name="John Kofi"
-              role="Investor"
-              location="Accra Region"
-              specialty="Grain Farming, Poultry"
-              avatarText="JK"
-              avatarColor="bg-blue-100 dark:bg-blue-800/30"
-              roleColor="text-blue-600 dark:text-blue-400"
-              onConnect={() => handleConnectWithUser("John Kofi")}
-            />
-            
-            <UserCard 
-              name="Sarah Mensah"
-              role="Landowner"
-              location="Western Region"
-              specialty="Cocoa Farms, Palm Oil Plantations"
-              avatarText="SM"
-              avatarColor="bg-green-100 dark:bg-green-800/30"
-              roleColor="text-green-600 dark:text-green-400"
-              onConnect={() => handleConnectWithUser("Sarah Mensah")}
-            />
-            
-            <UserCard 
-              name="Ibrahim Yakubu"
-              role="Farmer"
-              location="Northern Region"
-              specialty="Rice, Vegetables, Organic Farming"
-              avatarText="IY"
-              avatarColor="bg-amber-100 dark:bg-amber-800/30"
-              roleColor="text-amber-600 dark:text-amber-400"
-              onConnect={() => handleConnectWithUser("Ibrahim Yakubu")}
-            />
-            
-            <UserCard 
-              name="David Asare"
-              role="Buyer"
-              location="Greater Accra"
-              specialty="Food Processing, Export Markets"
-              avatarText="DA"
-              avatarColor="bg-purple-100 dark:bg-purple-800/30"
-              roleColor="text-purple-600 dark:text-purple-400"
-              onConnect={() => handleConnectWithUser("David Asare")}
-            />
-            
-            <UserCard 
-              name="Mary Osei"
-              role="Landowner"
-              location="Volta Region"
-              specialty="Timber, Mixed Farming Land"
-              avatarText="MO"
-              avatarColor="bg-green-100 dark:bg-green-800/30"
-              roleColor="text-green-600 dark:text-green-400"
-              onConnect={() => handleConnectWithUser("Mary Osei")}
-            />
-          </div>
+              {/* Network connections */}
+              <UserCard 
+                name="John Kofi"
+                role="Investor"
+                location="Accra Region"
+                specialty="Grain Farming, Poultry"
+                avatarText="JK"
+                avatarColor="bg-blue-100 dark:bg-blue-800/30"
+                roleColor="text-blue-600 dark:text-blue-400"
+                onConnect={() => handleConnectWithUser("John Kofi")}
+              />
+              
+              <UserCard 
+                name="Sarah Mensah"
+                role="Landowner"
+                location="Western Region"
+                specialty="Cocoa Farms, Palm Oil Plantations"
+                avatarText="SM"
+                avatarColor="bg-green-100 dark:bg-green-800/30"
+                roleColor="text-green-600 dark:text-green-400"
+                onConnect={() => handleConnectWithUser("Sarah Mensah")}
+              />
+              
+              <UserCard 
+                name="Ibrahim Yakubu"
+                role="Farmer"
+                location="Northern Region"
+                specialty="Rice, Vegetables, Organic Farming"
+                avatarText="IY"
+                avatarColor="bg-amber-100 dark:bg-amber-800/30"
+                roleColor="text-amber-600 dark:text-amber-400"
+                onConnect={() => handleConnectWithUser("Ibrahim Yakubu")}
+              />
+              
+              <UserCard 
+                name="David Asare"
+                role="Buyer"
+                location="Greater Accra"
+                specialty="Food Processing, Export Markets"
+                avatarText="DA"
+                avatarColor="bg-purple-100 dark:bg-purple-800/30"
+                roleColor="text-purple-600 dark:text-purple-400"
+                onConnect={() => handleConnectWithUser("David Asare")}
+              />
+              
+              <UserCard 
+                name="Mary Osei"
+                role="Landowner"
+                location="Volta Region"
+                specialty="Timber, Mixed Farming Land"
+                avatarText="MO"
+                avatarColor="bg-green-100 dark:bg-green-800/30"
+                roleColor="text-green-600 dark:text-green-400"
+                onConnect={() => handleConnectWithUser("Mary Osei")}
+              />
+            </div>
+          </ScrollArea>
         </DialogContent>
       </Dialog>
     </>

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { BusinessLayout } from '@/components/layout/BusinessLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,172 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 
+// Sample data
+const contactsData = [
+  {
+    id: 1,
+    name: "John Doe",
+    avatar: "JD",
+    message: "When can I visit the farm?",
+    time: "10:30 AM",
+    active: true,
+  },
+  {
+    id: 2,
+    name: "Sarah K.",
+    avatar: "SK",
+    message: "I'd like to discuss the contract terms.",
+    time: "Yesterday",
+    active: false,
+  },
+  {
+    id: 3,
+    name: "Kwame B.",
+    avatar: "KB",
+    message: "Thanks for your investment!",
+    time: "Yesterday",
+    active: false,
+  },
+  {
+    id: 4,
+    name: "Ama Owusu",
+    avatar: "AO",
+    message: "The cocoa harvest will be next month.",
+    time: "Tuesday",
+    active: false,
+  },
+  {
+    id: 5,
+    name: "Ibrahim",
+    avatar: "IM",
+    message: "I've uploaded the land documents.",
+    time: "Monday",
+    active: false,
+  },
+];
+
+// Sample messages for each contact
+const messagesData = {
+  1: [
+    {
+      sent: false,
+      avatar: "JD",
+      message: "Hello, I'd like to show you around the farm next week if you're interested in investing.",
+      time: "10:15 AM"
+    },
+    {
+      sent: true,
+      avatar: "ME",
+      message: "That sounds good. What days are you available?",
+      time: "10:20 AM"
+    },
+    {
+      sent: false,
+      avatar: "JD",
+      message: "I can do Tuesday or Thursday afternoon. The maize is growing well and I want to show you the irrigation system we've installed.",
+      time: "10:25 AM"
+    },
+    {
+      sent: true,
+      avatar: "ME",
+      message: "Thursday works for me. What time should I arrive?",
+      time: "10:28 AM"
+    },
+    {
+      sent: false,
+      avatar: "JD",
+      message: "Let's say 2:00 PM. I'll send you the exact location via GPS pin.",
+      time: "10:30 AM"
+    }
+  ],
+  2: [
+    {
+      sent: false,
+      avatar: "SK",
+      message: "Hi there! I'd like to discuss the contract terms for our partnership.",
+      time: "Yesterday"
+    },
+    {
+      sent: true,
+      avatar: "ME",
+      message: "Sure, what specific terms were you looking to discuss?",
+      time: "Yesterday"
+    },
+    {
+      sent: false,
+      avatar: "SK",
+      message: "I'm interested in the profit-sharing model and duration of the contract.",
+      time: "Yesterday"
+    }
+  ],
+  3: [
+    {
+      sent: false,
+      avatar: "KB",
+      message: "Thank you for your investment in our cocoa farm!",
+      time: "Yesterday"
+    },
+    {
+      sent: true,
+      avatar: "ME",
+      message: "You're welcome. How is the project progressing?",
+      time: "Yesterday"
+    }
+  ],
+  4: [
+    {
+      sent: false,
+      avatar: "AO",
+      message: "Just wanted to let you know that our cocoa harvest will begin next month.",
+      time: "Tuesday"
+    },
+    {
+      sent: true,
+      avatar: "ME",
+      message: "That's great news! What's the estimated yield this season?",
+      time: "Tuesday"
+    }
+  ],
+  5: [
+    {
+      sent: false,
+      avatar: "IM",
+      message: "I've uploaded all the land documents to the shared folder.",
+      time: "Monday"
+    },
+    {
+      sent: true,
+      avatar: "ME",
+      message: "Thanks, I'll review them today.",
+      time: "Monday"
+    }
+  ]
+};
+
 const Messages = () => {
+  const [activeContact, setActiveContact] = useState(1);
+  const [newMessage, setNewMessage] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredContacts = contactsData.filter(contact => 
+    contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    contact.message.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleContactClick = (contactId) => {
+    setActiveContact(contactId);
+  };
+
+  const handleSendMessage = () => {
+    if (newMessage.trim() === '') return;
+    
+    // In a real app, this would send a message to the API
+    console.log(`Sending message to contact ${activeContact}: ${newMessage}`);
+    setNewMessage('');
+  };
+
+  const activeContactData = contactsData.find(contact => contact.id === activeContact);
+
   return (
     <BusinessLayout activeRole="investor">
       <div className="mb-6">
@@ -26,47 +191,25 @@ const Messages = () => {
             <div className="p-4">
               <div className="relative mb-3">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input placeholder="Search contacts..." className="pl-9" />
+                <Input 
+                  placeholder="Search contacts..." 
+                  className="pl-9"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
               </div>
               <Button className="w-full">New Message</Button>
             </div>
             <ScrollArea className="h-[calc(100vh-18rem)]">
               <div className="space-y-1 px-1">
-                <ContactItem
-                  name="John Doe"
-                  avatar="JD"
-                  message="When can I visit the farm?"
-                  time="10:30 AM"
-                  active={true}
-                />
-                <ContactItem
-                  name="Sarah K."
-                  avatar="SK"
-                  message="I'd like to discuss the contract terms."
-                  time="Yesterday"
-                  active={false}
-                />
-                <ContactItem
-                  name="Kwame B."
-                  avatar="KB"
-                  message="Thanks for your investment!"
-                  time="Yesterday"
-                  active={false}
-                />
-                <ContactItem
-                  name="Ama Owusu"
-                  avatar="AO"
-                  message="The cocoa harvest will be next month."
-                  time="Tuesday"
-                  active={false}
-                />
-                <ContactItem
-                  name="Ibrahim"
-                  avatar="IM"
-                  message="I've uploaded the land documents."
-                  time="Monday"
-                  active={false}
-                />
+                {filteredContacts.map((contact) => (
+                  <ContactItem
+                    key={contact.id}
+                    {...contact}
+                    active={contact.id === activeContact}
+                    onClick={() => handleContactClick(contact.id)}
+                  />
+                ))}
               </div>
             </ScrollArea>
           </div>
@@ -76,10 +219,12 @@ const Messages = () => {
             <div className="flex items-center justify-between p-4 border-b">
               <div className="flex items-center">
                 <Avatar className="h-10 w-10 mr-3">
-                  <AvatarFallback className="bg-blue-100 text-blue-800">JD</AvatarFallback>
+                  <AvatarFallback className="bg-blue-100 text-blue-800">
+                    {activeContactData?.avatar}
+                  </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h3 className="font-medium">John Doe</h3>
+                  <h3 className="font-medium">{activeContactData?.name}</h3>
                   <p className="text-xs text-muted-foreground">Farmer • Tamale</p>
                 </div>
               </div>
@@ -98,43 +243,28 @@ const Messages = () => {
             
             <ScrollArea className="flex-1 p-4">
               <div className="space-y-4">
-                <ChatMessage
-                  sent={false}
-                  avatar="JD"
-                  message="Hello, I'd like to show you around the farm next week if you're interested in investing."
-                  time="10:15 AM"
-                />
-                <ChatMessage
-                  sent={true}
-                  avatar="ME"
-                  message="That sounds good. What days are you available?"
-                  time="10:20 AM"
-                />
-                <ChatMessage
-                  sent={false}
-                  avatar="JD"
-                  message="I can do Tuesday or Thursday afternoon. The maize is growing well and I want to show you the irrigation system we've installed."
-                  time="10:25 AM"
-                />
-                <ChatMessage
-                  sent={true}
-                  avatar="ME"
-                  message="Thursday works for me. What time should I arrive?"
-                  time="10:28 AM"
-                />
-                <ChatMessage
-                  sent={false}
-                  avatar="JD"
-                  message="Let's say 2:00 PM. I'll send you the exact location via GPS pin."
-                  time="10:30 AM"
-                />
+                {messagesData[activeContact]?.map((message, idx) => (
+                  <ChatMessage
+                    key={idx}
+                    sent={message.sent}
+                    avatar={message.avatar}
+                    message={message.message}
+                    time={message.time}
+                  />
+                ))}
               </div>
             </ScrollArea>
             
             <div className="p-4 border-t">
               <div className="flex items-center space-x-2">
-                <Input placeholder="Type your message..." className="flex-1" />
-                <Button size="icon">
+                <Input 
+                  placeholder="Type your message..." 
+                  className="flex-1" 
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                />
+                <Button size="icon" onClick={handleSendMessage}>
                   <Send className="h-4 w-4" />
                 </Button>
               </div>
@@ -147,8 +277,11 @@ const Messages = () => {
 };
 
 // Helper components
-const ContactItem = ({ name, avatar, message, time, active }) => (
-  <div className={`flex items-center p-3 rounded-md cursor-pointer ${active ? 'bg-slate-100 dark:bg-slate-800' : 'hover:bg-slate-50 dark:hover:bg-slate-900'}`}>
+const ContactItem = ({ name, avatar, message, time, active, onClick }) => (
+  <div 
+    className={`flex items-center p-3 rounded-md cursor-pointer ${active ? 'bg-slate-100 dark:bg-slate-800' : 'hover:bg-slate-50 dark:hover:bg-slate-900'}`}
+    onClick={onClick}
+  >
     <Avatar className="h-10 w-10 mr-3">
       <AvatarFallback className={`${active ? 'bg-blue-100 text-blue-800' : 'bg-slate-100 text-slate-800'}`}>{avatar}</AvatarFallback>
     </Avatar>

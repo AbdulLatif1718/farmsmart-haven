@@ -31,3 +31,8 @@ export const toggleTheme = (): void => {
     localStorage.setItem('theme', 'dark');
   }
 };
+
+// Get current theme
+export const getCurrentTheme = (): 'dark' | 'light' => {
+  return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+};
