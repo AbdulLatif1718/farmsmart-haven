@@ -52,7 +52,7 @@ const App = () => {
               element={
                 localStorage.getItem('isLoggedIn') === 'true' 
                   ? <Navigate to={userRole === 'farmer' ? "/dashboard" : "/business"} replace /> 
-                  : <Navigate to="/landing" replace />
+                  : <LandingPage />
               } 
             />
             <Route path="/landing" element={<LandingPage />} />
