@@ -6,6 +6,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { initializeTheme } from "./utils/themeUtils";
+import PrivateRoute from "./components/auth/PrivateRoute";
+
+// Import pages
 import LandingPage from "./pages/LandingPage";
 import Index from "./pages/Index";
 import BusinessDashboard from "./pages/BusinessDashboard";
@@ -30,13 +33,10 @@ import BusinessSettings from "./pages/business/Settings";
 const queryClient = new QueryClient();
 
 const App = () => {
-  // Initialize theme on app load
   useEffect(() => {
     initializeTheme();
   }, []);
 
-  // Check if user is logged in
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
   const userRole = localStorage.getItem('userRole') || 'farmer';
 
   return (
@@ -46,37 +46,38 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <Routes>
+            {/* Public Routes */}
             <Route 
               path="/" 
               element={
-                isLoggedIn 
+                localStorage.getItem('isLoggedIn') === 'true' 
                   ? <Navigate to={userRole === 'farmer' ? "/dashboard" : "/business"} replace /> 
                   : <Navigate to="/landing" replace />
               } 
             />
             <Route path="/landing" element={<LandingPage />} />
             
-            {/* Farmer Platform Routes */}
-            <Route path="/dashboard" element={<Index />} />
-            <Route path="/weather" element={<Weather />} />
-            <Route path="/crops" element={<Crops />} />
-            <Route path="/marketplace" element={<Marketplace />} />
-            <Route path="/transport" element={<Transport />} />
-            <Route path="/machinery" element={<Machinery />} />
-            <Route path="/storage" element={<Storage />} />
-            <Route path="/knowledge" element={<Knowledge />} />
-            <Route path="/settings" element={<Settings />} />
+            {/* Protected Farmer Platform Routes */}
+            <Route path="/dashboard" element={<PrivateRoute><Index /></PrivateRoute>} />
+            <Route path="/weather" element={<PrivateRoute><Weather /></PrivateRoute>} />
+            <Route path="/crops" element={<PrivateRoute><Crops /></PrivateRoute>} />
+            <Route path="/marketplace" element={<PrivateRoute><Marketplace /></PrivateRoute>} />
+            <Route path="/transport" element={<PrivateRoute><Transport /></PrivateRoute>} />
+            <Route path="/machinery" element={<PrivateRoute><Machinery /></PrivateRoute>} />
+            <Route path="/storage" element={<PrivateRoute><Storage /></PrivateRoute>} />
+            <Route path="/knowledge" element={<PrivateRoute><Knowledge /></PrivateRoute>} />
+            <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
             
-            {/* Business Platform Routes */}
-            <Route path="/business" element={<BusinessDashboard />} />
-            <Route path="/business/investments" element={<Investments />} />
-            <Route path="/business/properties" element={<Properties />} />
-            <Route path="/business/projects" element={<Projects />} />
-            <Route path="/business/marketplace" element={<BusinessMarketplace />} />
-            <Route path="/business/messages" element={<Messages />} />
-            <Route path="/business/settings" element={<BusinessSettings />} />
+            {/* Protected Business Platform Routes */}
+            <Route path="/business" element={<PrivateRoute><BusinessDashboard /></PrivateRoute>} />
+            <Route path="/business/investments" element={<PrivateRoute><Investments /></PrivateRoute>} />
+            <Route path="/business/properties" element={<PrivateRoute><Properties /></PrivateRoute>} />
+            <Route path="/business/projects" element={<PrivateRoute><Projects /></PrivateRoute>} />
+            <Route path="/business/marketplace" element={<PrivateRoute><BusinessMarketplace /></PrivateRoute>} />
+            <Route path="/business/messages" element={<PrivateRoute><Messages /></PrivateRoute>} />
+            <Route path="/business/settings" element={<PrivateRoute><BusinessSettings /></PrivateRoute>} />
             
-            {/* Placeholder routes that will redirect to construction pages */}
+            {/* Placeholder routes that will redirect to settings */}
             <Route path="/business/contracts" element={<Navigate to="/business/settings" replace />} />
             <Route path="/business/financials" element={<Navigate to="/business/settings" replace />} />
             <Route path="/business/partnerships" element={<Navigate to="/business/settings" replace />} />
