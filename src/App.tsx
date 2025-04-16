@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { initializeTheme } from "./utils/themeUtils";
+import ScrollToTop from '@/components/ui/scroll-to-top';
 import PrivateRoute from "./components/auth/PrivateRoute";
 
 // Import pages
@@ -45,6 +46,7 @@ const App = () => {
         <Toaster />
         <Sonner />
         <BrowserRouter>
+        <ScrollToTop />
           <Routes>
             {/* Public Routes */}
             <Route 
