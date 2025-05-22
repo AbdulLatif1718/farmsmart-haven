@@ -12,7 +12,8 @@ import PrivateRoute from "./components/auth/PrivateRoute";
 // Import pages
 import LandingPage from "./pages/LandingPage";
 import Index from "./pages/Index";
-import BusinessDashboard from "./pages/BusinessDashboard";
+import YouthDashboard from "./pages/YouthDashboard";
+import InvestorDashboard from "./pages/InvestorDashboard";
 import Weather from "./pages/Weather"; 
 import Crops from "./pages/Crops";
 import Marketplace from "./pages/Marketplace";
@@ -22,14 +23,6 @@ import Storage from "./pages/Storage";
 import Knowledge from "./pages/Knowledge";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
-
-// Import business pages
-import Investments from "./pages/business/Investments";
-import Properties from "./pages/business/Properties";
-import Projects from "./pages/business/Projects";
-import BusinessMarketplace from "./pages/business/Marketplace";
-import Messages from "./pages/business/Messages";
-import BusinessSettings from "./pages/business/Settings";
 
 const queryClient = new QueryClient();
 
@@ -53,7 +46,13 @@ const App = () => {
               path="/" 
               element={
                 localStorage.getItem('isLoggedIn') === 'true' 
-                  ? <Navigate to={userRole === 'farmer' ? "/dashboard" : "/business"} replace /> 
+                  ? <Navigate to={
+                      userRole === 'youth' 
+                        ? "/youth" 
+                        : userRole === 'investor' 
+                          ? "/investor" 
+                          : "/dashboard"
+                    } replace /> 
                   : <LandingPage />
               } 
             />
@@ -70,23 +69,9 @@ const App = () => {
             <Route path="/knowledge" element={<PrivateRoute><Knowledge /></PrivateRoute>} />
             <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
             
-            {/* Protected Business Platform Routes */}
-            <Route path="/business" element={<PrivateRoute><BusinessDashboard /></PrivateRoute>} />
-            <Route path="/business/investments" element={<PrivateRoute><Investments /></PrivateRoute>} />
-            <Route path="/business/properties" element={<PrivateRoute><Properties /></PrivateRoute>} />
-            <Route path="/business/projects" element={<PrivateRoute><Projects /></PrivateRoute>} />
-            <Route path="/business/marketplace" element={<PrivateRoute><BusinessMarketplace /></PrivateRoute>} />
-            <Route path="/business/messages" element={<PrivateRoute><Messages /></PrivateRoute>} />
-            <Route path="/business/settings" element={<PrivateRoute><BusinessSettings /></PrivateRoute>} />
-            
-            {/* Placeholder routes that will redirect to settings */}
-            <Route path="/business/contracts" element={<Navigate to="/business/settings" replace />} />
-            <Route path="/business/financials" element={<Navigate to="/business/settings" replace />} />
-            <Route path="/business/partnerships" element={<Navigate to="/business/settings" replace />} />
-            <Route path="/business/leases" element={<Navigate to="/business/settings" replace />} />
-            <Route path="/business/land" element={<Navigate to="/business/settings" replace />} />
-            <Route path="/business/orders" element={<Navigate to="/business/settings" replace />} />
-            <Route path="/business/payments" element={<Navigate to="/business/settings" replace />} />
+            {/* New Youth and Investor Dashboards */}
+            <Route path="/youth" element={<PrivateRoute><YouthDashboard /></PrivateRoute>} />
+            <Route path="/investor" element={<PrivateRoute><InvestorDashboard /></PrivateRoute>} />
             
             {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />

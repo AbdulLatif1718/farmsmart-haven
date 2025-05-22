@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, Sun, Moon, Bell, UserCircle, LogOut } from 'lucide-react';
@@ -38,6 +39,10 @@ const DEMO_EMAIL = 'sulley@gmail.com';
 const DEMO_PASSWORD = 'sulley1234';
 const BUSINESS_EMAIL = 'business@example.com';
 const BUSINESS_PASSWORD = 'business1234';
+const YOUTH_EMAIL = 'youth@example.com';
+const YOUTH_PASSWORD = 'youth1234';
+const INVESTOR_EMAIL = 'investor@example.com';
+const INVESTOR_PASSWORD = 'investor1234';
 
 export const NavBar = ({ onMenuToggle }: NavBarProps) => {
   const [theme, setTheme] = useState(() => {
@@ -112,10 +117,42 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
           description: "Welcome to the Business Dashboard!",
         });
         navigate('/business');
+      } else if (loginRole === 'youth' && email === YOUTH_EMAIL && password === YOUTH_PASSWORD) {
+        setIsLoggedIn(true);
+        setUserRole('youth');
+        localStorage.setItem('userRole', 'youth');
+        toast({
+          title: "Youth login successful",
+          description: "Welcome to the Youth Agripreneur Dashboard!",
+        });
+        navigate('/youth');
+      } else if (loginRole === 'investor' && email === INVESTOR_EMAIL && password === INVESTOR_PASSWORD) {
+        setIsLoggedIn(true);
+        setUserRole('investor');
+        localStorage.setItem('userRole', 'investor');
+        toast({
+          title: "Investor login successful",
+          description: "Welcome to the Investor Dashboard!",
+        });
+        navigate('/investor');
       } else {
-        const credentialHint = loginRole === 'farmer' 
-          ? 'Try sulley@gmail.com / sulley1234' 
-          : 'Try business@example.com / business1234';
+        let credentialHint = '';
+        
+        switch(loginRole) {
+          case 'farmer':
+            credentialHint = 'Try sulley@gmail.com / sulley1234';
+            break;
+          case 'business':
+            credentialHint = 'Try business@example.com / business1234';
+            break;
+          case 'youth':
+            credentialHint = 'Try youth@example.com / youth1234';
+            break;
+          case 'investor':
+            credentialHint = 'Try investor@example.com / investor1234';
+            break;
+        }
+        
         setLoginError(`Invalid email or password. ${credentialHint}`);
         toast({
           title: "Login failed",
@@ -142,6 +179,10 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
       return 'Sulley User';
     } else if (userRole === 'business') {
       return 'Business User';
+    } else if (userRole === 'youth') {
+      return 'Kwame';
+    } else if (userRole === 'investor') {
+      return 'Diaspora Investor';
     }
     return 'User';
   };
@@ -151,6 +192,10 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
       return 'SU';
     } else if (userRole === 'business') {
       return 'BU';
+    } else if (userRole === 'youth') {
+      return 'KA';
+    } else if (userRole === 'investor') {
+      return 'DI';
     }
     return 'U';
   };
@@ -163,7 +208,22 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
           <span className="sr-only">Menu</span>
         </Button>
         
-        <Link to={isLoggedIn ? (userRole === 'farmer' ? "/dashboard" : "/business") : "/landing"} className="flex items-center">
+        <Link 
+          to={
+            isLoggedIn 
+              ? (
+                  userRole === 'youth' 
+                    ? "/youth" 
+                    : userRole === 'investor' 
+                      ? "/investor" 
+                      : userRole === 'business'
+                        ? "/business"
+                        : "/dashboard"
+                )
+              : "/landing"
+          } 
+          className="flex items-center"
+        >
           <span className="font-bold text-xl text-leaf-600">Agri</span>
           <span className="font-bold text-xl text-sky-600">AI</span>
           <span className="text-sm font-medium ml-1">Ghana</span>
@@ -252,13 +312,20 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="farmer">Farmer</SelectItem>
-                        <SelectItem value="business">Business (Investor/Landowner)</SelectItem>
+                        <SelectItem value="youth">Youth Agripreneur</SelectItem>
+                        <SelectItem value="investor">Investor</SelectItem>
+                        <SelectItem value="business">Business</SelectItem>
                       </SelectContent>
                     </Select>
                     <div className="text-xs text-muted-foreground">
                       {loginRole === 'farmer' 
                         ? "Use sulley@gmail.com / sulley1234" 
-                        : "Use business@example.com / business1234"}
+                        : loginRole === 'youth'
+                          ? "Use youth@example.com / youth1234"
+                          : loginRole === 'investor'
+                            ? "Use investor@example.com / investor1234"
+                            : "Use business@example.com / business1234"
+                      }
                     </div>
                   </div>
                   <div className="grid gap-2">
@@ -266,7 +333,15 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
                     <Input
                       id="email"
                       type="email"
-                      placeholder={loginRole === 'farmer' ? "sulley@gmail.com" : "business@example.com"}
+                      placeholder={
+                        loginRole === 'farmer' 
+                          ? "sulley@gmail.com" 
+                          : loginRole === 'youth'
+                            ? "youth@example.com"
+                            : loginRole === 'investor'
+                              ? "investor@example.com"
+                              : "business@example.com"
+                      }
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
