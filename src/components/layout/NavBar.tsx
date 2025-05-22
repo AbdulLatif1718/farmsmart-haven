@@ -35,14 +35,11 @@ interface NavBarProps {
 }
 
 // Demo credentials
-const DEMO_EMAIL = 'sulley@gmail.com';
-const DEMO_PASSWORD = 'sulley1234';
-const BUSINESS_EMAIL = 'business@example.com';
-const BUSINESS_PASSWORD = 'business1234';
-const YOUTH_EMAIL = 'youth@example.com';
-const YOUTH_PASSWORD = 'youth1234';
-const INVESTOR_EMAIL = 'investor@example.com';
-const INVESTOR_PASSWORD = 'investor1234';
+const USER_CREDENTIALS = {
+  farmer: { email: 'farmer@example.com', password: 'farmer123', name: 'Farmer User' },
+  youth: { email: 'youth@example.com', password: 'youth123', name: 'Kwame Agyei' },
+  investor: { email: 'investor@example.com', password: 'investor123', name: 'Diaspora Investor' }
+};
 
 export const NavBar = ({ onMenuToggle }: NavBarProps) => {
   const [theme, setTheme] = useState(() => {
@@ -95,62 +92,37 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
     setIsLoading(true);
     setLoginError('');
     
-    // Using the dummy credentials for login
     setTimeout(() => {
       setIsLoading(false);
       
-      if (loginRole === 'farmer' && email === DEMO_EMAIL && password === DEMO_PASSWORD) {
+      const userCreds = USER_CREDENTIALS[loginRole as keyof typeof USER_CREDENTIALS];
+      if (email === userCreds.email && password === userCreds.password) {
         setIsLoggedIn(true);
-        setUserRole('farmer');
-        localStorage.setItem('userRole', 'farmer');
+        setUserRole(loginRole);
+        localStorage.setItem('userRole', loginRole);
+        
         toast({
           title: "Login successful",
-          description: "Welcome to AgriAI-Ghana!",
+          description: `Welcome to AgriAI-Ghana, ${userCreds.name}!`,
         });
-        navigate('/dashboard');
-      } else if (loginRole === 'business' && email === BUSINESS_EMAIL && password === BUSINESS_PASSWORD) {
-        setIsLoggedIn(true);
-        setUserRole('business');
-        localStorage.setItem('userRole', 'business');
-        toast({
-          title: "Business login successful",
-          description: "Welcome to the Business Dashboard!",
-        });
-        navigate('/business');
-      } else if (loginRole === 'youth' && email === YOUTH_EMAIL && password === YOUTH_PASSWORD) {
-        setIsLoggedIn(true);
-        setUserRole('youth');
-        localStorage.setItem('userRole', 'youth');
-        toast({
-          title: "Youth login successful",
-          description: "Welcome to the Youth Agripreneur Dashboard!",
-        });
-        navigate('/youth');
-      } else if (loginRole === 'investor' && email === INVESTOR_EMAIL && password === INVESTOR_PASSWORD) {
-        setIsLoggedIn(true);
-        setUserRole('investor');
-        localStorage.setItem('userRole', 'investor');
-        toast({
-          title: "Investor login successful",
-          description: "Welcome to the Investor Dashboard!",
-        });
-        navigate('/investor');
+        
+        // Redirect based on role
+        if (loginRole === 'farmer') {
+          navigate('/dashboard');
+        } else if (loginRole === 'youth') {
+          navigate('/youth');
+        } else if (loginRole === 'investor') {
+          navigate('/investor');
+        }
       } else {
         let credentialHint = '';
         
-        switch(loginRole) {
-          case 'farmer':
-            credentialHint = 'Try sulley@gmail.com / sulley1234';
-            break;
-          case 'business':
-            credentialHint = 'Try business@example.com / business1234';
-            break;
-          case 'youth':
-            credentialHint = 'Try youth@example.com / youth1234';
-            break;
-          case 'investor':
-            credentialHint = 'Try investor@example.com / investor1234';
-            break;
+        if (loginRole === 'farmer') {
+          credentialHint = 'Try farmer@example.com / farmer123';
+        } else if (loginRole === 'youth') {
+          credentialHint = 'Try youth@example.com / youth123';
+        } else if (loginRole === 'investor') {
+          credentialHint = 'Try investor@example.com / investor123';
         }
         
         setLoginError(`Invalid email or password. ${credentialHint}`);
@@ -176,11 +148,9 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
   
   const getUserDisplayName = () => {
     if (userRole === 'farmer') {
-      return 'Sulley User';
-    } else if (userRole === 'business') {
-      return 'Business User';
+      return 'Farmer User';
     } else if (userRole === 'youth') {
-      return 'Kwame';
+      return 'Kwame Agyei';
     } else if (userRole === 'investor') {
       return 'Diaspora Investor';
     }
@@ -189,9 +159,7 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
   
   const getUserInitials = () => {
     if (userRole === 'farmer') {
-      return 'SU';
-    } else if (userRole === 'business') {
-      return 'BU';
+      return 'FU';
     } else if (userRole === 'youth') {
       return 'KA';
     } else if (userRole === 'investor') {
@@ -216,9 +184,7 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
                     ? "/youth" 
                     : userRole === 'investor' 
                       ? "/investor" 
-                      : userRole === 'business'
-                        ? "/business"
-                        : "/dashboard"
+                      : "/dashboard"
                 )
               : "/landing"
           } 
@@ -314,17 +280,14 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
                         <SelectItem value="farmer">Farmer</SelectItem>
                         <SelectItem value="youth">Youth Agripreneur</SelectItem>
                         <SelectItem value="investor">Investor</SelectItem>
-                        <SelectItem value="business">Business</SelectItem>
                       </SelectContent>
                     </Select>
                     <div className="text-xs text-muted-foreground">
                       {loginRole === 'farmer' 
-                        ? "Use sulley@gmail.com / sulley1234" 
+                        ? "Use farmer@example.com / farmer123" 
                         : loginRole === 'youth'
-                          ? "Use youth@example.com / youth1234"
-                          : loginRole === 'investor'
-                            ? "Use investor@example.com / investor1234"
-                            : "Use business@example.com / business1234"
+                          ? "Use youth@example.com / youth123"
+                          : "Use investor@example.com / investor123"
                       }
                     </div>
                   </div>
@@ -335,12 +298,10 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
                       type="email"
                       placeholder={
                         loginRole === 'farmer' 
-                          ? "sulley@gmail.com" 
+                          ? "farmer@example.com" 
                           : loginRole === 'youth'
                             ? "youth@example.com"
-                            : loginRole === 'investor'
-                              ? "investor@example.com"
-                              : "business@example.com"
+                            : "investor@example.com"
                       }
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}

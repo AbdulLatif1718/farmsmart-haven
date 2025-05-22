@@ -15,7 +15,15 @@ const LandingPage = () => {
   useEffect(() => {
     if (localStorage.getItem('isLoggedIn') === 'true') {
       const userRole = localStorage.getItem('userRole') || 'farmer';
-      navigate(userRole === 'farmer' ? '/dashboard' : '/business');
+      
+      // Redirect based on role
+      if (userRole === 'farmer') {
+        navigate('/dashboard');
+      } else if (userRole === 'youth') {
+        navigate('/youth');
+      } else if (userRole === 'investor') {
+        navigate('/investor');
+      }
     }
   }, [navigate]);
 
