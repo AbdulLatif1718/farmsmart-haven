@@ -7,11 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { BarChart, LineChart, MapPin, Search, Users, ChevronRight, Bell, Zap } from "lucide-react";
 
-import { MainLayout } from "@/components/layout/MainLayout";
+import { InvestorLayout } from "@/components/layout/InvestorLayout";
 
 const InvestorDashboard = () => {
   return (
-    <MainLayout>
+    <InvestorLayout>
       <div className="p-6 space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
@@ -325,7 +325,7 @@ const InvestorDashboard = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </MainLayout>
+    </InvestorLayout>
   );
 };
 
