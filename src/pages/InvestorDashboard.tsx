@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { BarChart, LineChart, MapPin, Search, Users, ChevronRight, Bell, Zap } from "lucide-react";
 
-import MainLayout from "@/components/layout/MainLayout";
+import { MainLayout } from "@/components/layout/MainLayout";
 
 const InvestorDashboard = () => {
   return (

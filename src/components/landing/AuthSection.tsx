@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { user, userCheck, mailCheck, lock, check } from "lucide-react";
+import { User, UserCheck, MailCheck, Lock, Check } from "lucide-react";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -197,7 +197,7 @@ const AuthSection = () => {
                             <FormLabel>Email</FormLabel>
                             <FormControl>
                               <div className="relative">
-                                <mailCheck className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                                <MailCheck className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                                 <Input
                                   placeholder="Enter your email"
                                   className="pl-10 border-soil-300 focus-visible:ring-leaf-500"
@@ -218,7 +218,7 @@ const AuthSection = () => {
                             <FormLabel>Password</FormLabel>
                             <FormControl>
                               <div className="relative">
-                                <lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                                <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                                 <Input
                                   type="password"
                                   placeholder="••••••••"
@@ -268,7 +268,7 @@ const AuthSection = () => {
                   {signupSuccess ? (
                     <div className="py-8 text-center space-y-4">
                       <div className="mx-auto bg-green-100 rounded-full w-16 h-16 flex items-center justify-center">
-                        <check className="h-8 w-8 text-green-600" />
+                        <Check className="h-8 w-8 text-green-600" />
                       </div>
                       <h3 className="text-xl font-semibold text-soil-800">Registration Successful</h3>
                       <p className="text-soil-600">Your account has been created. You can now log in.</p>
@@ -339,7 +339,7 @@ const AuthSection = () => {
                               <FormLabel>Full Name</FormLabel>
                               <FormControl>
                                 <div className="relative">
-                                  <user className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                                  <User className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                                   <Input
                                     placeholder="Enter your full name"
                                     className="pl-10 border-soil-300 focus-visible:ring-leaf-500"
@@ -360,7 +360,7 @@ const AuthSection = () => {
                               <FormLabel>Email</FormLabel>
                               <FormControl>
                                 <div className="relative">
-                                  <mailCheck className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                                  <MailCheck className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                                   <Input
                                     placeholder="Enter your email"
                                     className="pl-10 border-soil-300 focus-visible:ring-leaf-500"
@@ -381,7 +381,7 @@ const AuthSection = () => {
                               <FormLabel>Password</FormLabel>
                               <FormControl>
                                 <div className="relative">
-                                  <lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                                  <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                                   <Input
                                     type="password"
                                     placeholder="Create a strong password"
@@ -403,7 +403,7 @@ const AuthSection = () => {
                               <FormLabel>Confirm Password</FormLabel>
                               <FormControl>
                                 <div className="relative">
-                                  <userCheck className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                                  <UserCheck className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                                   <Input
                                     type="password"
                                     placeholder="Confirm your password"
