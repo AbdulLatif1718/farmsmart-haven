@@ -33,6 +33,12 @@ import YouthProgress from "./pages/youth/YouthProgress";
 // Investor pages
 import InvestorProjects from "./pages/investor/InvestorProjects";
 import InvestorInvestments from "./pages/investor/InvestorInvestments";
+import InvestorFinancials from "./pages/investor/InvestorFinancials";
+import InvestorPortfolio from "./pages/investor/InvestorPortfolio";
+import InvestorContracts from "./pages/investor/InvestorContracts";
+import InvestorMap from "./pages/investor/InvestorMap";
+import InvestorNetwork from "./pages/investor/InvestorNetwork";
+import InvestorMessages from "./pages/investor/InvestorMessages";
 
 const queryClient = new QueryClient();
 
@@ -90,6 +96,12 @@ const App = () => {
             <Route path="/investor" element={<PrivateRoute><InvestorDashboard /></PrivateRoute>} />
             <Route path="/investor/projects" element={<PrivateRoute><InvestorProjects /></PrivateRoute>} />
             <Route path="/investor/investments" element={<PrivateRoute><InvestorInvestments /></PrivateRoute>} />
+            <Route path="/investor/financials" element={<PrivateRoute><InvestorFinancials /></PrivateRoute>} />
+            <Route path="/investor/portfolio" element={<PrivateRoute><InvestorPortfolio /></PrivateRoute>} />
+            <Route path="/investor/contracts" element={<PrivateRoute><InvestorContracts /></PrivateRoute>} />
+            <Route path="/investor/map" element={<PrivateRoute><InvestorMap /></PrivateRoute>} />
+            <Route path="/investor/network" element={<PrivateRoute><InvestorNetwork /></PrivateRoute>} />
+            <Route path="/investor/messages" element={<PrivateRoute><InvestorMessages /></PrivateRoute>} />
             
             {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
