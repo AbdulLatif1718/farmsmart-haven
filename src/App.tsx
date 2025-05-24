@@ -24,6 +24,16 @@ import Knowledge from "./pages/Knowledge";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
+// Youth pages
+import YouthProjects from "./pages/youth/YouthProjects";
+import YouthTraining from "./pages/youth/YouthTraining";
+import YouthMentors from "./pages/youth/YouthMentors";
+import YouthProgress from "./pages/youth/YouthProgress";
+
+// Investor pages
+import InvestorProjects from "./pages/investor/InvestorProjects";
+import InvestorInvestments from "./pages/investor/InvestorInvestments";
+
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -69,9 +79,17 @@ const App = () => {
             <Route path="/knowledge" element={<PrivateRoute><Knowledge /></PrivateRoute>} />
             <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
             
-            {/* New Youth and Investor Dashboards */}
+            {/* Youth Dashboard Routes */}
             <Route path="/youth" element={<PrivateRoute><YouthDashboard /></PrivateRoute>} />
+            <Route path="/youth/projects" element={<PrivateRoute><YouthProjects /></PrivateRoute>} />
+            <Route path="/youth/training" element={<PrivateRoute><YouthTraining /></PrivateRoute>} />
+            <Route path="/youth/mentors" element={<PrivateRoute><YouthMentors /></PrivateRoute>} />
+            <Route path="/youth/progress" element={<PrivateRoute><YouthProgress /></PrivateRoute>} />
+            
+            {/* Investor Dashboard Routes */}
             <Route path="/investor" element={<PrivateRoute><InvestorDashboard /></PrivateRoute>} />
+            <Route path="/investor/projects" element={<PrivateRoute><InvestorProjects /></PrivateRoute>} />
+            <Route path="/investor/investments" element={<PrivateRoute><InvestorInvestments /></PrivateRoute>} />
             
             {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
