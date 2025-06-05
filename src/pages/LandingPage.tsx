@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LandingLayout from '@/components/landing/LandingLayout';
 import HeroSection from '@/components/landing/HeroSection';
+import RoleSection from '@/components/landing/RoleSection';
 import FeatureSection from '@/components/landing/FeatureSection';
 import BenefitsSection from '@/components/landing/BenefitsSection';
 import TransportSection from '@/components/landing/TransportSection';
@@ -30,6 +31,7 @@ const LandingPage = () => {
   return (
     <LandingLayout>
       <HeroSection />
+      <RoleSection />
       <FeatureSection />
       <BenefitsSection />
       <TransportSection />
