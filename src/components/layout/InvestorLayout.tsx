@@ -41,7 +41,7 @@ export const InvestorLayout = ({ children }: InvestorLayoutProps) => {
             
             <h1 className="text-xl font-semibold md:hidden">
               <span className="text-blue-600 dark:text-blue-500">Investor</span>
-              <span className="text-green-600 dark:text-green-500">AgriAI</span>
+              <span className="text-green-600 dark:text-green-500">AgriVerse</span>
             </h1>
           </div>
           

@@ -9,7 +9,7 @@ export const Footer = () => {
         <div className="text-center md:text-left mb-4 md:mb-0">
           <div className="flex items-center justify-center md:justify-start">
             <span className="font-bold text-xl text-leaf-600">Agri</span>
-            <span className="font-bold text-xl text-sky-600">AI</span>
+            <span className="font-bold text-xl text-sky-600">Verse</span>
             <span className="text-sm font-medium ml-1">Africa</span>
           </div>
           <p className="text-xs text-muted-foreground mt-1">

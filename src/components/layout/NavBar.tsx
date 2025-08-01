@@ -191,7 +191,7 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
           className="flex items-center"
         >
           <span className="font-bold text-xl text-leaf-600">Agri</span>
-          <span className="font-bold text-xl text-sky-600">AI</span>
+          <span className="font-bold text-xl text-sky-600">Verse</span>
           <span className="text-sm font-medium ml-1">Africa</span>
         </Link>
       </div>

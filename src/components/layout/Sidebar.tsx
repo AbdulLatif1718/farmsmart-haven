@@ -55,7 +55,7 @@ export const Sidebar = ({ open, onClose }: SidebarProps) => {
         <div className="flex items-center justify-between p-4 md:pt-16">
           <Link to="/" className="flex items-center">
             <span className="font-bold text-xl text-leaf-600">Agri</span>
-            <span className="font-bold text-xl text-sky-600">AI</span>
+            <span className="font-bold text-xl text-sky-600">Verse</span>
             <span className="text-sm font-medium ml-1">Africa</span>
           </Link>
           <Button variant="ghost" size="icon" onClick={onClose} className="md:hidden">

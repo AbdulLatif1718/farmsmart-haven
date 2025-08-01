@@ -179,7 +179,7 @@ export const BusinessSidebar = ({ open, onClose, activeRole, collapsed = false }
           {!collapsed && (
             <Link to="/business" className="flex items-center">
               <span className="font-bold text-xl text-green-400">Agri</span>
-              <span className="font-bold text-xl text-blue-400">Business</span>
+              <span className="font-bold text-xl text-blue-400">Verse</span>
             </Link>
           )}
           {collapsed && (

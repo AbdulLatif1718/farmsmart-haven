@@ -62,7 +62,7 @@ export const YouthSidebar = ({ open, onClose }: YouthSidebarProps) => {
         <div className="flex items-center justify-between p-4 md:pt-16">
           <Link to="/youth" className="flex items-center">
             <span className="font-bold text-xl text-amber-600">Youth</span>
-            <span className="font-bold text-xl text-sky-600">AgriAI</span>
+            <span className="font-bold text-xl text-sky-600">AgriVerse</span>
           </Link>
           <Button variant="ghost" size="icon" onClick={onClose} className="md:hidden">
             <X className="h-5 w-5" />

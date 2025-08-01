@@ -11,7 +11,7 @@ const Footer = () => {
           <div>
             <div className="flex items-center mb-6">
               <span className="font-bold text-2xl text-leaf-400">Agri</span>
-              <span className="font-bold text-2xl text-sky-400">AI</span>
+              <span className="font-bold text-2xl text-sky-400">Verse</span>
               <span className="text-sm font-medium ml-1 text-wheat-100">Africa</span>
             </div>
             <p className="text-wheat-100/80 mb-6">

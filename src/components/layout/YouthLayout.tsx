@@ -41,7 +41,7 @@ export const YouthLayout = ({ children }: YouthLayoutProps) => {
             
             <h1 className="text-xl font-semibold md:hidden">
               <span className="text-amber-600 dark:text-amber-500">Youth</span>
-              <span className="text-sky-600 dark:text-sky-500">AgriAI</span>
+              <span className="text-sky-600 dark:text-sky-500">AgriVerse</span>
             </h1>
           </div>
           
