@@ -3,11 +3,11 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LandingLayout from '@/components/landing/LandingLayout';
 import HeroSection from '@/components/landing/HeroSection';
-import RoleSection from '@/components/landing/RoleSection';
-import FeatureSection from '@/components/landing/FeatureSection';
-import BenefitsSection from '@/components/landing/BenefitsSection';
-import TransportSection from '@/components/landing/TransportSection';
+import HowItWorksSection from '@/components/landing/HowItWorksSection';
+import ImpactSection from '@/components/landing/ImpactSection';
+import WhyJoinSection from '@/components/landing/WhyJoinSection';
 import TestimonialsSection from '@/components/landing/TestimonialsSection';
+import FinalCTASection from '@/components/landing/FinalCTASection';
 import AuthSection from '@/components/landing/AuthSection';
 
 const LandingPage = () => {
@@ -31,11 +31,11 @@ const LandingPage = () => {
   return (
     <LandingLayout>
       <HeroSection />
-      <RoleSection />
-      <FeatureSection />
-      <BenefitsSection />
-      <TransportSection />
+      <HowItWorksSection />
+      <ImpactSection />
+      <WhyJoinSection />
       <TestimonialsSection />
+      <FinalCTASection />
       <AuthSection />
     </LandingLayout>
   );

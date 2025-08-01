@@ -7,44 +7,28 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 const TestimonialsSection = () => {
   const testimonials = [
     {
-      name: "Kofi Mensah",
-      location: "Ashanti Region",
-      role: "Maize Farmer",
+      name: "Kwame Asante",
+      location: "Ghana",
+      role: "Youth Farmer",
       image: "https://randomuser.me/api/portraits/men/32.jpg",
-      quote: "Since using AgriAI, my maize yields have increased by 40%. The weather alerts have saved my crops multiple times during unexpected rains. I'm now able to provide better for my family.",
+      quote: "AgriVerse Africa gave me funding and smart tools. My cassava farm now feeds 500 families and generates 40% more income.",
       stars: 5
     },
     {
-      name: "Ama Darko",
-      location: "Eastern Region",
-      role: "Vegetable Grower",
+      name: "Fatima Ibrahim",
+      location: "Nigeria",
+      role: "Tech Investor",
       image: "https://randomuser.me/api/portraits/women/44.jpg",
-      quote: "The marketplace feature has connected me with buyers who pay fair prices. I no longer have to sell at low prices to middlemen. My income has doubled in just six months.",
+      quote: "I invested in 10 farms through AgriVerse and achieved 120% ROI while supporting local communities. Amazing impact!",
       stars: 5
     },
     {
-      name: "Kwame Owusu",
-      location: "Central Region",
-      role: "Cassava Farmer",
+      name: "Joseph Mensah",
+      location: "Kenya",
+      role: "Agritech Partner",
       image: "https://randomuser.me/api/portraits/men/62.jpg", 
-      quote: "The transport booking system has solved my biggest challenge - getting my produce to market. Now I can find reliable trucks with just a few clicks. No more waiting days for transport.",
+      quote: "Our partnership with AgriVerse expanded our reach across 15 countries. Innovation meets impact at scale.",
       stars: 5
-    },
-    {
-      name: "Grace Amoah",
-      location: "Volta Region",
-      role: "Rice Farmer",
-      image: "https://randomuser.me/api/portraits/women/58.jpg",
-      quote: "The knowledge hub has taught me new rice farming techniques that are more resistant to changing weather patterns. My crops are now more resilient and my yields are much higher.",
-      stars: 5
-    },
-    {
-      name: "Ibrahim Yakubu",
-      location: "Northern Region",
-      role: "Sorghum Farmer",
-      image: "https://randomuser.me/api/portraits/men/77.jpg",
-      quote: "AgriAI's soil analysis feature helped me understand why my yields were declining. With their recommendations, I've restored my soil's health and my harvests are better than ever.",
-      stars: 4
     }
   ];
 
@@ -55,13 +39,13 @@ const TestimonialsSection = () => {
   };
 
   return (
-    <section id="testimonials" className="py-20 bg-wheat-100">
+    <section id="testimonials" className="py-20 bg-muted/30">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <span className="inline-block px-4 py-1 rounded-full bg-leaf-100 text-leaf-700 font-medium text-sm mb-5">Success Stories</span>
-          <h2 className="text-3xl font-bold mb-4 text-soil-800">Hear from Our Farmers</h2>
-          <p className="text-xl text-soil-700 max-w-2xl mx-auto">
-            Discover how AgriVerse Africa is transforming agriculture across the continent.
+          <span className="inline-block px-4 py-1 rounded-full bg-primary/10 text-primary font-medium text-sm mb-5">Success Stories</span>
+          <h2 className="text-3xl md:text-5xl font-bold mb-6 text-foreground">Success <span className="text-primary">Stories</span></h2>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Real people, real impact. See how AgriVerse Africa is transforming lives across the continent.
           </p>
         </div>
 
@@ -69,30 +53,31 @@ const TestimonialsSection = () => {
           <Carousel className="mx-auto max-w-5xl">
             <CarouselContent>
               {testimonials.map((testimonial, index) => (
-                <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 pl-4">
-                  <Card className="border-none bg-white shadow-md h-full">
-                    <CardContent className="pt-6 h-full flex flex-col">
-                      <div className="flex items-center gap-2 mb-2">
-                        {renderStars(testimonial.stars)}
-                      </div>
-                      <div className="relative mb-6 flex-grow">
-                        <Quote className="h-8 w-8 text-leaf-200 absolute -top-2 -left-2 opacity-50" />
-                        <p className="italic text-soil-700 relative z-10">{testimonial.quote}</p>
-                      </div>
-                      <div className="flex items-center mt-auto">
-                        <img 
-                          src={testimonial.image} 
-                          alt={testimonial.name} 
-                          className="w-12 h-12 rounded-full mr-4"
-                        />
-                        <div>
-                          <p className="font-semibold text-soil-800">{testimonial.name}</p>
-                          <p className="text-sm text-soil-600">{testimonial.role}, {testimonial.location}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </CarouselItem>
+                 <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 pl-4">
+                   <Card className="border border-border bg-card shadow-lg h-full">
+                     <CardContent className="pt-6 h-full flex flex-col">
+                       <div className="flex items-center gap-2 mb-2">
+                         {renderStars(testimonial.stars)}
+                       </div>
+                       <div className="relative mb-6 flex-grow">
+                         <Quote className="h-8 w-8 text-primary/20 absolute -top-2 -left-2 opacity-50" />
+                         <p className="italic text-card-foreground relative z-10">{testimonial.quote}</p>
+                       </div>
+                       <div className="flex items-center mt-auto">
+                         <img 
+                           src={testimonial.image} 
+                           alt={testimonial.name} 
+                           className="w-12 h-12 rounded-full mr-4 border-2 border-primary/20"
+                         />
+                         <div>
+                           <p className="font-semibold text-card-foreground">{testimonial.name}</p>
+                           <p className="text-sm text-primary font-medium">{testimonial.role}</p>
+                           <p className="text-xs text-muted-foreground">{testimonial.location}</p>
+                         </div>
+                       </div>
+                     </CardContent>
+                   </Card>
+                 </CarouselItem>
               ))}
             </CarouselContent>
             <div className="hidden md:block">
@@ -102,14 +87,14 @@ const TestimonialsSection = () => {
           </Carousel>
         </div>
 
-        <div className="bg-leaf-600 rounded-xl text-white p-8 md:p-12 text-center max-w-3xl mx-auto">
-          <h3 className="text-2xl md:text-3xl font-bold mb-4">Join 10,000+ Farmers Already Growing with AgriAI</h3>
-          <p className="text-lg mb-8 text-white/90">Start transforming your farming practices today</p>
+        <div className="bg-card rounded-xl border border-border p-8 md:p-12 text-center max-w-3xl mx-auto">
+          <h3 className="text-2xl md:text-3xl font-bold mb-4 text-card-foreground">Ready to Write Your Success Story?</h3>
+          <p className="text-lg mb-8 text-muted-foreground">Join thousands of people transforming African agriculture</p>
           <button 
-            className="bg-white text-leaf-700 font-medium px-6 py-3 rounded-lg hover:bg-wheat-100 transition-colors"
+            className="bg-primary text-primary-foreground font-medium px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors"
             onClick={() => document.getElementById('auth-section')?.scrollIntoView({ behavior: 'smooth' })}
           >
-            Get Started For Free
+            Start Your Journey Today
           </button>
         </div>
       </div>
