@@ -25,7 +25,7 @@ const HeroSection = () => {
             </span>
             <br />
             <span className="text-3xl md:text-5xl text-soil-800">
-              Transforming Agriculture with AI
+              Connecting Africa's Agricultural Ecosystem
             </span>
           </h1>
           <p className="text-xl md:text-2xl text-soil-700 mb-10 max-w-4xl mx-auto leading-relaxed">
