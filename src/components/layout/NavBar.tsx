@@ -103,7 +103,7 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
         
         toast({
           title: "Login successful",
-          description: `Welcome to AgriAI-Ghana, ${userCreds.name}!`,
+          description: `Welcome to AgriVerse Africa, ${userCreds.name}!`,
         });
         
         // Redirect based on role
@@ -192,7 +192,7 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
         >
           <span className="font-bold text-xl text-leaf-600">Agri</span>
           <span className="font-bold text-xl text-sky-600">AI</span>
-          <span className="text-sm font-medium ml-1">Ghana</span>
+          <span className="text-sm font-medium ml-1">Africa</span>
         </Link>
       </div>
       

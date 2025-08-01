@@ -17,11 +17,11 @@ const HeroSection = () => {
       <div className="container mx-auto px-4 relative">
         <div className="max-w-5xl mx-auto text-center mb-16 animate-fade-in">
           <span className="inline-block px-6 py-2 rounded-full bg-gradient-to-r from-leaf-100 to-sky-100 text-leaf-700 font-medium text-sm mb-6 animate-bounce border border-leaf-200">
-            🇬🇭 Ghana's Complete Agricultural Platform
+            🌍 Africa's Complete Agricultural Platform
           </span>
           <h1 className="text-4xl md:text-7xl font-bold mb-8 text-soil-900 leading-tight">
             <span className="bg-gradient-to-r from-leaf-600 via-leaf-700 to-sky-600 bg-clip-text text-transparent">
-              AgriAI-Ghana
+              AgriVerse Africa
             </span>
             <br />
             <span className="text-3xl md:text-5xl text-soil-800">
@@ -29,7 +29,7 @@ const HeroSection = () => {
             </span>
           </h1>
           <p className="text-xl md:text-2xl text-soil-700 mb-10 max-w-4xl mx-auto leading-relaxed">
-            Empowering <span className="font-semibold text-leaf-700">farmers</span>, connecting <span className="font-semibold text-sky-700">investors</span>, and training <span className="font-semibold text-amber-700">youth</span> - all in one comprehensive platform for Ghana's agricultural future.
+            Empowering <span className="font-semibold text-leaf-700">farmers</span>, connecting <span className="font-semibold text-sky-700">investors</span>, and training <span className="font-semibold text-amber-700">youth</span> - all in one comprehensive platform for Africa's agricultural future.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16 animate-fade-in">
@@ -56,7 +56,7 @@ const HeroSection = () => {
                 <Users className="h-8 w-8 text-leaf-700" />
               </div>
               <h3 className="font-bold text-xl text-soil-800 mb-2">15,000+ Farmers</h3>
-              <p className="text-soil-600 text-center">Active users growing smarter across Ghana</p>
+              <p className="text-soil-600 text-center">Active users growing smarter across Africa</p>
             </div>
             <div className="flex flex-col items-center p-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:transform hover:scale-105 border border-sky-100">
               <div className="rounded-full bg-gradient-to-br from-sky-100 to-sky-200 p-4 mb-4">
@@ -69,8 +69,8 @@ const HeroSection = () => {
               <div className="rounded-full bg-gradient-to-br from-amber-100 to-amber-200 p-4 mb-4">
                 <Globe className="h-8 w-8 text-amber-700" />
               </div>
-              <h3 className="font-bold text-xl text-soil-800 mb-2">All 16 Regions</h3>
-              <p className="text-soil-600 text-center">Nationwide coverage and support</p>
+              <h3 className="font-bold text-xl text-soil-800 mb-2">54 Countries</h3>
+              <p className="text-soil-600 text-center">Continent-wide coverage and support</p>
             </div>
           </div>
         </div>

@@ -56,7 +56,7 @@ export const Sidebar = ({ open, onClose }: SidebarProps) => {
           <Link to="/" className="flex items-center">
             <span className="font-bold text-xl text-leaf-600">Agri</span>
             <span className="font-bold text-xl text-sky-600">AI</span>
-            <span className="text-sm font-medium ml-1">Ghana</span>
+            <span className="text-sm font-medium ml-1">Africa</span>
           </Link>
           <Button variant="ghost" size="icon" onClick={onClose} className="md:hidden">
             <X className="h-5 w-5" />

@@ -24,7 +24,7 @@ const RoleSection = () => {
     {
       icon: TrendingUp,
       title: "For Investors",
-      subtitle: "Invest in Ghana's Agricultural Future",
+      subtitle: "Invest in Africa's Agricultural Future",
       description: "Discover profitable agricultural projects, track investments, and support sustainable farming initiatives.",
       features: [
         "Vetted investment opportunities",
@@ -87,7 +87,7 @@ const RoleSection = () => {
           <span className="inline-block px-4 py-1 rounded-full bg-leaf-100 text-leaf-700 font-medium text-sm mb-5">Three Powerful Dashboards</span>
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-soil-800">Built for Every Role in Agriculture</h2>
           <p className="text-xl text-soil-700 max-w-3xl mx-auto">
-            Whether you're farming, investing, or learning, AgriAI-Ghana has the perfect dashboard designed for your needs.
+            Whether you're farming, investing, or learning, AgriVerse Africa has the perfect dashboard designed for your needs.
           </p>
         </div>
 

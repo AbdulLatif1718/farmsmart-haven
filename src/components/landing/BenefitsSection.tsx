@@ -44,7 +44,7 @@ const BenefitsSection = () => {
           <span className="inline-block px-4 py-1 rounded-full bg-leaf-100 text-leaf-700 font-medium text-sm mb-5">Why Choose AgriAI</span>
           <h2 className="text-3xl font-bold mb-4 text-soil-800">How Farmers Benefit</h2>
           <p className="text-xl text-soil-700 max-w-2xl mx-auto">
-            AgriAI-Ghana helps farmers across the country increase productivity and improve their livelihoods.
+            AgriVerse Africa helps farmers across the continent increase productivity and improve their livelihoods.
           </p>
         </div>
 

@@ -12,10 +12,10 @@ const Footer = () => {
             <div className="flex items-center mb-6">
               <span className="font-bold text-2xl text-leaf-400">Agri</span>
               <span className="font-bold text-2xl text-sky-400">AI</span>
-              <span className="text-sm font-medium ml-1 text-wheat-100">Ghana</span>
+              <span className="text-sm font-medium ml-1 text-wheat-100">Africa</span>
             </div>
             <p className="text-wheat-100/80 mb-6">
-              Empowering Ghanaian farmers with AI-powered tools and resources for sustainable growth.
+              Empowering African farmers with AI-powered tools and resources for sustainable growth.
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-wheat-100/80 hover:text-leaf-400 transition-colors">
@@ -57,7 +57,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-wheat-100/80">
                 <MapPin className="h-4 w-4 text-leaf-400" />
-                <span>123 Innovation Way, Accra, Ghana</span>
+                <span>123 Innovation Way, Lagos, Nigeria</span>
               </li>
               <li className="flex items-center gap-2 text-wheat-100/80">
                 <Phone className="h-4 w-4 text-leaf-400" />
@@ -65,7 +65,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-2 text-wheat-100/80">
                 <Mail className="h-4 w-4 text-leaf-400" />
-                <span>info@agriai-ghana.com</span>
+                <span>info@agriverse-africa.com</span>
               </li>
             </ul>
             <Button 
@@ -81,7 +81,7 @@ const Footer = () => {
         
         <div className="border-t border-soil-700 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-wheat-100/70 mb-4 md:mb-0">
-            © 2025 AgriAI-Ghana. All rights reserved.
+            © 2025 AgriVerse Africa. All rights reserved.
           </p>
           <div className="flex space-x-6 text-sm">
             <a href="#" className="text-wheat-100/70 hover:text-leaf-400 transition-colors">Terms of Service</a>

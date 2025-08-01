@@ -10,10 +10,10 @@ export const Footer = () => {
           <div className="flex items-center justify-center md:justify-start">
             <span className="font-bold text-xl text-leaf-600">Agri</span>
             <span className="font-bold text-xl text-sky-600">AI</span>
-            <span className="text-sm font-medium ml-1">Ghana</span>
+            <span className="text-sm font-medium ml-1">Africa</span>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Empowering Ghanaian farmers with AI and IoT
+            Empowering African farmers with AI and IoT
           </p>
         </div>
         
@@ -26,7 +26,7 @@ export const Footer = () => {
             <Link to="/privacy" className="text-muted-foreground hover:text-foreground">Privacy</Link>
           </div>
           <div className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} AgriAI-Ghana
+            © {new Date().getFullYear()} AgriVerse Africa
           </div>
         </div>
       </div>

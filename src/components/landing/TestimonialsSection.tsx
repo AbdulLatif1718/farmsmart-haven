@@ -61,7 +61,7 @@ const TestimonialsSection = () => {
           <span className="inline-block px-4 py-1 rounded-full bg-leaf-100 text-leaf-700 font-medium text-sm mb-5">Success Stories</span>
           <h2 className="text-3xl font-bold mb-4 text-soil-800">Hear from Our Farmers</h2>
           <p className="text-xl text-soil-700 max-w-2xl mx-auto">
-            Discover how AgriAI-Ghana is transforming agriculture across the country.
+            Discover how AgriVerse Africa is transforming agriculture across the continent.
           </p>
         </div>
 

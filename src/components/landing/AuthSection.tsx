@@ -80,7 +80,7 @@ const AuthSection = () => {
         
         toast({
           title: "Login successful",
-          description: `Welcome to AgriAI-Ghana!`,
+          description: `Welcome to AgriVerse Africa!`,
         });
 
         // Redirect based on role
@@ -261,7 +261,7 @@ const AuthSection = () => {
                 <CardHeader>
                   <CardTitle className="text-soil-800">Create an account</CardTitle>
                   <CardDescription className="text-soil-600">
-                    Join AgriAI Ghana by creating your account
+                    Join AgriVerse Africa by creating your account
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

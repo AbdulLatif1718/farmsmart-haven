@@ -45,7 +45,7 @@ const Header = () => {
           <div className="flex items-center">
             <span className="font-bold text-2xl text-leaf-700">Agri</span>
             <span className="font-bold text-2xl text-sky-600">AI</span>
-            <span className="text-sm font-medium ml-1 text-soil-700">Ghana</span>
+            <span className="text-sm font-medium ml-1 text-soil-700">Africa</span>
           </div>
           
           {/* Desktop Menu */}

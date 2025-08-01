@@ -28,7 +28,7 @@ const Index = () => {
       {showWelcome && (
         <Card className="mb-6 border-leaf-200 dark:border-leaf-800 bg-gradient-to-r from-leaf-50 to-leaf-100 dark:from-leaf-900/30 dark:to-leaf-900/10">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-medium">Welcome to AgriAI-Ghana</CardTitle>
+            <CardTitle className="text-lg font-medium">Welcome to AgriVerse Africa</CardTitle>
             <CardDescription>
               Your personal AI-powered farming assistant
             </CardDescription>
