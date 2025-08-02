@@ -24,11 +24,11 @@ const HeroSection = () => {
           </span>
           
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-white leading-tight">
-            <span className="block">Invest in the</span>
+            <span className="block">Build Wealth Through</span>
             <span className="block bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Future of African
+              Farming—
             </span>
-            <span className="block">Farming</span>
+            <span className="block">With or Without Owning a Farm</span>
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-200 mb-10 max-w-2xl leading-relaxed">
@@ -46,7 +46,7 @@ const HeroSection = () => {
             <Button 
               size="lg" 
               variant="outline"
-              className="border-2 border-white/30 text-white hover:bg-white/10 backdrop-blur-sm px-8 py-4 text-lg font-semibold transform hover:scale-105 transition-all duration-300"
+              className="border-2 border-white/50 text-white hover:bg-white/20 hover:text-white backdrop-blur-sm px-8 py-4 text-lg font-semibold transform hover:scale-105 transition-all duration-300"
               onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
             >
               <Play className="h-5 w-5 mr-2" />
