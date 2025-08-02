@@ -23,16 +23,18 @@ const HeroSection = () => {
             🚀 Transforming African Agriculture
           </span>
           
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-white leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 text-white leading-tight tracking-tight">
             <span className="block">Build Wealth Through</span>
-            <span className="block bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Farming—
+            <span className="block bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-extrabold">
+              Smart Farming
             </span>
-            <span className="block">With or Without Owning a Farm</span>
+            <span className="block text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-medium opacity-90">
+              With or Without Owning Land
+            </span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-gray-200 mb-10 max-w-2xl leading-relaxed">
-            Fund farms. Use smart tech. Sell directly. Earn returns.
+          <p className="text-lg sm:text-xl md:text-2xl text-gray-200 mb-10 max-w-2xl leading-relaxed font-light">
+            Fund farms. Use smart tech. Sell directly. <span className="font-medium text-white">Earn returns.</span>
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 mb-16">
