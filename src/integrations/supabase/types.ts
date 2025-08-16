@@ -14,7 +14,245 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      funding_applications: {
+        Row: {
+          admin_notes: string | null
+          applicant_id: string
+          business_plan_url: string | null
+          created_at: string
+          crop_type: string
+          expected_roi_percentage: number | null
+          farm_location: string
+          farm_size_acres: number | null
+          farming_experience_years: number | null
+          funding_amount_requested: number
+          id: string
+          interview_date: string | null
+          project_description: string
+          project_duration_months: number
+          project_title: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          applicant_id: string
+          business_plan_url?: string | null
+          created_at?: string
+          crop_type: string
+          expected_roi_percentage?: number | null
+          farm_location: string
+          farm_size_acres?: number | null
+          farming_experience_years?: number | null
+          funding_amount_requested: number
+          id?: string
+          interview_date?: string | null
+          project_description: string
+          project_duration_months: number
+          project_title: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          applicant_id?: string
+          business_plan_url?: string | null
+          created_at?: string
+          crop_type?: string
+          expected_roi_percentage?: number | null
+          farm_location?: string
+          farm_size_acres?: number | null
+          farming_experience_years?: number | null
+          funding_amount_requested?: number
+          id?: string
+          interview_date?: string | null
+          project_description?: string
+          project_duration_months?: number
+          project_title?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "funding_applications_applicant_id_fkey"
+            columns: ["applicant_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      investment_opportunities: {
+        Row: {
+          application_id: string
+          created_at: string
+          crop_type: string
+          current_amount: number
+          description: string
+          duration_months: number
+          end_date: string | null
+          farm_size_acres: number | null
+          farmer_id: string
+          id: string
+          location: string
+          risk_level: string | null
+          roi_percentage: number
+          start_date: string | null
+          status: string
+          target_amount: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          application_id: string
+          created_at?: string
+          crop_type: string
+          current_amount?: number
+          description: string
+          duration_months: number
+          end_date?: string | null
+          farm_size_acres?: number | null
+          farmer_id: string
+          id?: string
+          location: string
+          risk_level?: string | null
+          roi_percentage: number
+          start_date?: string | null
+          status?: string
+          target_amount: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          application_id?: string
+          created_at?: string
+          crop_type?: string
+          current_amount?: number
+          description?: string
+          duration_months?: number
+          end_date?: string | null
+          farm_size_acres?: number | null
+          farmer_id?: string
+          id?: string
+          location?: string
+          risk_level?: string | null
+          roi_percentage?: number
+          start_date?: string | null
+          status?: string
+          target_amount?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "investment_opportunities_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "funding_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "investment_opportunities_farmer_id_fkey"
+            columns: ["farmer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      investments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          investment_date: string
+          investor_id: string
+          opportunity_id: string
+          returns_earned: number | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          investment_date?: string
+          investor_id: string
+          opportunity_id: string
+          returns_earned?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          investment_date?: string
+          investor_id?: string
+          opportunity_id?: string
+          returns_earned?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "investments_investor_id_fkey"
+            columns: ["investor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "investments_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "investment_opportunities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          location: string | null
+          phone: string | null
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          location?: string | null
+          phone?: string | null
+          role: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          location?: string | null
+          phone?: string | null
+          role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
