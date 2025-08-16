@@ -8,11 +8,15 @@ import { MarketplaceCard } from '@/components/dashboard/MarketplaceCard';
 import { KnowledgeHubCard } from '@/components/dashboard/KnowledgeHubCard';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, DollarSign } from 'lucide-react';
+import { FundingApplicationForm } from '@/components/FundingApplicationForm';
+import { useAuth } from '@/hooks/useAuth';
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
   const [showWelcome, setShowWelcome] = useState(true);
+  const [showFundingForm, setShowFundingForm] = useState(false);
+  const { profile } = useAuth();
   
   // Simulate data loading
   useEffect(() => {
@@ -81,28 +85,44 @@ const Index = () => {
               <CardTitle className="text-base font-medium">Quick Actions</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-3">
-                <Button variant="outline" className="h-auto py-3 flex flex-col">
-                  <span className="text-sm">Add Farm</span>
-                  <span className="text-xs text-muted-foreground mt-1">Register a new farm</span>
-                </Button>
-                <Button variant="outline" className="h-auto py-3 flex flex-col">
-                  <span className="text-sm">Record Harvest</span>
-                  <span className="text-xs text-muted-foreground mt-1">Log your yields</span>
-                </Button>
-                <Button variant="outline" className="h-auto py-3 flex flex-col">
-                  <span className="text-sm">Find Transport</span>
-                  <span className="text-xs text-muted-foreground mt-1">Book a delivery</span>
-                </Button>
-                <Button variant="outline" className="h-auto py-3 flex flex-col">
-                  <span className="text-sm">Rent Equipment</span>
-                  <span className="text-xs text-muted-foreground mt-1">Browse machinery</span>
-                </Button>
+              <div className="space-y-3">
+                {profile?.role === 'farmer' && (
+                  <Button 
+                    onClick={() => setShowFundingForm(true)}
+                    className="w-full bg-leaf-600 hover:bg-leaf-700 text-white gap-2"
+                  >
+                    <DollarSign className="h-4 w-4" />
+                    Apply for Funding
+                  </Button>
+                )}
+                <div className="grid grid-cols-2 gap-3">
+                  <Button variant="outline" className="h-auto py-3 flex flex-col">
+                    <span className="text-sm">Add Farm</span>
+                    <span className="text-xs text-muted-foreground mt-1">Register a new farm</span>
+                  </Button>
+                  <Button variant="outline" className="h-auto py-3 flex flex-col">
+                    <span className="text-sm">Record Harvest</span>
+                    <span className="text-xs text-muted-foreground mt-1">Log your yields</span>
+                  </Button>
+                  <Button variant="outline" className="h-auto py-3 flex flex-col">
+                    <span className="text-sm">Find Transport</span>
+                    <span className="text-xs text-muted-foreground mt-1">Book a delivery</span>
+                  </Button>
+                  <Button variant="outline" className="h-auto py-3 flex flex-col">
+                    <span className="text-sm">Rent Equipment</span>
+                    <span className="text-xs text-muted-foreground mt-1">Browse machinery</span>
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
         </div>
       </div>
+      
+      <FundingApplicationForm 
+        isOpen={showFundingForm}
+        onClose={() => setShowFundingForm(false)}
+      />
     </MainLayout>
   );
 };

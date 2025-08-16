@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -7,12 +6,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { initializeTheme } from "./utils/themeUtils";
 import ScrollToTop from '@/components/ui/scroll-to-top';
-import PrivateRoute from "./components/auth/PrivateRoute";
+import { AuthProvider, useAuth } from "@/hooks/useAuth";
 
 // Import pages
 import LandingPage from "./pages/LandingPage";
+import Auth from "./pages/Auth";
 import Index from "./pages/Index";
-import YouthDashboard from "./pages/YouthDashboard";
 import InvestorDashboard from "./pages/InvestorDashboard";
 import Weather from "./pages/Weather"; 
 import Crops from "./pages/Crops";
@@ -23,12 +22,6 @@ import Storage from "./pages/Storage";
 import Knowledge from "./pages/Knowledge";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
-
-// Youth pages
-import YouthProjects from "./pages/youth/YouthProjects";
-import YouthTraining from "./pages/youth/YouthTraining";
-import YouthMentors from "./pages/youth/YouthMentors";
-import YouthProgress from "./pages/youth/YouthProgress";
 
 // Investor pages
 import InvestorProjects from "./pages/investor/InvestorProjects";
@@ -42,72 +35,94 @@ import InvestorMessages from "./pages/investor/InvestorMessages";
 
 const queryClient = new QueryClient();
 
+// Protected route wrapper
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  }
+  
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+  
+  return <>{children}</>;
+};
+
+// Root route handler
+const RootHandler = () => {
+  const { user, profile, loading } = useAuth();
+  
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  }
+  
+  if (!user) {
+    return <LandingPage />;
+  }
+  
+  // Redirect based on user role
+  if (profile?.role === 'investor') {
+    return <Navigate to="/investor" replace />;
+  } else {
+    return <Navigate to="/dashboard" replace />;
+  }
+};
+
+const AppRoutes = () => {
+  return (
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/" element={<RootHandler />} />
+      <Route path="/landing" element={<LandingPage />} />
+      <Route path="/auth" element={<Auth />} />
+      
+      {/* Protected Farmer Platform Routes */}
+      <Route path="/dashboard" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+      <Route path="/weather" element={<ProtectedRoute><Weather /></ProtectedRoute>} />
+      <Route path="/crops" element={<ProtectedRoute><Crops /></ProtectedRoute>} />
+      <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
+      <Route path="/transport" element={<ProtectedRoute><Transport /></ProtectedRoute>} />
+      <Route path="/machinery" element={<ProtectedRoute><Machinery /></ProtectedRoute>} />
+      <Route path="/storage" element={<ProtectedRoute><Storage /></ProtectedRoute>} />
+      <Route path="/knowledge" element={<ProtectedRoute><Knowledge /></ProtectedRoute>} />
+      <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+      
+      {/* Investor Dashboard Routes */}
+      <Route path="/investor" element={<ProtectedRoute><InvestorDashboard /></ProtectedRoute>} />
+      <Route path="/investor/projects" element={<ProtectedRoute><InvestorProjects /></ProtectedRoute>} />
+      <Route path="/investor/investments" element={<ProtectedRoute><InvestorInvestments /></ProtectedRoute>} />
+      <Route path="/investor/financials" element={<ProtectedRoute><InvestorFinancials /></ProtectedRoute>} />
+      <Route path="/investor/portfolio" element={<ProtectedRoute><InvestorPortfolio /></ProtectedRoute>} />
+      <Route path="/investor/contracts" element={<ProtectedRoute><InvestorContracts /></ProtectedRoute>} />
+      <Route path="/investor/map" element={<ProtectedRoute><InvestorMap /></ProtectedRoute>} />
+      <Route path="/investor/network" element={<ProtectedRoute><InvestorNetwork /></ProtectedRoute>} />
+      <Route path="/investor/messages" element={<ProtectedRoute><InvestorMessages /></ProtectedRoute>} />
+      
+      {/* Catch-all route */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
+
 const App = () => {
   useEffect(() => {
     initializeTheme();
   }, []);
 
-  const userRole = localStorage.getItem('userRole') || 'farmer';
-
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-        <ScrollToTop />
-          <Routes>
-            {/* Public Routes */}
-            <Route 
-              path="/" 
-              element={
-                localStorage.getItem('isLoggedIn') === 'true' 
-                  ? <Navigate to={
-                      userRole === 'youth' 
-                        ? "/youth" 
-                        : userRole === 'investor' 
-                          ? "/investor" 
-                          : "/dashboard"
-                    } replace /> 
-                  : <LandingPage />
-              } 
-            />
-            <Route path="/landing" element={<LandingPage />} />
-            
-            {/* Protected Farmer Platform Routes */}
-            <Route path="/dashboard" element={<PrivateRoute><Index /></PrivateRoute>} />
-            <Route path="/weather" element={<PrivateRoute><Weather /></PrivateRoute>} />
-            <Route path="/crops" element={<PrivateRoute><Crops /></PrivateRoute>} />
-            <Route path="/marketplace" element={<PrivateRoute><Marketplace /></PrivateRoute>} />
-            <Route path="/transport" element={<PrivateRoute><Transport /></PrivateRoute>} />
-            <Route path="/machinery" element={<PrivateRoute><Machinery /></PrivateRoute>} />
-            <Route path="/storage" element={<PrivateRoute><Storage /></PrivateRoute>} />
-            <Route path="/knowledge" element={<PrivateRoute><Knowledge /></PrivateRoute>} />
-            <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
-            
-            {/* Youth Dashboard Routes */}
-            <Route path="/youth" element={<PrivateRoute><YouthDashboard /></PrivateRoute>} />
-            <Route path="/youth/projects" element={<PrivateRoute><YouthProjects /></PrivateRoute>} />
-            <Route path="/youth/training" element={<PrivateRoute><YouthTraining /></PrivateRoute>} />
-            <Route path="/youth/mentors" element={<PrivateRoute><YouthMentors /></PrivateRoute>} />
-            <Route path="/youth/progress" element={<PrivateRoute><YouthProgress /></PrivateRoute>} />
-            
-            {/* Investor Dashboard Routes */}
-            <Route path="/investor" element={<PrivateRoute><InvestorDashboard /></PrivateRoute>} />
-            <Route path="/investor/projects" element={<PrivateRoute><InvestorProjects /></PrivateRoute>} />
-            <Route path="/investor/investments" element={<PrivateRoute><InvestorInvestments /></PrivateRoute>} />
-            <Route path="/investor/financials" element={<PrivateRoute><InvestorFinancials /></PrivateRoute>} />
-            <Route path="/investor/portfolio" element={<PrivateRoute><InvestorPortfolio /></PrivateRoute>} />
-            <Route path="/investor/contracts" element={<PrivateRoute><InvestorContracts /></PrivateRoute>} />
-            <Route path="/investor/map" element={<PrivateRoute><InvestorMap /></PrivateRoute>} />
-            <Route path="/investor/network" element={<PrivateRoute><InvestorNetwork /></PrivateRoute>} />
-            <Route path="/investor/messages" element={<PrivateRoute><InvestorMessages /></PrivateRoute>} />
-            
-            {/* Catch-all route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ScrollToTop />
+            <AppRoutes />
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };

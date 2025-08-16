@@ -35,21 +35,6 @@ const RoleSection = () => {
       ],
       color: "sky",
       demoCredentials: "investor@example.com / investor123"
-    },
-    {
-      icon: GraduationCap,
-      title: "For Youth",
-      subtitle: "Learn, Grow, Lead Agriculture",
-      description: "Access training programs, find mentors, and start your own agricultural projects with comprehensive support.",
-      features: [
-        "Agricultural training programs",
-        "Mentor matching system",
-        "Project development support",
-        "Skills certification",
-        "Peer networking opportunities"
-      ],
-      color: "amber",
-      demoCredentials: "youth@example.com / youth123"
     }
   ];
 
@@ -91,7 +76,7 @@ const RoleSection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
           {roles.map((role, index) => {
             const colors = getColorClasses(role.color);
             return (
