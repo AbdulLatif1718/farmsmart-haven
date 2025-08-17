@@ -8,6 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { InvestorSidebar } from '@/components/investor/InvestorSidebar';
 import { toggleTheme } from '@/utils/themeUtils';
 import { Footer } from './Footer';
+import { useAuth } from '@/hooks/useAuth';
 
 interface InvestorLayoutProps {
   children: React.ReactNode;
@@ -17,10 +18,15 @@ export const InvestorLayout = ({ children }: InvestorLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('userRole');
-    navigate('/landing');
+  const { signOut } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate('/landing');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   return (

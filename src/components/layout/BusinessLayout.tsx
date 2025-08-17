@@ -10,6 +10,7 @@ import { BusinessRole } from '../business/RoleSelector';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { toggleTheme } from '@/utils/themeUtils';
+import { useAuth } from '@/hooks/useAuth';
 
 interface BusinessLayoutProps {
   children: React.ReactNode;
@@ -21,10 +22,15 @@ export const BusinessLayout = ({ children, activeRole }: BusinessLayoutProps) =>
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('userRole');
-    navigate('/landing');
+  const { signOut } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate('/landing');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   // Role-specific color

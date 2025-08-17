@@ -22,7 +22,6 @@ import {
 } from 'lucide-react';
 
 const Weather = () => {
-  const [userRole, setUserRole] = useState(() => localStorage.getItem('userRole') || 'farmer');
   
   return (
     <MainLayout>
@@ -34,12 +33,6 @@ const Weather = () => {
           </p>
         </div>
         
-        {userRole === 'business' && (
-          <Button className="bg-leaf-600 hover:bg-leaf-700">
-            Weather Risk Assessment
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        )}
       </div>
       
       <Tabs defaultValue="forecast" className="w-full">
@@ -384,17 +377,6 @@ const Weather = () => {
                 </div>
               </div>
               
-              {userRole === 'business' && (
-                <div className="mt-6 p-4 border rounded-lg">
-                  <h3 className="font-medium mb-2">Investment Intelligence</h3>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    Analyze weather patterns against crop yields and investment returns to optimize your agricultural portfolio.
-                  </p>
-                  <Button variant="outline">
-                    View Investment-Weather Correlation
-                  </Button>
-                </div>
-              )}
             </CardContent>
           </Card>
         </TabsContent>

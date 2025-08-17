@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, Sun, Moon, Bell, UserCircle, LogOut } from 'lucide-react';
+import { Menu, Sun, Moon, Bell, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -11,53 +10,17 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useAuth } from '@/hooks/useAuth';
 
 interface NavBarProps {
   onMenuToggle: () => void;
 }
 
-// Demo credentials
-const USER_CREDENTIALS = {
-  farmer: { email: 'farmer@example.com', password: 'farmer123', name: 'Farmer User' },
-  youth: { email: 'youth@example.com', password: 'youth123', name: 'Kwame Agyei' },
-  investor: { email: 'investor@example.com', password: 'investor123', name: 'Diaspora Investor' }
-};
-
 export const NavBar = ({ onMenuToggle }: NavBarProps) => {
+  const { user, profile, signOut } = useAuth();
   const [theme, setTheme] = useState(() => {
-    // Check localStorage for saved theme
     return localStorage.getItem('theme') || 'light';
   });
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    // Check localStorage for login status
-    return localStorage.getItem('isLoggedIn') === 'true';
-  });
-  const [userRole, setUserRole] = useState(() => {
-    return localStorage.getItem('userRole') || 'farmer';
-  });
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loginRole, setLoginRole] = useState('farmer');
-  const [isLoading, setIsLoading] = useState(false);
-  const [loginError, setLoginError] = useState('');
   const { toast } = useToast();
   const navigate = useNavigate();
   
@@ -66,16 +29,6 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('theme', theme);
   }, [theme]);
-  
-  // Effect to redirect user if not logged in
-  useEffect(() => {
-    if (!isLoggedIn && window.location.pathname !== '/landing') {
-      navigate('/landing');
-    }
-    
-    // Save login status to localStorage
-    localStorage.setItem('isLoggedIn', isLoggedIn.toString());
-  }, [isLoggedIn, navigate]);
   
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -87,83 +40,30 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
     });
   };
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setLoginError('');
-    
-    setTimeout(() => {
-      setIsLoading(false);
-      
-      const userCreds = USER_CREDENTIALS[loginRole as keyof typeof USER_CREDENTIALS];
-      if (email === userCreds.email && password === userCreds.password) {
-        setIsLoggedIn(true);
-        setUserRole(loginRole);
-        localStorage.setItem('userRole', loginRole);
-        
-        toast({
-          title: "Login successful",
-          description: `Welcome to AgriVerse Africa, ${userCreds.name}!`,
-        });
-        
-        // Redirect based on role
-        if (loginRole === 'farmer') {
-          navigate('/dashboard');
-        } else if (loginRole === 'youth') {
-          navigate('/youth');
-        } else if (loginRole === 'investor') {
-          navigate('/investor');
-        }
-      } else {
-        let credentialHint = '';
-        
-        if (loginRole === 'farmer') {
-          credentialHint = 'Try farmer@example.com / farmer123';
-        } else if (loginRole === 'youth') {
-          credentialHint = 'Try youth@example.com / youth123';
-        } else if (loginRole === 'investor') {
-          credentialHint = 'Try investor@example.com / investor123';
-        }
-        
-        setLoginError(`Invalid email or password. ${credentialHint}`);
-        toast({
-          title: "Login failed",
-          description: "Invalid credentials",
-          variant: "destructive"
-        });
-      }
-    }, 1000);
-  };
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('userRole');
-    toast({
-      title: "Logged out",
-      description: "You have been logged out of your account",
-    });
-    navigate('/landing');
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "Logged out",
+        description: "You have been logged out of your account",
+      });
+      navigate('/landing');
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
   };
   
   const getUserDisplayName = () => {
-    if (userRole === 'farmer') {
-      return 'Farmer User';
-    } else if (userRole === 'youth') {
-      return 'Kwame Agyei';
-    } else if (userRole === 'investor') {
-      return 'Diaspora Investor';
-    }
-    return 'User';
+    return profile?.full_name || 'User';
   };
   
   const getUserInitials = () => {
-    if (userRole === 'farmer') {
-      return 'FU';
-    } else if (userRole === 'youth') {
-      return 'KA';
-    } else if (userRole === 'investor') {
-      return 'DI';
+    if (profile?.full_name) {
+      return profile.full_name.split(' ').map(n => n[0]).join('').toUpperCase();
     }
     return 'U';
   };
@@ -178,14 +78,8 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
         
         <Link 
           to={
-            isLoggedIn 
-              ? (
-                  userRole === 'youth' 
-                    ? "/youth" 
-                    : userRole === 'investor' 
-                      ? "/investor" 
-                      : "/dashboard"
-                )
+            user 
+              ? (profile?.role === 'investor' ? "/investor" : "/dashboard")
               : "/landing"
           } 
           className="flex items-center"
@@ -230,7 +124,7 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
           </DropdownMenuContent>
         </DropdownMenu>
         
-        {isLoggedIn ? (
+        {user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative flex items-center ml-1.5" size="sm">
@@ -257,80 +151,13 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="default" size="sm">Login</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <form onSubmit={handleLogin}>
-                <DialogHeader>
-                  <DialogTitle>Login to your account</DialogTitle>
-                  <DialogDescription>
-                    Select your role and login with the demo credentials
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="role">Role</Label>
-                    <Select defaultValue={loginRole} onValueChange={setLoginRole}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select your role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="farmer">Farmer</SelectItem>
-                        <SelectItem value="youth">Youth Agripreneur</SelectItem>
-                        <SelectItem value="investor">Investor</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <div className="text-xs text-muted-foreground">
-                      {loginRole === 'farmer' 
-                        ? "Use farmer@example.com / farmer123" 
-                        : loginRole === 'youth'
-                          ? "Use youth@example.com / youth123"
-                          : "Use investor@example.com / investor123"
-                      }
-                    </div>
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder={
-                        loginRole === 'farmer' 
-                          ? "farmer@example.com" 
-                          : loginRole === 'youth'
-                            ? "youth@example.com"
-                            : "investor@example.com"
-                      }
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="password">Password</Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                  {loginError && (
-                    <p className="text-sm text-destructive">{loginError}</p>
-                  )}
-                </div>
-                <DialogFooter>
-                  <Button type="submit" disabled={isLoading}>
-                    {isLoading ? "Logging in..." : "Login"}
-                  </Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
+          <Button 
+            variant="default" 
+            size="sm"
+            onClick={() => navigate('/auth')}
+          >
+            Login
+          </Button>
         )}
       </div>
     </nav>

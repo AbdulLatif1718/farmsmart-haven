@@ -21,15 +21,7 @@ const BusinessDashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Check if user is logged in
-  useEffect(() => {
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    const userRole = localStorage.getItem('userRole');
-    
-    if (!isLoggedIn || userRole !== 'business') {
-      navigate('/landing');
-    }
-  }, [navigate]);
+  // Authentication is handled by the protected route wrapper
 
   // Handle section changes
   useEffect(() => {
