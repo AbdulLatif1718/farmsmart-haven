@@ -18,7 +18,9 @@ export const InvestorLayout = ({ children }: InvestorLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
-  const { signOut } = useAuth();
+  const { signOut, profile } = useAuth();
+  const displayName = profile?.full_name || 'Investor';
+  const initials = profile?.full_name ? profile.full_name.split(' ').map(n => n[0]).join('').toUpperCase() : 'IN';
 
   const handleLogout = async () => {
     try {
@@ -82,9 +84,9 @@ export const InvestorLayout = ({ children }: InvestorLayoutProps) => {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative flex items-center gap-2" size="sm">
                   <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-blue-100 text-blue-800">IN</AvatarFallback>
+                    <AvatarFallback className="bg-blue-100 text-blue-800">{initials}</AvatarFallback>
                   </Avatar>
-                  <span className="hidden sm:inline text-sm font-medium">Investor</span>
+                  <span className="hidden sm:inline text-sm font-medium">{displayName}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-[200px]">

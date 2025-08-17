@@ -52,7 +52,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 // Root route handler
 const RootHandler = () => {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, session } = useAuth();
   
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
@@ -62,12 +62,14 @@ const RootHandler = () => {
     return <LandingPage />;
   }
   
-  // Redirect based on user role
-  if (profile?.role === 'investor') {
+  // Prefer profile.role; fall back to auth metadata during first render
+  const role = (profile?.role || (session?.user?.user_metadata?.role as 'farmer' | 'investor' | 'admin' | undefined));
+
+  if (role === 'investor') {
     return <Navigate to="/investor" replace />;
-  } else {
-    return <Navigate to="/dashboard" replace />;
   }
+
+  return <Navigate to="/dashboard" replace />;
 };
 
 const AppRoutes = () => {
