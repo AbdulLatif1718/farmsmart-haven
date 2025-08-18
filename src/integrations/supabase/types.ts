@@ -211,6 +211,156 @@ export type Database = {
           },
         ]
       }
+      knowledge_articles: {
+        Row: {
+          author_name: string
+          category: string
+          content: string
+          created_at: string
+          featured: boolean
+          id: string
+          image_url: string | null
+          reading_time_minutes: number | null
+          status: string
+          summary: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_name: string
+          category: string
+          content: string
+          created_at?: string
+          featured?: boolean
+          id?: string
+          image_url?: string | null
+          reading_time_minutes?: number | null
+          status?: string
+          summary?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_name?: string
+          category?: string
+          content?: string
+          created_at?: string
+          featured?: boolean
+          id?: string
+          image_url?: string | null
+          reading_time_minutes?: number | null
+          status?: string
+          summary?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      machinery_rentals: {
+        Row: {
+          availability_status: string
+          contact_info: string | null
+          created_at: string
+          daily_rate: number | null
+          description: string
+          hourly_rate: number | null
+          id: string
+          image_url: string | null
+          location: string
+          machine_type: string
+          provider_name: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          availability_status?: string
+          contact_info?: string | null
+          created_at?: string
+          daily_rate?: number | null
+          description: string
+          hourly_rate?: number | null
+          id?: string
+          image_url?: string | null
+          location: string
+          machine_type: string
+          provider_name: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          availability_status?: string
+          contact_info?: string | null
+          created_at?: string
+          daily_rate?: number | null
+          description?: string
+          hourly_rate?: number | null
+          id?: string
+          image_url?: string | null
+          location?: string
+          machine_type?: string
+          provider_name?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      market_listings: {
+        Row: {
+          contact_info: string | null
+          created_at: string
+          description: string
+          harvest_date: string | null
+          id: string
+          image_url: string | null
+          location: string
+          price: number
+          product_type: string
+          quality_grade: string | null
+          quantity_available: number | null
+          seller_name: string
+          status: string
+          title: string
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          contact_info?: string | null
+          created_at?: string
+          description: string
+          harvest_date?: string | null
+          id?: string
+          image_url?: string | null
+          location: string
+          price: number
+          product_type: string
+          quality_grade?: string | null
+          quantity_available?: number | null
+          seller_name: string
+          status?: string
+          title: string
+          unit: string
+          updated_at?: string
+        }
+        Update: {
+          contact_info?: string | null
+          created_at?: string
+          description?: string
+          harvest_date?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string
+          price?: number
+          product_type?: string
+          quality_grade?: string | null
+          quantity_available?: number | null
+          seller_name?: string
+          status?: string
+          title?: string
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -250,6 +400,48 @@ export type Database = {
           role?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      transport_logistics: {
+        Row: {
+          availability_status: string
+          contact_info: string | null
+          created_at: string
+          description: string
+          id: string
+          location: string
+          price_range: string | null
+          provider_name: string
+          service_type: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          availability_status?: string
+          contact_info?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          location: string
+          price_range?: string | null
+          provider_name: string
+          service_type: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          availability_status?: string
+          contact_info?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          location?: string
+          price_range?: string | null
+          provider_name?: string
+          service_type?: string
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
