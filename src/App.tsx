@@ -13,6 +13,7 @@ import LandingPage from "./pages/LandingPage";
 import Auth from "./pages/Auth";
 import Index from "./pages/Index";
 import InvestorDashboard from "./pages/InvestorDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 import Weather from "./pages/Weather"; 
 import Crops from "./pages/Crops";
 import Marketplace from "./pages/Marketplace";
@@ -22,6 +23,9 @@ import Storage from "./pages/Storage";
 import Knowledge from "./pages/Knowledge";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+
+// Admin pages
+import FundingApplicationsPage from "./pages/admin/FundingApplications";
 
 // Investor pages
 import InvestorProjects from "./pages/investor/InvestorProjects";
@@ -69,6 +73,10 @@ const RootHandler = () => {
     return <Navigate to="/investor" replace />;
   }
 
+  if (role === 'admin') {
+    return <Navigate to="/admin" replace />;
+  }
+
   return <Navigate to="/dashboard" replace />;
 };
 
@@ -101,6 +109,10 @@ const AppRoutes = () => {
       <Route path="/investor/map" element={<ProtectedRoute><InvestorMap /></ProtectedRoute>} />
       <Route path="/investor/network" element={<ProtectedRoute><InvestorNetwork /></ProtectedRoute>} />
       <Route path="/investor/messages" element={<ProtectedRoute><InvestorMessages /></ProtectedRoute>} />
+      
+      {/* Admin Dashboard Routes */}
+      <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+      <Route path="/admin/funding-applications" element={<ProtectedRoute><FundingApplicationsPage /></ProtectedRoute>} />
       
       {/* Catch-all route */}
       <Route path="*" element={<NotFound />} />
