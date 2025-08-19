@@ -49,7 +49,14 @@ export const InvestorLayout = ({ children }: InvestorLayoutProps) => {
             
             <h1 className="text-xl font-semibold md:hidden">
               <span className="text-blue-600 dark:text-blue-500">Investor</span>
-              <span className="text-green-600 dark:text-green-500">AgriVerse</span>
+              <div className="flex items-center space-x-2">
+                <img 
+                  src="/lovable-uploads/103c04b5-8ea1-4770-a453-7641b4a4073a.png" 
+                  alt="AgriVerse Africa Logo" 
+                  className="h-6 w-6"
+                />
+                <span className="text-green-600 dark:text-green-500">AgriVerse</span>
+              </div>
             </h1>
           </div>
           
