@@ -62,15 +62,16 @@ export const InvestorSidebar = ({ open, onClose }: InvestorSidebarProps) => {
       >
         <div className="flex items-center justify-between p-4 md:pt-16">
           <Link to="/investor" className="flex items-center">
-            <span className="font-bold text-xl text-blue-600">Investor</span>
-            <div className="flex items-center space-x-2">
-              <img 
-                src="/lovable-uploads/103c04b5-8ea1-4770-a453-7641b4a4073a.png" 
-                alt="AgriVerse Africa Logo" 
-                className="h-6 w-6"
-              />
-              <span className="font-bold text-xl text-green-600">AgriVerse</span>
-            </div>
+            <img 
+              src="/lovable-uploads/bce4d552-bebc-4009-9d01-68ca934c5518.png" 
+              alt="AgriVerse Africa Logo" 
+              className="h-8 w-8 dark:hidden"
+            />
+            <img 
+              src="/lovable-uploads/103c04b5-8ea1-4770-a453-7641b4a4073a.png" 
+              alt="AgriVerse Africa Logo" 
+              className="h-8 w-8 hidden dark:block"
+            />
           </Link>
           <Button variant="ghost" size="icon" onClick={onClose} className="md:hidden">
             <X className="h-5 w-5" />

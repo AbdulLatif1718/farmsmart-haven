@@ -82,18 +82,18 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
               ? (profile?.role === 'investor' ? "/investor" : "/dashboard")
               : "/landing"
           } 
-          className="flex items-center space-x-2"
+          className="flex items-center"
         >
+          <img 
+            src="/lovable-uploads/bce4d552-bebc-4009-9d01-68ca934c5518.png" 
+            alt="AgriVerse Africa Logo" 
+            className="h-8 w-8 dark:hidden"
+          />
           <img 
             src="/lovable-uploads/103c04b5-8ea1-4770-a453-7641b4a4073a.png" 
             alt="AgriVerse Africa Logo" 
-            className="h-8 w-8"
+            className="h-8 w-8 hidden dark:block"
           />
-          <div>
-            <span className="font-bold text-xl text-leaf-600">Agri</span>
-            <span className="font-bold text-xl text-sky-600">Verse</span>
-            <span className="text-sm font-medium ml-1">Africa</span>
-          </div>
         </Link>
       </div>
       

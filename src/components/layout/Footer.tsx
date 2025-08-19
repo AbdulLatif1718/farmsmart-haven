@@ -7,17 +7,17 @@ export const Footer = () => {
     <footer className="bg-card border-t border-border py-4 px-6 mt-auto">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
         <div className="text-center md:text-left mb-4 md:mb-0">
-          <div className="flex items-center justify-center md:justify-start space-x-2">
+          <div className="flex items-center justify-center md:justify-start">
+            <img 
+              src="/lovable-uploads/bce4d552-bebc-4009-9d01-68ca934c5518.png" 
+              alt="AgriVerse Africa Logo" 
+              className="h-8 w-8 dark:hidden"
+            />
             <img 
               src="/lovable-uploads/103c04b5-8ea1-4770-a453-7641b4a4073a.png" 
               alt="AgriVerse Africa Logo" 
-              className="h-8 w-8"
+              className="h-8 w-8 hidden dark:block"
             />
-            <div>
-              <span className="font-bold text-xl text-leaf-600">Agri</span>
-              <span className="font-bold text-xl text-sky-600">Verse</span>
-              <span className="text-sm font-medium ml-1">Africa</span>
-            </div>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
             Empowering African farmers with AI and IoT

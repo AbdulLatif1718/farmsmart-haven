@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { LocationSettings } from '@/components/settings/LocationSettings';
 
 const Settings = () => {
   return (
@@ -21,11 +22,12 @@ const Settings = () => {
       </div>
       
       <Tabs defaultValue="account" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 mb-6">
+        <TabsList className="grid w-full grid-cols-5 mb-6">
           <TabsTrigger value="account">Account</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
+          <TabsTrigger value="location">Location</TabsTrigger>
           <TabsTrigger value="appearance">Appearance</TabsTrigger>
-          <TabsTrigger value="language">Language & Region</TabsTrigger>
+          <TabsTrigger value="language">Language</TabsTrigger>
         </TabsList>
         
         <TabsContent value="account">
@@ -150,6 +152,10 @@ const Settings = () => {
               <Button>Save Preferences</Button>
             </CardFooter>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="location">
+          <LocationSettings />
         </TabsContent>
         
         <TabsContent value="appearance">

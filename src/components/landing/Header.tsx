@@ -44,15 +44,15 @@ const Header = () => {
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <img 
+              src="/lovable-uploads/bce4d552-bebc-4009-9d01-68ca934c5518.png" 
+              alt="AgriVerse Africa Logo" 
+              className="h-10 w-10 dark:hidden"
+            />
+            <img 
               src="/lovable-uploads/103c04b5-8ea1-4770-a453-7641b4a4073a.png" 
               alt="AgriVerse Africa Logo" 
-              className="h-10 w-10"
+              className="h-10 w-10 hidden dark:block"
             />
-            <div>
-              <span className="font-bold text-2xl text-leaf-700">Agri</span>
-              <span className="font-bold text-2xl text-sky-600">Verse</span>
-              <span className="text-sm font-medium ml-1 text-soil-700">Africa</span>
-            </div>
           </div>
           
           {/* Desktop Menu */}

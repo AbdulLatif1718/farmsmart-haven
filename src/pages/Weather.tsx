@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { WeatherCard } from '@/components/dashboard/WeatherCard';
 import { Button } from '@/components/ui/button';
+import { useLocationSettings } from '@/hooks/useLocationSettings';
+import { useWeather } from '@/hooks/useWeather';
 import { Badge } from '@/components/ui/badge';
 import { 
   Cloud, 
@@ -22,6 +24,8 @@ import {
 } from 'lucide-react';
 
 const Weather = () => {
+  const { location } = useLocationSettings();
+  const { weather, forecast, loading } = useWeather(location?.lat, location?.lon);
   
   return (
     <MainLayout>
@@ -45,7 +49,7 @@ const Weather = () => {
         
         <TabsContent value="forecast">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <WeatherCard location="Accra Region" />
+            <WeatherCard weather={weather} isLoading={loading} />
             
             <Card>
               <CardHeader className="pb-2">

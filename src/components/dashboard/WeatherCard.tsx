@@ -3,13 +3,14 @@ import React from 'react';
 import { CloudSun, Droplets, Wind, Thermometer } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { WeatherData } from '@/services/weatherService';
 
 interface WeatherCardProps {
-  location?: string;
+  weather?: WeatherData | null;
   isLoading?: boolean;
 }
 
-export const WeatherCard = ({ location = "Accra Region", isLoading = false }: WeatherCardProps) => {
+export const WeatherCard = ({ weather, isLoading = false }: WeatherCardProps) => {
   if (isLoading) {
     return (
       <Card>
@@ -38,17 +39,25 @@ export const WeatherCard = ({ location = "Accra Region", isLoading = false }: We
       <CardHeader className="pb-2">
         <CardTitle className="text-base font-medium flex items-center">
           <CloudSun className="h-4 w-4 mr-2 text-sky-500" />
-          Weather Forecast for {location}
+          Weather Forecast for {weather?.location || "Select Location"}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex justify-between items-center">
           <div>
-            <div className="text-3xl font-bold">28°C</div>
-            <div className="text-sm text-muted-foreground">Partly Cloudy</div>
+            <div className="text-3xl font-bold">{weather?.temperature}°C</div>
+            <div className="text-sm text-muted-foreground capitalize">{weather?.description}</div>
           </div>
           <div className="h-16 w-16 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
-            <CloudSun className="h-10 w-10 text-sky-500" />
+            {weather?.icon ? (
+              <img 
+                src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`}
+                alt={weather.description}
+                className="h-12 w-12"
+              />
+            ) : (
+              <CloudSun className="h-10 w-10 text-sky-500" />
+            )}
           </div>
         </div>
         
@@ -56,34 +65,36 @@ export const WeatherCard = ({ location = "Accra Region", isLoading = false }: We
           <div className="flex flex-col items-center">
             <Droplets className="h-5 w-5 text-sky-500 mb-1" />
             <span className="text-xs text-muted-foreground">Humidity</span>
-            <span className="text-sm font-medium">65%</span>
+            <span className="text-sm font-medium">{weather?.humidity || 0}%</span>
           </div>
           <div className="flex flex-col items-center">
             <Wind className="h-5 w-5 text-sky-500 mb-1" />
             <span className="text-xs text-muted-foreground">Wind</span>
-            <span className="text-sm font-medium">12 km/h</span>
+            <span className="text-sm font-medium">{weather?.windSpeed || 0} km/h</span>
           </div>
           <div className="flex flex-col items-center">
             <Droplets className="h-5 w-5 text-sky-500 mb-1" />
             <span className="text-xs text-muted-foreground">Rain</span>
-            <span className="text-sm font-medium">30%</span>
+            <span className="text-sm font-medium">{weather?.rainChance || 0}%</span>
           </div>
         </div>
         
         <div className="mt-4">
           <div className="flex justify-between text-xs text-muted-foreground mb-1">
             <span>Soil Moisture</span>
-            <span>42%</span>
+            <span>{weather?.soilMoisture || 0}%</span>
           </div>
-          <Progress value={42} className="h-2" />
+          <Progress value={weather?.soilMoisture || 0} className="h-2" />
         </div>
         
-        <div className="mt-3 text-xs text-leaf-600 dark:text-leaf-400 font-medium">
-          <span className="inline-flex items-center">
-            <span className="h-2 w-2 rounded-full bg-yellow-500 mr-1"></span>
-            Weather alert: Light rain expected tomorrow
-          </span>
-        </div>
+        {weather?.rainChance && weather.rainChance > 50 && (
+          <div className="mt-3 text-xs text-leaf-600 dark:text-leaf-400 font-medium">
+            <span className="inline-flex items-center">
+              <span className="h-2 w-2 rounded-full bg-yellow-500 mr-1"></span>
+              Weather alert: High chance of rain
+            </span>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

@@ -47,17 +47,18 @@ export const InvestorLayout = ({ children }: InvestorLayoutProps) => {
               <span className="sr-only">Toggle sidebar</span>
             </Button>
             
-            <h1 className="text-xl font-semibold md:hidden">
-              <span className="text-blue-600 dark:text-blue-500">Investor</span>
-              <div className="flex items-center space-x-2">
-                <img 
-                  src="/lovable-uploads/103c04b5-8ea1-4770-a453-7641b4a4073a.png" 
-                  alt="AgriVerse Africa Logo" 
-                  className="h-6 w-6"
-                />
-                <span className="text-green-600 dark:text-green-500">AgriVerse</span>
-              </div>
-            </h1>
+            <div className="md:hidden">
+              <img 
+                src="/lovable-uploads/bce4d552-bebc-4009-9d01-68ca934c5518.png" 
+                alt="AgriVerse Africa Logo" 
+                className="h-8 w-8 dark:hidden"
+              />
+              <img 
+                src="/lovable-uploads/103c04b5-8ea1-4770-a453-7641b4a4073a.png" 
+                alt="AgriVerse Africa Logo" 
+                className="h-8 w-8 hidden dark:block"
+              />
+            </div>
           </div>
           
           <div className="flex items-center gap-3">
