@@ -11,12 +11,16 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { AlertCircle, DollarSign } from 'lucide-react';
 import { FundingApplicationForm } from '@/components/FundingApplicationForm';
 import { useAuth } from '@/hooks/useAuth';
+import { useLocationSettings } from '@/hooks/useLocationSettings';
+import { useWeather } from '@/hooks/useWeather';
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
   const [showWelcome, setShowWelcome] = useState(true);
   const [showFundingForm, setShowFundingForm] = useState(false);
   const { profile } = useAuth();
+  const { location } = useLocationSettings();
+  const { weather, loading: weatherLoading } = useWeather(location?.lat, location?.lon);
   
   // Simulate data loading
   useEffect(() => {
@@ -58,7 +62,7 @@ const Index = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div className="col-span-1 md:col-span-2 lg:col-span-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <WeatherCard isLoading={loading} />
+            <WeatherCard weather={weather} isLoading={loading || weatherLoading} />
             <IoTSensorsCard isLoading={loading} />
           </div>
           

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { InvestorLayout } from "@/components/layout/InvestorLayout";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,103 +21,57 @@ import {
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 
 const InvestorProjects = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
+  const [projects, setProjects] = useState<any[]>([]);
+  const [investments, setInvestments] = useState<any[]>([]);
+  const { profile } = useAuth();
 
-  const availableProjects = [
-    {
-      id: 1,
-      title: "Sustainable Maize Cultivation",
-      farmer: "Kwame Asante",
-      location: "Northern Region",
-      type: "crop",
-      fundingGoal: 15000,
-      currentFunding: 8500,
-      expectedROI: 30,
-      duration: "6 months",
-      riskLevel: "Medium",
-      description: "Large-scale maize cultivation using drought-resistant varieties and modern irrigation systems.",
-      farmSize: "10 acres",
-      experience: "8 years",
-      rating: 4.8,
-      deadline: "June 15, 2025"
-    },
-    {
-      id: 2,
-      title: "Organic Poultry Farm Expansion",
-      farmer: "Akosua Mensah",
-      location: "Ashanti Region",
-      type: "livestock",
-      fundingGoal: 12000,
-      currentFunding: 4200,
-      expectedROI: 35,
-      duration: "4 months",
-      riskLevel: "Low",
-      description: "Expansion of existing organic poultry operation with improved housing and feed systems.",
-      farmSize: "2 acres",
-      experience: "5 years",
-      rating: 4.9,
-      deadline: "May 30, 2025"
-    },
-    {
-      id: 3,
-      title: "Cocoa Plantation Modernization",
-      farmer: "Joseph Boateng",
-      location: "Western Region",
-      type: "crop",
-      fundingGoal: 25000,
-      currentFunding: 18000,
-      expectedROI: 25,
-      duration: "12 months",
-      riskLevel: "Low",
-      description: "Modernizing traditional cocoa plantation with new varieties and processing equipment.",
-      farmSize: "15 acres",
-      experience: "12 years",
-      rating: 4.7,
-      deadline: "July 1, 2025"
-    }
-  ];
+  useEffect(() => {
+    const fetchProjects = async () => {
+      const { data, error } = await supabase
+        .from('investment_opportunities')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (!error) setProjects(data || []);
+    };
+    fetchProjects();
+  }, []);
 
-  const myInvestments = [
-    {
-      id: 1,
-      title: "Rice Farming Initiative",
-      farmer: "Ibrahim Yakubu",
-      invested: 10000,
-      currentValue: 11500,
-      expectedReturn: 13000,
-      progress: 75,
-      status: "Active",
-      nextUpdate: "May 30, 2025"
-    },
-    {
-      id: 2,
-      title: "Vegetable Greenhouse Project",
-      farmer: "Mary Osei",
-      invested: 8000,
-      currentValue: 9200,
-      expectedReturn: 10400,
-      progress: 100,
-      status: "Completed",
-      actualReturn: 10800
-    }
-  ];
+  useEffect(() => {
+    const fetchInvestments = async () => {
+      if (!profile?.id) return;
+      const { data, error } = await supabase
+        .from('investments')
+        .select('*')
+        .eq('investor_id', profile.id)
+        .order('created_at', { ascending: false });
+      if (!error) setInvestments(data || []);
+    };
+    fetchInvestments();
+  }, [profile?.id]);
 
   const getRiskColor = (risk: string) => {
-    switch(risk) {
-      case 'Low': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
-      case 'Medium': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
-      case 'High': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
+    const label = (risk || '').toLowerCase();
+    switch(label) {
+      case 'low': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+      case 'medium': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
+      case 'high': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
       default: return '';
     }
   };
 
-  const filteredProjects = availableProjects.filter(project => {
-    const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         project.farmer.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterType === 'all' || project.type === filterType;
+  const filteredProjects = projects.filter((project) => {
+    const title = (project.title || '').toLowerCase();
+    const location = (project.location || '').toLowerCase();
+    const crop = (project.crop_type || '').toLowerCase();
+    const q = searchTerm.toLowerCase();
+    const matchesSearch = title.includes(q) || location.includes(q) || crop.includes(q);
+    const matchesFilter = filterType === 'all' || (filterType === 'crop');
     return matchesSearch && matchesFilter;
   });
 
@@ -179,22 +133,21 @@ const InvestorProjects = () => {
                     <div className="flex justify-between items-start">
                       <div>
                         <CardTitle className="flex items-center gap-2">
-                          {project.type === 'crop' ? <Leaf className="h-5 w-5 text-green-600" /> : <Bird className="h-5 w-5 text-blue-600" />}
+                          {project.crop_type ? <Leaf className="h-5 w-5 text-green-600" /> : <Leaf className="h-5 w-5 text-green-600" />}
                           {project.title}
                         </CardTitle>
                         <CardDescription className="flex items-center gap-4 mt-1">
                           <span className="flex items-center gap-1">
-                            <Users className="h-3 w-3" />
-                            {project.farmer}
-                          </span>
-                          <span className="flex items-center gap-1">
                             <MapPin className="h-3 w-3" />
                             {project.location}
                           </span>
+                          {project.crop_type && (
+                            <span className="text-xs">Crop: {project.crop_type}</span>
+                          )}
                         </CardDescription>
                       </div>
-                      <Badge className={getRiskColor(project.riskLevel)}>
-                        {project.riskLevel} Risk
+                      <Badge className={getRiskColor(project.risk_level)}>
+                        {(project.risk_level || 'Medium')} Risk
                       </Badge>
                     </div>
                   </CardHeader>

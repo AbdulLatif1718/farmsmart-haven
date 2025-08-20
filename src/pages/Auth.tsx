@@ -61,7 +61,13 @@ const Auth = () => {
 
         if (error) throw error;
 
-        navigate('/');
+        // Redirect admin email straight to admin dashboard
+        const adminEmail = 'tva@agriverse.africa';
+        if (email.trim().toLowerCase() === adminEmail) {
+          navigate('/admin');
+        } else {
+          navigate('/');
+        }
       }
     } catch (error: any) {
       toast({

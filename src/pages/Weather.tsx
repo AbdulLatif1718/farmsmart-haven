@@ -83,24 +83,28 @@ const Weather = () => {
           
           <h3 className="font-medium text-lg mb-4">7-Day Forecast</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
-            {[
-              { day: "Today", temp: "28°C", icon: CloudSun, description: "Partly Cloudy" },
-              { day: "Tomorrow", temp: "27°C", icon: CloudRain, description: "Light Rain" },
-              { day: "Wed", temp: "26°C", icon: CloudRain, description: "Showers" },
-              { day: "Thu", temp: "26°C", icon: CloudRain, description: "Light Rain" },
-              { day: "Fri", temp: "27°C", icon: CloudSun, description: "Partly Cloudy" },
-              { day: "Sat", temp: "29°C", icon: Sun, description: "Sunny" },
-              { day: "Sun", temp: "28°C", icon: Sun, description: "Sunny" }
-            ].map((day, index) => (
-              <Card key={index} className="overflow-hidden">
-                <CardContent className="p-3 text-center">
-                  <div className="font-medium mb-1">{day.day}</div>
-                  <day.icon className="h-8 w-8 mx-auto my-2 text-sky-500" />
-                  <div className="text-lg font-bold">{day.temp}</div>
-                  <div className="text-xs text-muted-foreground">{day.description}</div>
+            {forecast.length > 0 ? (
+              forecast.map((day, index) => (
+                <Card key={index} className="overflow-hidden">
+                  <CardContent className="p-3 text-center">
+                    <div className="font-medium mb-1">{new Date(day.date).toLocaleDateString(undefined, { weekday: 'short' })}</div>
+                    {day.icon ? (
+                      <img src={`https://openweathermap.org/img/wn/${day.icon}@2x.png`} alt={day.description} className="h-8 w-8 mx-auto my-2" />
+                    ) : (
+                      <CloudSun className="h-8 w-8 mx-auto my-2 text-sky-500" />
+                    )}
+                    <div className="text-lg font-bold">{day.temperature}°C</div>
+                    <div className="text-xs text-muted-foreground capitalize">{day.description}</div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <Card className="col-span-2 sm:col-span-3 md:col-span-4 lg:col-span-7">
+                <CardContent className="p-3 text-center text-sm text-muted-foreground">
+                  Set your location in Settings to view the forecast for your farm.
                 </CardContent>
               </Card>
-            ))}
+            )}
           </div>
         </TabsContent>
         
