@@ -207,7 +207,7 @@ const InvestorProjects = () => {
 
           <TabsContent value="investments" className="space-y-6">
             <div className="space-y-4">
-              {myInvestments.map((investment) => (
+              {investments.map((investment) => (
                 <Card key={investment.id}>
                   <CardHeader>
                     <div className="flex justify-between items-start">
