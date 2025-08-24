@@ -61,41 +61,40 @@ const Auth = () => {
 
         if (error) throw error;
 
-        // Check if this is an admin user and route accordingly
-        const adminEmails = ['tva@agriverse.africa', 'admin@agriverse.africa'];
-        if (adminEmails.includes(email.trim().toLowerCase())) {
-          // Update the user's profile to admin role if they don't have one yet
-          const { data: { user } } = await supabase.auth.getUser();
-          if (user) {
-            // Check if profile exists
-            const { data: existingProfile } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('user_id', user.id)
-              .single();
+        // Ensure profile exists for all users
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          // Create profile if missing
+          const { data: existingProfile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('user_id', user.id)
+            .maybeSingle();
 
-            if (!existingProfile) {
-              // Create admin profile
-              await supabase
-                .from('profiles')
-                .insert({
-                  user_id: user.id,
-                  email: user.email,
-                  full_name: 'TVA Admin',
-                  role: 'admin'
-                });
-            } else if (existingProfile.role !== 'admin') {
-              // Update existing profile to admin
-              await supabase
-                .from('profiles')
-                .update({ role: 'admin' })
-                .eq('user_id', user.id);
-            }
+          if (!existingProfile) {
+            await supabase
+              .from('profiles')
+              .insert({
+                user_id: user.id,
+                email: user.email,
+                full_name: (user.user_metadata?.full_name as string) || '',
+                role: (user.user_metadata?.role as 'farmer' | 'investor' | 'admin') || 'farmer'
+              });
           }
-          navigate('/admin');
-        } else {
-          navigate('/');
+
+          // Admin override by email
+          const adminEmails = ['tva@agriverse.africa', 'admin@agriverse.africa'];
+          if (adminEmails.includes((user.email || '').trim().toLowerCase())) {
+            await supabase
+              .from('profiles')
+              .update({ role: 'admin' })
+              .eq('user_id', user.id);
+            navigate('/admin');
+            return;
+          }
         }
+
+        navigate('/');
       }
     } catch (error: any) {
       toast({
