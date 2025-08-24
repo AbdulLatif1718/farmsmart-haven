@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { cleanupAuthState } from '@/utils/authCleanup';
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -34,6 +35,16 @@ const Auth = () => {
     setLoading(true);
 
     try {
+      // Clean up any existing auth state first
+      cleanupAuthState();
+      
+      // Attempt global sign out to prevent conflicts
+      try {
+        await supabase.auth.signOut({ scope: 'global' });
+      } catch (err) {
+        // Continue even if sign out fails
+        console.warn('Sign out cleanup failed:', err);
+      }
       if (isSignUp) {
         const { error } = await supabase.auth.signUp({
           email,
@@ -89,12 +100,14 @@ const Auth = () => {
               .from('profiles')
               .update({ role: 'admin' })
               .eq('user_id', user.id);
-            navigate('/admin');
+            // Use full page reload to ensure clean state
+            window.location.href = '/admin';
             return;
           }
         }
 
-        navigate('/');
+        // Use full page reload to ensure clean state
+        window.location.href = '/';
       }
     } catch (error: any) {
       toast({
