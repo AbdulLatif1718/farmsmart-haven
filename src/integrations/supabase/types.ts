@@ -14,6 +14,65 @@ export type Database = {
   }
   public: {
     Tables: {
+      farms: {
+        Row: {
+          created_at: string
+          crop_types: string[] | null
+          description: string | null
+          established_date: string | null
+          farm_image_url: string | null
+          farmer_id: string
+          id: string
+          irrigation_type: string | null
+          location: string
+          name: string
+          size_acres: number
+          soil_type: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          crop_types?: string[] | null
+          description?: string | null
+          established_date?: string | null
+          farm_image_url?: string | null
+          farmer_id: string
+          id?: string
+          irrigation_type?: string | null
+          location: string
+          name: string
+          size_acres: number
+          soil_type?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          crop_types?: string[] | null
+          description?: string | null
+          established_date?: string | null
+          farm_image_url?: string | null
+          farmer_id?: string
+          id?: string
+          irrigation_type?: string | null
+          location?: string
+          name?: string
+          size_acres?: number
+          soil_type?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "farms_farmer_id_fkey"
+            columns: ["farmer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       funding_applications: {
         Row: {
           admin_notes: string | null
