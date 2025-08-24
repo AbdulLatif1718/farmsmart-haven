@@ -16,6 +16,7 @@ import InvestorDashboard from "./pages/InvestorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Weather from "./pages/Weather"; 
 import Crops from "./pages/Crops";
+import Farm from "./pages/Farm";
 import Marketplace from "./pages/Marketplace";
 import Transport from "./pages/Transport";
 import Machinery from "./pages/Machinery";
@@ -88,10 +89,11 @@ const AppRoutes = () => {
       <Route path="/landing" element={<LandingPage />} />
       <Route path="/auth" element={<Auth />} />
       
-      {/* Protected Farmer Platform Routes */}
+      {/* Protected Platform Routes */}
       <Route path="/dashboard" element={<ProtectedRoute><Index /></ProtectedRoute>} />
       <Route path="/weather" element={<ProtectedRoute><Weather /></ProtectedRoute>} />
-      <Route path="/crops" element={<ProtectedRoute><Crops /></ProtectedRoute>} />
+      <Route path="/crops" element={<ProtectedRoute><Farm /></ProtectedRoute>} />
+      <Route path="/farm" element={<ProtectedRoute><Farm /></ProtectedRoute>} />
       <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
       <Route path="/transport" element={<ProtectedRoute><Transport /></ProtectedRoute>} />
       <Route path="/machinery" element={<ProtectedRoute><Machinery /></ProtectedRoute>} />
