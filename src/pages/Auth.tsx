@@ -61,9 +61,37 @@ const Auth = () => {
 
         if (error) throw error;
 
-        // Redirect admin email straight to admin dashboard
+        // Check if this is the admin user and route accordingly
         const adminEmail = 'tva@agriverse.africa';
-        if (email.trim().toLowerCase() === adminEmail) {
+        if (email.trim().toLowerCase() === adminEmail.toLowerCase()) {
+          // Update the user's profile to admin role if they don't have one yet
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            // Check if profile exists
+            const { data: existingProfile } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('user_id', user.id)
+              .single();
+
+            if (!existingProfile) {
+              // Create admin profile
+              await supabase
+                .from('profiles')
+                .insert({
+                  user_id: user.id,
+                  email: user.email,
+                  full_name: 'TVA Admin',
+                  role: 'admin'
+                });
+            } else if (existingProfile.role !== 'admin') {
+              // Update existing profile to admin
+              await supabase
+                .from('profiles')
+                .update({ role: 'admin' })
+                .eq('user_id', user.id);
+            }
+          }
           navigate('/admin');
         } else {
           navigate('/');
