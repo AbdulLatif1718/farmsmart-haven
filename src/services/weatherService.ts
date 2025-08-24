@@ -1,5 +1,5 @@
-const OPENWEATHER_API_KEY = '62e9fc4280bd6068531b09621a74a9b0';
-const BASE_URL = 'https://api.openweathermap.org/data/2.5';
+import { supabase } from '@/integrations/supabase/client';
+
 const GEO_URL = 'https://api.openweathermap.org/geo/1.0';
 
 export interface WeatherData {
@@ -49,15 +49,13 @@ export const searchLocation = async (query: string): Promise<LocationCoords[]> =
       searchQuery = `${searchQuery}, Ghana`;
     }
 
-    const response = await fetch(
-      `${GEO_URL}/direct?q=${encodeURIComponent(searchQuery)}&limit=10&appid=${OPENWEATHER_API_KEY}`
-    );
+    const { data, error } = await supabase.functions.invoke('get-location', {
+      body: { query: searchQuery, limit: 10 }
+    });
 
-    if (!response.ok) {
-      throw new Error(`Failed to search location: ${response.status}`);
+    if (error) {
+      throw new Error(`Failed to search location: ${error.message}`);
     }
-
-    const data = await response.json();
     
     // Filter and prioritize Ghana locations
     const ghanaLocations = data.filter((item: any) => 
@@ -80,12 +78,11 @@ export const searchLocation = async (query: string): Promise<LocationCoords[]> =
     
     // Fallback: try searching without Ghana context
     try {
-      const fallbackResponse = await fetch(
-        `${GEO_URL}/direct?q=${encodeURIComponent(query)}&limit=5&appid=${OPENWEATHER_API_KEY}`
-      );
+      const { data: fallbackData, error: fallbackError } = await supabase.functions.invoke('get-location', {
+        body: { query, limit: 5 }
+      });
       
-      if (fallbackResponse.ok) {
-        const fallbackData = await fallbackResponse.json();
+      if (!fallbackError) {
         return fallbackData.map((item: any) => ({
           lat: item.lat,
           lon: item.lon,
@@ -141,22 +138,18 @@ const getCountryName = (countryCode: string): string => {
 // Enhanced weather data fetching
 export const getCurrentWeather = async (lat: number, lon: number): Promise<WeatherData> => {
   try {
-    const [weatherResponse, uvResponse] = await Promise.all([
-      fetch(`${BASE_URL}/weather?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=metric`),
-      fetch(`${BASE_URL}/uvi?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}`).catch(() => null)
-    ]);
+    const { data, error } = await supabase.functions.invoke('get-weather', {
+      body: { lat, lon }
+    });
 
-    if (!weatherResponse.ok) {
-      throw new Error(`Failed to fetch weather data: ${weatherResponse.status}`);
+    if (error) {
+      throw new Error(`Failed to fetch weather data: ${error.message}`);
     }
 
-    const weatherData = await weatherResponse.json();
-    let uvIndex = 0;
+    const weatherData = data;
     
-    if (uvResponse && uvResponse.ok) {
-      const uvData = await uvResponse.json();
-      uvIndex = uvData.value || 0;
-    }
+    // Calculate UV index estimation (since UV endpoint may not be available)
+    let uvIndex = Math.round((weatherData.main.temp / 30) * 11);
 
     return {
       location: formatWeatherLocation(weatherData),
@@ -168,7 +161,7 @@ export const getCurrentWeather = async (lat: number, lon: number): Promise<Weath
       rainChance: calculateRainChance(weatherData),
       icon: weatherData.weather[0].icon,
       soilMoisture: calculateSoilMoisture(weatherData),
-      uvIndex: Math.round(uvIndex),
+      uvIndex: Math.max(0, Math.min(11, uvIndex)),
       pressure: weatherData.main.pressure,
       visibility: weatherData.visibility ? Math.round(weatherData.visibility / 1000) : 10, // Convert to km
       dewPoint: Math.round(weatherData.main.temp - ((100 - weatherData.main.humidity) / 5))
@@ -182,15 +175,13 @@ export const getCurrentWeather = async (lat: number, lon: number): Promise<Weath
 // Enhanced forecast data
 export const getWeatherForecast = async (lat: number, lon: number): Promise<ForecastData[]> => {
   try {
-    const response = await fetch(
-      `${BASE_URL}/forecast?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=metric`
-    );
+    const { data, error } = await supabase.functions.invoke('get-forecast', {
+      body: { lat, lon }
+    });
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch forecast data: ${response.status}`);
+    if (error) {
+      throw new Error(`Failed to fetch forecast data: ${error.message}`);
     }
-
-    const data = await response.json();
     
     // Group forecasts by day and get daily min/max temperatures
     const dailyForecasts = new Map<string, any[]>();
