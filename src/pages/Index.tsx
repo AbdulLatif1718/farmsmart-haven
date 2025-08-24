@@ -90,10 +90,10 @@ const Index = () => {
 <div className="mb-8">
   <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
     <CardHeader>
-      <CardTitle className="text-3xl font-extrabold text-primary">
+      <CardTitle className="text-3xl font-extrabold text-green-600">
         Welcome back, {profile?.full_name?.split(' ')[0] || 'Friend'}! 🌱
       </CardTitle>
-      <CardDescription className="text-muted-foreground">
+      <CardDescription className="text-muted-foreground font-bold">
         Let’s build wealth through smart farming.
       </CardDescription>
     </CardHeader>
