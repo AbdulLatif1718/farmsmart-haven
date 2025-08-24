@@ -87,24 +87,27 @@ const Index = () => {
 
   return (
     <MainLayout>
-      <div className="mb-8">
-        <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold">
-              Welcome back, {profile?.full_name?.split(' ')[0] || 'Friend'}! 👋
-            </CardTitle>
-            <CardDescription className="text-lg">
-              Ready to grow your agricultural empire today?
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">
-              Your complete agricultural ecosystem awaits. Whether you want to invest, farm, trade, or collaborate - 
-              let's make today productive and profitable together.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+<div className="mb-8">
+  <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
+    <CardHeader>
+      <CardTitle className="text-3xl font-extrabold text-primary">
+        Welcome back, {profile?.full_name?.split(' ')[0] || 'Friend'}! 🌱
+      </CardTitle>
+      <CardDescription className="text-muted-foreground">
+        Let’s build wealth through smart farming.
+      </CardDescription>
+    </CardHeader>
+    <CardContent>
+      <p className="text-muted-foreground">
+        You’re in the right place to <span className="font-semibold text-primary">grow wealth</span>, 
+        <span className="font-semibold text-green-700"> feed Africa</span>, and 
+        <span className="font-semibold text-emerald-700"> boost our economy</span>.  
+        Let’s make farming the future together. 🌍✨
+      </p>
+    </CardContent>
+  </Card>
+</div>
+
 
       <div className="mb-8">
         <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
