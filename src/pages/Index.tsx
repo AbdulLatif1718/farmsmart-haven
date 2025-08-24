@@ -34,10 +34,18 @@ const Index = () => {
       featured: true
     },
     {
+      title: "Join a Project",
+      description: "Collaborate on agricultural projects",
+      icon: Users,
+      action: () => navigate('/projects'),
+      color: "blue",
+      featured: true
+    },
+    {
       title: "Start a Farm",
       description: "Begin your agricultural journey",
       icon: Sprout,
-      action: () => navigate('/crops'),
+      action: () => navigate('/farm'),
       color: "emerald"
     },
     {
@@ -74,13 +82,6 @@ const Index = () => {
       icon: GraduationCap,
       action: () => navigate('/knowledge'),
       color: "teal"
-    },
-    {
-      title: "Track Investments",
-      description: "Monitor your agricultural portfolio",
-      icon: TrendingUp,
-      action: () => navigate('/marketplace'),
-      color: "pink"
     }
   ];
 
@@ -89,15 +90,17 @@ const Index = () => {
       <div className="mb-8">
         <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold">Welcome to AgriVerse Africa</CardTitle>
+            <CardTitle className="text-2xl font-bold">
+              Welcome back, {profile?.full_name?.split(' ')[0] || 'Friend'}! 👋
+            </CardTitle>
             <CardDescription className="text-lg">
-              Your complete agricultural ecosystem - invest, farm, trade, and grow together
+              Ready to grow your agricultural empire today?
             </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              Whether you're a farmer, investor, or agricultural enthusiast, our platform connects you 
-              to opportunities to participate in Africa's agricultural revolution and build wealth together.
+              Your complete agricultural ecosystem awaits. Whether you want to invest, farm, trade, or collaborate - 
+              let's make today productive and profitable together.
             </p>
           </CardContent>
         </Card>

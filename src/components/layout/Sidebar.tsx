@@ -11,11 +11,18 @@ import {
   PackageOpen,
   BookOpen,
   Settings,
-  X
+  X,
+  ChevronDown,
+  ChevronRight,
+  Plus,
+  BarChart3,
+  Sprout as Farm,
+  Users
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useState } from 'react';
 
 interface SidebarProps {
   open: boolean;
@@ -24,8 +31,8 @@ interface SidebarProps {
 
 const menuItems = [
   { icon: Home, label: 'Dashboard', path: '/' },
+  { icon: Users, label: 'Projects', path: '/projects' },
   { icon: Cloud, label: 'Weather Alerts', path: '/weather' },
-  { icon: Leaf, label: 'Crop Recommendations', path: '/crops' },
   { icon: ShoppingCart, label: 'Marketplace', path: '/marketplace' },
   { icon: Truck, label: 'Transport & Logistics', path: '/transport' },
   { icon: Tractor, label: 'Machinery Rentals', path: '/machinery' },
@@ -34,7 +41,15 @@ const menuItems = [
   { icon: Settings, label: 'Settings', path: '/settings' },
 ];
 
+const farmMenuItems = [
+  { icon: Farm, label: 'My Farms', path: '/farm' },
+  { icon: Plus, label: 'Add New Farm', path: '/farm/add' },
+  { icon: BarChart3, label: 'Farm Analytics', path: '/farm/analytics' },
+  { icon: Leaf, label: 'Crop Planning', path: '/farm/crops' },
+];
+
 export const Sidebar = ({ open, onClose }: SidebarProps) => {
+  const [farmSectionOpen, setFarmSectionOpen] = useState(false);
   return (
     <>
       {/* Overlay for mobile */}
@@ -79,6 +94,41 @@ export const Sidebar = ({ open, onClose }: SidebarProps) => {
                   </Link>
                 </li>
               ))}
+              
+              {/* Farm Section */}
+              <li>
+                <button
+                  onClick={() => setFarmSectionOpen(!farmSectionOpen)}
+                  className="flex items-center justify-between w-full px-4 py-3 text-sm rounded-md hover:bg-leaf-50 hover:text-leaf-700 dark:hover:bg-leaf-900/20 dark:hover:text-leaf-300 transition-colors"
+                >
+                  <div className="flex items-center">
+                    <Farm className="h-5 w-5 mr-3 text-leaf-600 dark:text-leaf-400" />
+                    <span>Farm Management</span>
+                  </div>
+                  {farmSectionOpen ? (
+                    <ChevronDown className="h-4 w-4 text-leaf-600 dark:text-leaf-400" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4 text-leaf-600 dark:text-leaf-400" />
+                  )}
+                </button>
+                
+                {farmSectionOpen && (
+                  <ul className="ml-6 mt-1 space-y-1">
+                    {farmMenuItems.map((item) => (
+                      <li key={item.path}>
+                        <Link 
+                          to={item.path}
+                          className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-leaf-50 hover:text-leaf-700 dark:hover:bg-leaf-900/20 dark:hover:text-leaf-300 transition-colors"
+                          onClick={() => onClose()}
+                        >
+                          <item.icon className="h-4 w-4 mr-3 text-leaf-500 dark:text-leaf-500" />
+                          <span className="text-muted-foreground hover:text-foreground">{item.label}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
             </ul>
           </nav>
         </ScrollArea>

@@ -17,6 +17,10 @@ import AdminDashboard from "./pages/AdminDashboard";
 import Weather from "./pages/Weather"; 
 import Crops from "./pages/Crops";
 import Farm from "./pages/Farm";
+import Projects from "./pages/Projects";
+import FarmAdd from "./pages/farm/FarmAdd";
+import FarmAnalytics from "./pages/farm/FarmAnalytics";
+import FarmCrops from "./pages/farm/FarmCrops";
 import Marketplace from "./pages/Marketplace";
 import Transport from "./pages/Transport";
 import Machinery from "./pages/Machinery";
@@ -94,6 +98,10 @@ const AppRoutes = () => {
       <Route path="/weather" element={<ProtectedRoute><Weather /></ProtectedRoute>} />
       <Route path="/crops" element={<ProtectedRoute><Farm /></ProtectedRoute>} />
       <Route path="/farm" element={<ProtectedRoute><Farm /></ProtectedRoute>} />
+      <Route path="/farm/add" element={<ProtectedRoute><FarmAdd /></ProtectedRoute>} />
+      <Route path="/farm/analytics" element={<ProtectedRoute><FarmAnalytics /></ProtectedRoute>} />
+      <Route path="/farm/crops" element={<ProtectedRoute><FarmCrops /></ProtectedRoute>} />
+      <Route path="/projects" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
       <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
       <Route path="/transport" element={<ProtectedRoute><Transport /></ProtectedRoute>} />
       <Route path="/machinery" element={<ProtectedRoute><Machinery /></ProtectedRoute>} />
