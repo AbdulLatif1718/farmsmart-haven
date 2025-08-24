@@ -43,16 +43,16 @@ const Header = () => {
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-2">
-            <img 
-              src="/lovable-uploads/bce4d552-bebc-4009-9d01-68ca934c5518.png" 
-              alt="AgriVerse Africa Logo" 
-              className="h-10 w-10 dark:hidden"
-            />
-            <img 
-              src="/lovable-uploads/103c04b5-8ea1-4770-a453-7641b4a4073a.png" 
-              alt="AgriVerse Africa Logo" 
-              className="h-10 w-10 hidden dark:block"
-            />
+<img 
+  src="/images/agriverse dark.png" 
+  alt="AgriVerse Africa Logo" 
+  className="h-12 w-12 transform scale-[2.0] dark:hidden"
+/>
+<img 
+  src="/images/agriverse light.png" 
+  alt="AgriVerse Africa Logo" 
+  className="h-12 w-12 transform scale-[2.0] hidden dark:block"
+/>
           </div>
           
           {/* Desktop Menu */}
