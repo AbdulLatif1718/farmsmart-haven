@@ -61,9 +61,9 @@ const Auth = () => {
 
         if (error) throw error;
 
-        // Check if this is the admin user and route accordingly
-        const adminEmail = 'tva@agriverse.africa';
-        if (email.trim().toLowerCase() === adminEmail.toLowerCase()) {
+        // Check if this is an admin user and route accordingly
+        const adminEmails = ['tva@agriverse.africa', 'admin@agriverse.africa'];
+        if (adminEmails.includes(email.trim().toLowerCase())) {
           // Update the user's profile to admin role if they don't have one yet
           const { data: { user } } = await supabase.auth.getUser();
           if (user) {
