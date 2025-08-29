@@ -1,10 +1,7 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Home, 
-  Cloud, 
-  Leaf, 
   ShoppingCart, 
   Truck, 
   Tractor, 
@@ -12,17 +9,13 @@ import {
   BookOpen,
   Settings,
   X,
-  ChevronDown,
-  ChevronRight,
-  Plus,
-  BarChart3,
   Sprout as Farm,
-  Users
+  Users,
+  Briefcase
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useState } from 'react';
 
 interface SidebarProps {
   open: boolean;
@@ -32,7 +25,8 @@ interface SidebarProps {
 const menuItems = [
   { icon: Home, label: 'Dashboard', path: '/' },
   { icon: Users, label: 'Projects', path: '/projects' },
-  { icon: Cloud, label: 'Weather Alerts', path: '/weather' },
+  { icon: Briefcase, label: 'Services', path: '/services' }, // New Services tab
+  { icon: Farm, label: 'Farm', path: '/farm' },
   { icon: ShoppingCart, label: 'Marketplace', path: '/marketplace' },
   { icon: Truck, label: 'Transport & Logistics', path: '/transport' },
   { icon: Tractor, label: 'Machinery Rentals', path: '/machinery' },
@@ -41,15 +35,22 @@ const menuItems = [
   { icon: Settings, label: 'Settings', path: '/settings' },
 ];
 
-const farmMenuItems = [
-  { icon: Farm, label: 'My Farms', path: '/farm' },
-  { icon: Plus, label: 'Add New Farm', path: '/farm/add' },
-  { icon: BarChart3, label: 'Farm Analytics', path: '/farm/analytics' },
-  { icon: Leaf, label: 'Crop Planning', path: '/farm/crops' },
-];
-
 export const Sidebar = ({ open, onClose }: SidebarProps) => {
-  const [farmSectionOpen, setFarmSectionOpen] = useState(false);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  // Handle online/offline status
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
   return (
     <>
       {/* Overlay for mobile */}
@@ -95,59 +96,28 @@ export const Sidebar = ({ open, onClose }: SidebarProps) => {
                 </li>
               ))}
               
-              {/* Farm Section */}
-              <li>
-                <button
-                  onClick={() => setFarmSectionOpen(!farmSectionOpen)}
-                  className="flex items-center justify-between w-full px-4 py-3 text-sm rounded-md hover:bg-leaf-50 hover:text-leaf-700 dark:hover:bg-leaf-900/20 dark:hover:text-leaf-300 transition-colors"
-                >
-                  <div className="flex items-center">
-                    <Farm className="h-5 w-5 mr-3 text-leaf-600 dark:text-leaf-400" />
-                    <span>Farm Management</span>
-                  </div>
-                  {farmSectionOpen ? (
-                    <ChevronDown className="h-4 w-4 text-leaf-600 dark:text-leaf-400" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4 text-leaf-600 dark:text-leaf-400" />
-                  )}
-                </button>
-                
-                {farmSectionOpen && (
-                  <ul className="ml-6 mt-1 space-y-1">
-                    {farmMenuItems.map((item) => (
-                      <li key={item.path}>
-                        <Link 
-                          to={item.path}
-                          className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-leaf-50 hover:text-leaf-700 dark:hover:bg-leaf-900/20 dark:hover:text-leaf-300 transition-colors"
-                          onClick={() => onClose()}
-                        >
-                          <item.icon className="h-4 w-4 mr-3 text-leaf-500 dark:text-leaf-500" />
-                          <span className="text-muted-foreground hover:text-foreground">{item.label}</span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
             </ul>
           </nav>
         </ScrollArea>
         
-        <div className="p-4">
-          <div className="bg-leaf-50 dark:bg-leaf-900/30 rounded-lg p-4 text-sm">
-            <h4 className="font-medium text-leaf-800 dark:text-leaf-200">Offline Mode</h4>
-            <p className="text-xs text-muted-foreground mt-1">
-              Last synced: Today, 10:45 AM
-            </p>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="w-full mt-3 border-leaf-200 dark:border-leaf-700 text-xs"
-            >
-              Sync when online
-            </Button>
+        {!isOnline && (
+          <div className="p-4">
+            <div className="bg-leaf-50 dark:bg-leaf-900/30 rounded-lg p-4 text-sm">
+              <h4 className="font-medium text-leaf-800 dark:text-leaf-200">Offline Mode</h4>
+              <p className="text-xs text-muted-foreground mt-1">
+                Last synced: Today, 10:45 AM
+              </p>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full mt-3 border-leaf-200 dark:border-leaf-700 text-xs"
+                disabled
+              >
+                Sync when online
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </aside>
     </>
   );

@@ -1,54 +1,55 @@
 
 import React from 'react';
-import { CloudSun, Droplets, Wind, Thermometer } from 'lucide-react';
+import { CloudSun, Droplets, Wind, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import { WeatherData } from '@/services/weatherService';
+import { cn } from '@/lib/utils';
 
 interface WeatherCardProps {
   weather?: WeatherData | null;
   isLoading?: boolean;
+  className?: string;
 }
 
-export const WeatherCard = ({ weather, isLoading = false }: WeatherCardProps) => {
+export const WeatherCard = ({ weather, isLoading = false, className }: WeatherCardProps) => {
   if (isLoading) {
     return (
-      <Card>
-        <CardHeader className="pb-2">
-          <div className="h-6 w-32 bg-muted rounded animate-pulse"></div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex justify-between">
-            <div className="space-y-2">
-              <div className="h-10 w-20 bg-muted rounded animate-pulse"></div>
-              <div className="h-4 w-24 bg-muted rounded animate-pulse"></div>
+      <Card className={cn("backdrop-blur-sm", className)}>
+        <CardContent className="p-6">
+          <div className="flex items-center gap-4">
+            <div className="space-y-2 flex-1">
+              <div className="h-8 w-24 bg-muted rounded animate-pulse"></div>
+              <div className="h-4 w-32 bg-muted rounded animate-pulse"></div>
             </div>
             <div className="h-16 w-16 bg-muted rounded-full animate-pulse"></div>
           </div>
-          <div className="mt-4 space-y-2">
-            <div className="h-4 w-full bg-muted rounded animate-pulse"></div>
-            <div className="h-4 w-3/4 bg-muted rounded animate-pulse"></div>
+          <div className="mt-4 flex justify-between gap-2">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-12 flex-1 bg-muted rounded animate-pulse"></div>
+            ))}
           </div>
         </CardContent>
       </Card>
     );
   }
   
+  const hasAlert = weather?.rainChance && weather.rainChance > 50;
+  
   return (
-    <Card className="overflow-hidden">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base font-medium flex items-center">
-          <CloudSun className="h-4 w-4 mr-2 text-sky-500" />
-          Weather Forecast for {weather?.location || "Select Location"}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex justify-between items-center">
+    <Card className={cn("backdrop-blur-sm", className)}>
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between">
           <div>
             <div className="text-3xl font-bold">{weather?.temperature}°C</div>
-            <div className="text-sm text-muted-foreground capitalize">{weather?.description}</div>
+            <div className="text-sm text-muted-foreground capitalize flex items-center gap-2">
+              <CloudSun className="h-4 w-4 text-sky-500" />
+              {weather?.description || "Loading weather data..."}
+            </div>
+            <div className="text-sm text-muted-foreground mt-1">
+              {weather?.location || "Loading location..."}
+            </div>
           </div>
-          <div className="h-16 w-16 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
+          <div className="h-16 w-16 rounded-full bg-gradient-to-br from-sky-100 to-sky-50 dark:from-sky-900/30 dark:to-sky-800/30 flex items-center justify-center shadow-inner">
             {weather?.icon ? (
               <img 
                 src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`}
@@ -61,7 +62,7 @@ export const WeatherCard = ({ weather, isLoading = false }: WeatherCardProps) =>
           </div>
         </div>
         
-        <div className="grid grid-cols-3 gap-2 mt-4">
+        <div className="grid grid-cols-3 gap-4 mt-6 bg-muted/50 rounded-lg p-3">
           <div className="flex flex-col items-center">
             <Droplets className="h-5 w-5 text-sky-500 mb-1" />
             <span className="text-xs text-muted-foreground">Humidity</span>
@@ -79,19 +80,11 @@ export const WeatherCard = ({ weather, isLoading = false }: WeatherCardProps) =>
           </div>
         </div>
         
-        <div className="mt-4">
-          <div className="flex justify-between text-xs text-muted-foreground mb-1">
-            <span>Soil Moisture</span>
-            <span>{weather?.soilMoisture || 0}%</span>
-          </div>
-          <Progress value={weather?.soilMoisture || 0} className="h-2" />
-        </div>
-        
-        {weather?.rainChance && weather.rainChance > 50 && (
-          <div className="mt-3 text-xs text-leaf-600 dark:text-leaf-400 font-medium">
-            <span className="inline-flex items-center">
-              <span className="h-2 w-2 rounded-full bg-yellow-500 mr-1"></span>
-              Weather alert: High chance of rain
+        {hasAlert && (
+          <div className="mt-4 text-sm text-yellow-600 dark:text-yellow-400 font-medium bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-3">
+            <span className="inline-flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4" />
+              High chance of rainfall expected
             </span>
           </div>
         )}

@@ -173,10 +173,10 @@ export const getCurrentWeather = async (lat: number, lon: number): Promise<Weath
 };
 
 // Enhanced forecast data
-export const getWeatherForecast = async (lat: number, lon: number): Promise<ForecastData[]> => {
+export const getWeatherForecast = async (lat: number, lon: number, monthsAhead: number = 6): Promise<ForecastData[]> => {
   try {
     const { data, error } = await supabase.functions.invoke('get-forecast', {
-      body: { lat, lon }
+      body: { lat, lon, months: monthsAhead }
     });
 
     if (error) {
@@ -199,8 +199,8 @@ export const getWeatherForecast = async (lat: number, lon: number): Promise<Fore
 
     const result: ForecastData[] = [];
     
-    // Process each day (limit to 7 days)
-    for (const [dateString, dayItems] of Array.from(dailyForecasts.entries()).slice(0, 7)) {
+    // Process all available days
+    for (const [dateString, dayItems] of Array.from(dailyForecasts.entries())) {
       const temps = dayItems.map(item => item.main.temp);
       const humidities = dayItems.map(item => item.main.humidity);
       const windSpeeds = dayItems.map(item => item.wind.speed);
@@ -333,39 +333,183 @@ export interface AgricultureInsight {
 export const getAgricultureInsights = (weather: WeatherData, forecast: ForecastData[]): AgricultureInsight[] => {
   const insights: AgricultureInsight[] = [];
   
+  // Analyze monthly patterns
+  const monthlyPatterns = analyzeMonthlyPatterns(forecast);
+  
   // Check for irrigation needs
   if (weather.rainChance < 30 && weather.humidity < 60) {
     insights.push({
       type: 'irrigation',
       priority: 'high',
-      title: 'Irrigation Recommended',
+      title: 'Irrigation Alert',
       description: `Low rain chance (${weather.rainChance}%) and humidity (${weather.humidity}%)`,
       recommendation: 'Consider irrigating crops, especially during early morning or evening hours.'
     });
   }
   
-  // Check for pest control timing
-  if (weather.humidity > 80 && weather.temperature > 25) {
+  // Predict optimal planting windows
+  const plantingWindows = findPlantingWindows(forecast);
+  if (plantingWindows.length > 0) {
     insights.push({
-      type: 'pest_control',
-      priority: 'medium',
-      title: 'Monitor for Pests',
-      description: 'High humidity and warm temperatures favor pest development',
-      recommendation: 'Increase pest monitoring and consider preventive treatments.'
+      type: 'planting',
+      priority: 'high',
+      title: 'Optimal Planting Windows Identified',
+      description: 'Favorable conditions detected in upcoming months',
+      recommendation: `Best planting periods: ${plantingWindows.join(', ')}`
     });
   }
   
-  // Check upcoming rain for planting
-  const upcomingRain = forecast.slice(0, 3).some(day => day.rainChance > 60);
-  if (upcomingRain && weather.rainChance < 40) {
+  // Long-term rainfall pattern analysis
+  const rainfallTrend = analyzeRainfallTrend(forecast);
+  if (rainfallTrend.trend !== 'normal') {
     insights.push({
       type: 'planting',
-      priority: 'medium',
-      title: 'Good Planting Window',
-      description: 'Rain expected in the coming days with current dry conditions',
-      recommendation: 'Consider planting now to take advantage of upcoming rainfall.'
+      priority: rainfallTrend.trend === 'drought' ? 'high' : 'medium',
+      title: `${rainfallTrend.trend === 'drought' ? 'Drought' : 'Heavy Rainfall'} Pattern Detected`,
+      description: rainfallTrend.description,
+      recommendation: rainfallTrend.recommendation
     });
   }
+  
+  // Pest risk assessment based on weather patterns
+  const pestRisk = assessPestRisk(weather, forecast);
+  if (pestRisk.risk > 'low') {
+    insights.push({
+      type: 'pest_control',
+      priority: pestRisk.risk === 'high' ? 'high' : 'medium',
+      title: 'Pest Risk Alert',
+      description: pestRisk.description,
+      recommendation: pestRisk.recommendation
+    });
+  }
+  
+  // Crop-specific recommendations based on weather patterns
+  const cropRecommendations = getCropRecommendations(monthlyPatterns);
+  insights.push(...cropRecommendations);
   
   return insights;
 };
+
+// Helper functions for agricultural insights
+function analyzeMonthlyPatterns(forecast: ForecastData[]) {
+  const patterns = new Map<string, any>();
+  forecast.forEach(day => {
+    const date = new Date(day.date);
+    const month = date.toLocaleString('default', { month: 'long' });
+    if (!patterns.has(month)) {
+      patterns.set(month, {
+        temps: [],
+        rain: [],
+        humidity: []
+      });
+    }
+    const monthData = patterns.get(month);
+    monthData.temps.push(day.temperature);
+    monthData.rain.push(day.rainChance);
+    monthData.humidity.push(day.humidity);
+  });
+  return patterns;
+}
+
+function findPlantingWindows(forecast: ForecastData[]): string[] {
+  const windows: string[] = [];
+  let consecutiveFavorableDays = 0;
+  let windowStart: Date | null = null;
+  
+  forecast.forEach((day, index) => {
+    const isGoodCondition = day.rainChance >= 40 && day.rainChance <= 70 &&
+                           day.temperature >= 20 && day.temperature <= 30;
+    
+    if (isGoodCondition) {
+      if (!windowStart) {
+        windowStart = new Date(day.date);
+      }
+      consecutiveFavorableDays++;
+    } else {
+      if (consecutiveFavorableDays >= 5 && windowStart) {
+        windows.push(windowStart.toLocaleString('default', { month: 'long' }));
+      }
+      consecutiveFavorableDays = 0;
+      windowStart = null;
+    }
+  });
+  
+  return [...new Set(windows)]; // Remove duplicates
+}
+
+function analyzeRainfallTrend(forecast: ForecastData[]) {
+  const avgRainChance = forecast.reduce((sum, day) => sum + day.rainChance, 0) / forecast.length;
+  
+  if (avgRainChance < 30) {
+    return {
+      trend: 'drought',
+      description: 'Extended period of low rainfall expected',
+      recommendation: 'Consider drought-resistant crops and water conservation measures'
+    };
+  } else if (avgRainChance > 70) {
+    return {
+      trend: 'heavy',
+      description: 'Above-average rainfall expected',
+      recommendation: 'Plan for proper drainage and consider crops that tolerate wet conditions'
+    };
+  }
+  
+  return { trend: 'normal', description: '', recommendation: '' };
+}
+
+function assessPestRisk(weather: WeatherData, forecast: ForecastData[]) {
+  const highHumidityDays = forecast.filter(day => day.humidity > 80).length;
+  const highTempDays = forecast.filter(day => day.temperature > 25).length;
+  const riskPercentage = (highHumidityDays + highTempDays) / (forecast.length * 2) * 100;
+  
+  if (riskPercentage > 70) {
+    return {
+      risk: 'high',
+      description: 'Prolonged conditions favorable for pest development',
+      recommendation: 'Implement preventive pest control measures and increase monitoring frequency'
+    };
+  } else if (riskPercentage > 40) {
+    return {
+      risk: 'medium',
+      description: 'Moderate risk of pest issues',
+      recommendation: 'Regular monitoring advised, prepare pest control measures'
+    };
+  }
+  
+  return { risk: 'low', description: '', recommendation: '' };
+}
+
+function getCropRecommendations(patterns: Map<string, any>): AgricultureInsight[] {
+  const insights: AgricultureInsight[] = [];
+  const months = Array.from(patterns.keys());
+  
+  months.forEach(month => {
+    const data = patterns.get(month);
+    const avgTemp = data.temps.reduce((a: number, b: number) => a + b, 0) / data.temps.length;
+    const avgRain = data.rain.reduce((a: number, b: number) => a + b, 0) / data.rain.length;
+    
+    let crops: string[] = [];
+    
+    if (avgTemp >= 20 && avgTemp <= 30 && avgRain >= 50) {
+      crops.push('maize', 'vegetables');
+    }
+    if (avgTemp >= 25 && avgRain >= 60) {
+      crops.push('rice');
+    }
+    if (avgTemp >= 20 && avgTemp <= 35 && avgRain >= 40) {
+      crops.push('cassava', 'yam');
+    }
+    
+    if (crops.length > 0) {
+      insights.push({
+        type: 'planting',
+        priority: 'medium',
+        title: `${month} Crop Recommendations`,
+        description: `Favorable conditions for: ${crops.join(', ')}`,
+        recommendation: 'Consider these crops for the upcoming planting season'
+      });
+    }
+  });
+  
+  return insights;
+}

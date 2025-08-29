@@ -1,0 +1,178 @@
+import React, { useState, useEffect } from 'react';
+import { MainLayout } from '@/components/layout/MainLayout';
+import { WeatherCard } from '@/components/dashboard/WeatherCard';
+import { CropRecommendationCard } from '@/components/dashboard/CropRecommendationCard';
+import { IoTSensorsCard } from '@/components/dashboard/IoTSensorsCard';
+import { MarketplaceCard } from '@/components/dashboard/MarketplaceCard';
+import { KnowledgeHubCard } from '@/components/dashboard/KnowledgeHubCard';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { AlertCircle, DollarSign, Home, BarChart3, Plus } from 'lucide-react';
+import { FundingApplicationForm } from '@/components/FundingApplicationForm';
+import { useAuth } from '@/hooks/useAuth';
+import { useLocationSettings } from '@/hooks/useLocationSettings';
+import { useWeather } from '@/hooks/useWeather';
+import { Link, useNavigate } from 'react-router-dom';
+
+const Farm = () => {
+  const [loading, setLoading] = useState(true);
+  const [showFundingForm, setShowFundingForm] = useState(false);
+  const { profile } = useAuth();
+  const { location } = useLocationSettings();
+  const { weather, loading: weatherLoading } = useWeather(location?.lat, location?.lon);
+  
+  // Simulate data loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
+  return (
+    <MainLayout>
+      <>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold mb-2">Farm Management</h1>
+          <p className="text-muted-foreground text-lg">
+            Manage your farms, track analytics, and optimize your operations
+          </p>
+        </div>
+
+        <Tabs defaultValue="dashboard" className="w-full">
+          <div className="overflow-x-auto mb-6">
+            <TabsList className="inline-flex w-max min-w-full">
+              <TabsTrigger value="dashboard" className="flex items-center gap-2">
+                <Home className="h-4 w-4" />
+                Dashboard
+              </TabsTrigger>
+              <TabsTrigger value="farms" className="flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                My Farms
+              </TabsTrigger>
+              <TabsTrigger value="analytics" className="flex items-center gap-2">
+                <BarChart3 className="h-4 w-4" />
+                Analytics
+              </TabsTrigger>
+            </TabsList>
+          </div>
+
+          <TabsContent value="dashboard" className="mt-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="col-span-1 md:col-span-2 lg:col-span-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <WeatherCard weather={weather} isLoading={loading || weatherLoading} />
+                  <IoTSensorsCard isLoading={loading} />
+                </div>
+                
+                <Card className="mb-6 border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20">
+                  <CardContent className="p-3 flex items-center">
+                    <AlertCircle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mr-3" />
+                    <div className="text-sm text-yellow-800 dark:text-yellow-200">
+                      Weather alert: Moderate rainfall expected over the next 3 days. Consider adjusting irrigation schedules.
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <CropRecommendationCard isLoading={loading} />
+                  <MarketplaceCard isLoading={loading} />
+                </div>
+              </div>
+              
+              <div className="col-span-1">
+                <KnowledgeHubCard isLoading={loading} />
+                
+                <Card className="mt-6">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base font-medium">Farm Actions</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {profile?.role === 'farmer' && (
+                        <Button 
+                          onClick={() => setShowFundingForm(true)}
+                          className="w-full bg-leaf-600 hover:bg-leaf-700 text-white gap-2"
+                        >
+                          <DollarSign className="h-4 w-4" />
+                          Apply for Funding
+                        </Button>
+                      )}
+                      <div className="grid grid-cols-2 gap-3">
+                        <Button 
+                          variant="outline" 
+                          className="h-auto py-3 flex flex-col"
+                          onClick={() => navigate('/farm/add')}
+                        >
+                          <span className="text-sm">Add Farm</span>
+                          <span className="text-xs text-muted-foreground mt-1">Register a new farm</span>
+                        </Button>
+                        <Button variant="outline" className="h-auto py-3 flex flex-col">
+                          <span className="text-sm">Record Harvest</span>
+                          <span className="text-xs text-muted-foreground mt-1">Log your yields</span>
+                        </Button>
+                        <Button variant="outline" className="h-auto py-3 flex flex-col">
+                          <span className="text-sm">Find Transport</span>
+                          <span className="text-xs text-muted-foreground mt-1">Book a delivery</span>
+                        </Button>
+                        <Button variant="outline" className="h-auto py-3 flex flex-col">
+                          <span className="text-sm">Rent Equipment</span>
+                          <span className="text-xs text-muted-foreground mt-1">Browse machinery</span>
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="farms" className="mt-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <Card className="col-span-full">
+                <CardHeader>
+                  <CardTitle>My Farms</CardTitle>
+                  <CardDescription>Manage and monitor your registered farms</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground mb-4">No farms registered yet</p>
+                    <Button onClick={() => navigate('/farm/add')}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Register New Farm
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="analytics" className="mt-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <Card className="col-span-full">
+                <CardHeader>
+                  <CardTitle>Farm Analytics</CardTitle>
+                  <CardDescription>Track performance and insights across all your farms</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">Register a farm to view analytics</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
+        
+        <FundingApplicationForm 
+          isOpen={showFundingForm}
+          onClose={() => setShowFundingForm(false)}
+        />
+      </>
+    </MainLayout>
+  );
+};
+
+export default Farm;
