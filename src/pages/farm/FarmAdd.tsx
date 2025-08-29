@@ -26,7 +26,9 @@ const FarmAdd = () => {
     description: '',
     soilType: '',
     waterSource: '',
-    coordinates: { lat: '', lng: '' }
+    coordinates: { lat: '', lng: '' },
+    contactPhone: '',
+    contactEmail: profile?.email || ''
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,27 +44,32 @@ const FarmAdd = () => {
 
     setLoading(true);
     try {
-      const farmData = {
-        farmer_id: profile.id,
+      const applicationData = {
+        applicant_id: profile.id,
         name: formData.name,
         location: formData.location,
         size_acres: parseFloat(formData.size) || 0,
+        size_unit: formData.sizeUnit,
+        farm_type: formData.farmType,
         description: formData.description,
         soil_type: formData.soilType,
         irrigation_type: formData.waterSource,
-        crop_types: [formData.farmType].filter(Boolean),
-        status: 'active'
+        coordinates_lat: formData.coordinates.lat,
+        coordinates_lng: formData.coordinates.lng,
+        contact_phone: formData.contactPhone,
+        contact_email: formData.contactEmail,
+        status: 'pending'
       };
 
       const { error } = await supabase
-        .from('farms')
-        .insert(farmData);
+        .from('farm_applications')
+        .insert(applicationData);
 
       if (error) throw error;
 
       toast({
-        title: "Farm Added Successfully!",
-        description: `${formData.name} has been added to your farms.`,
+        title: "Farm Application Submitted!",
+        description: `Your application for ${formData.name} has been submitted for review. You'll be contacted once it's reviewed.`,
       });
       navigate('/farm');
     } catch (error: any) {
@@ -100,18 +107,18 @@ const FarmAdd = () => {
         </div>
 
         <div>
-          <h1 className="text-3xl font-bold">Add New Farm</h1>
+          <h1 className="text-3xl font-bold">Apply to Start a Farm</h1>
           <p className="text-muted-foreground">
-            Register a new farm to start tracking your agricultural operations
+            Submit your farm application for review. Our team will contact you to discuss next steps.
           </p>
         </div>
 
         {/* Farm Registration Form */}
         <Card>
           <CardHeader>
-            <CardTitle>Farm Information</CardTitle>
+            <CardTitle>Farm Application</CardTitle>
             <CardDescription>
-              Provide basic details about your farm location and specifications
+              Provide details about your proposed farm. We'll review your application and contact you.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -260,17 +267,26 @@ const FarmAdd = () => {
                 />
               </div>
 
-              {/* Farm Photos */}
-              <div className="space-y-2">
-                <Label>Farm Photos</Label>
-                <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center">
-                  <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Drag and drop photos here, or click to select
-                  </p>
-                  <Button type="button" variant="outline" size="sm">
-                    Choose Files
-                  </Button>
+              {/* Contact Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="contactPhone">Contact Phone</Label>
+                  <Input
+                    id="contactPhone"
+                    placeholder="e.g., +233 24 123 4567"
+                    value={formData.contactPhone}
+                    onChange={(e) => handleInputChange('contactPhone', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contactEmail">Contact Email</Label>
+                  <Input
+                    id="contactEmail"
+                    type="email"
+                    placeholder="your@email.com"
+                    value={formData.contactEmail}
+                    onChange={(e) => handleInputChange('contactEmail', e.target.value)}
+                  />
                 </div>
               </div>
 
@@ -278,7 +294,7 @@ const FarmAdd = () => {
               <div className="flex gap-3 pt-4">
                 <Button type="submit" className="flex items-center gap-2" disabled={loading}>
                   <Plus className="h-4 w-4" />
-                  {loading ? 'Adding Farm...' : 'Add Farm'}
+                  {loading ? 'Submitting Application...' : 'Submit Application'}
                 </Button>
                 <Button
                   type="button"

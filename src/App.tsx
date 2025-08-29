@@ -33,6 +33,7 @@ import NotFound from "./pages/NotFound";
 
 // Admin pages
 import FundingApplicationsPage from "./pages/admin/FundingApplications";
+import AdminFarmApplications from "./pages/admin/AdminFarmApplications";
 import AdminKnowledge from "./pages/admin/AdminKnowledge";
 import AdminMarketplace from "./pages/admin/AdminMarketplace";
 import AdminMachinery from "./pages/admin/AdminMachinery";
@@ -130,6 +131,7 @@ const AppRoutes = () => {
       
       {/* Admin Dashboard Routes */}
       <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+      <Route path="/admin/farm-applications" element={<ProtectedRoute><AdminFarmApplications /></ProtectedRoute>} />
       <Route path="/admin/funding-applications" element={<ProtectedRoute><FundingApplicationsPage /></ProtectedRoute>} />
       <Route path="/admin/knowledge" element={<ProtectedRoute><AdminKnowledge /></ProtectedRoute>} />
       <Route path="/admin/marketplace" element={<ProtectedRoute><AdminMarketplace /></ProtectedRoute>} />

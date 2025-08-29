@@ -41,6 +41,75 @@ export type Database = {
         }
         Relationships: []
       }
+      farm_applications: {
+        Row: {
+          admin_notes: string | null
+          applicant_id: string
+          contact_email: string | null
+          contact_phone: string | null
+          coordinates_lat: string | null
+          coordinates_lng: string | null
+          created_at: string
+          description: string | null
+          farm_type: string
+          id: string
+          irrigation_type: string | null
+          location: string
+          name: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          size_acres: number
+          size_unit: string
+          soil_type: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          applicant_id: string
+          contact_email?: string | null
+          contact_phone?: string | null
+          coordinates_lat?: string | null
+          coordinates_lng?: string | null
+          created_at?: string
+          description?: string | null
+          farm_type: string
+          id?: string
+          irrigation_type?: string | null
+          location: string
+          name: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          size_acres: number
+          size_unit?: string
+          soil_type?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          applicant_id?: string
+          contact_email?: string | null
+          contact_phone?: string | null
+          coordinates_lat?: string | null
+          coordinates_lng?: string | null
+          created_at?: string
+          description?: string | null
+          farm_type?: string
+          id?: string
+          irrigation_type?: string | null
+          location?: string
+          name?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          size_acres?: number
+          size_unit?: string
+          soil_type?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       farms: {
         Row: {
           created_at: string

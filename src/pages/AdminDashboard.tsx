@@ -63,6 +63,13 @@ const AdminDashboard = () => {
 
   const quickActions = [
     {
+      title: 'Review Farm Applications',
+      description: 'Approve or reject farm applications',
+      icon: FileText,
+      href: '/admin/farm-applications',
+      badge: '8 pending'
+    },
+    {
       title: 'Review Funding Applications',
       description: 'Approve or reject pending applications',
       icon: FileText,
