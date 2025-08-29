@@ -24,9 +24,9 @@ import { LandMonetizationForm } from '@/components/LandMonetizationForm';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
-const StartFarmWizard = ({ isOpen, onClose }) => {
+const StartFarmWizard = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const [currentStep, setCurrentStep] = useState(0);
-  const [answers, setAnswers] = useState({
+  const [answers, setAnswers] = useState<Record<string, any>>({
     farmType: '',
     experience: '',
     involvement: '',
