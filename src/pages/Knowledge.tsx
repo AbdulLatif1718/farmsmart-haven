@@ -19,12 +19,14 @@ const Knowledge = () => {
       </div>
       
       <Tabs defaultValue="featured" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 mb-6">
+        <div className="overflow-x-auto mb-6">
+        <TabsList className="inline-flex w-max min-w-full">
           <TabsTrigger value="featured">Featured</TabsTrigger>
           <TabsTrigger value="courses">Courses</TabsTrigger>
           <TabsTrigger value="guides">Farming Guides</TabsTrigger>
           <TabsTrigger value="saved">Saved Content</TabsTrigger>
         </TabsList>
+        </div>
         
         <TabsContent value="featured">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

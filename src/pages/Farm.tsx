@@ -150,9 +150,9 @@ const Farm = () => {
       <>
         <div className="mb-6">
           <h1 className="text-3xl font-bold mb-2">Farm Management</h1>
-          <p className="text-muted-foreground text-lg">
+          {/* <p className="text-muted-foreground text-lg">
             Manage your farms, track analytics, and optimize your operations
-          </p>
+          </p> */}
         </div>
 
         <Tabs defaultValue="dashboard" className="w-full">

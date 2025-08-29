@@ -18,12 +18,14 @@ const Machinery = () => {
       </div>
       
       <Tabs defaultValue="available" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 mb-6">
+        <div className="overflow-x-auto mb-6">
+        <TabsList className="inline-flex w-max min-w-full">
           <TabsTrigger value="available">Available</TabsTrigger>
           <TabsTrigger value="upcoming">My Bookings</TabsTrigger>
           <TabsTrigger value="listing">List Equipment</TabsTrigger>
           <TabsTrigger value="history">Rental History</TabsTrigger>
         </TabsList>
+        </div>
         
         <TabsContent value="available">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -285,13 +285,15 @@ const Marketplace = () => {
       </div>
       
       <Tabs defaultValue="buying-requests" className="w-full">
-        <TabsList className="grid w-full grid-cols-5 mb-6">
+        <div className="overflow-x-auto mb-6">
+        <TabsList className="inline-flex w-max min-w-full">
           <TabsTrigger value="buying-requests">Buying Requests</TabsTrigger>
           <TabsTrigger value="products">Products for Sale</TabsTrigger>
           <TabsTrigger value="sell">List Product</TabsTrigger>
           <TabsTrigger value="orders">My Orders</TabsTrigger>
           <TabsTrigger value="listings">My Listings</TabsTrigger>
         </TabsList>
+        </div>
 
         <TabsContent value="buying-requests">
           <div className="mb-6">
