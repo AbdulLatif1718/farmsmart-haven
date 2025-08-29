@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -144,24 +144,26 @@ const AdminDashboard = () => {
           <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {quickActions.map((action) => (
-              <Card key={action.title} className="cursor-pointer hover:shadow-md transition-shadow">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-primary/10">
-                        <action.icon className="h-5 w-5 text-primary" />
+              <Link key={action.title} to={action.href}>
+                <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-primary/10">
+                          <action.icon className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <CardTitle className="text-base">{action.title}</CardTitle>
+                        </div>
                       </div>
-                      <div>
-                        <CardTitle className="text-base">{action.title}</CardTitle>
-                      </div>
+                      {action.badge && (
+                        <Badge variant="secondary">{action.badge}</Badge>
+                      )}
                     </div>
-                    {action.badge && (
-                      <Badge variant="secondary">{action.badge}</Badge>
-                    )}
-                  </div>
-                  <CardDescription>{action.description}</CardDescription>
-                </CardHeader>
-              </Card>
+                    <CardDescription>{action.description}</CardDescription>
+                  </CardHeader>
+                </Card>
+              </Link>
             ))}
           </div>
         </div>

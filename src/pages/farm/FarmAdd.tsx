@@ -9,10 +9,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { MapPin, Upload, Plus, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 
 const FarmAdd = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { profile } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     location: '',
@@ -25,14 +29,51 @@ const FarmAdd = () => {
     coordinates: { lat: '', lng: '' }
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Add farm creation logic
-    toast({
-      title: "Farm Added Successfully!",
-      description: `${formData.name} has been added to your farms.`,
-    });
-    navigate('/farm');
+    if (!profile?.id) {
+      toast({
+        title: "Error",
+        description: "Please log in to add a farm.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const farmData = {
+        farmer_id: profile.id,
+        name: formData.name,
+        location: formData.location,
+        size_acres: parseFloat(formData.size) || 0,
+        description: formData.description,
+        soil_type: formData.soilType,
+        irrigation_type: formData.waterSource,
+        crop_types: [formData.farmType].filter(Boolean),
+        status: 'active'
+      };
+
+      const { error } = await supabase
+        .from('farms')
+        .insert(farmData);
+
+      if (error) throw error;
+
+      toast({
+        title: "Farm Added Successfully!",
+        description: `${formData.name} has been added to your farms.`,
+      });
+      navigate('/farm');
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -235,9 +276,9 @@ const FarmAdd = () => {
 
               {/* Submit Buttons */}
               <div className="flex gap-3 pt-4">
-                <Button type="submit" className="flex items-center gap-2">
+                <Button type="submit" className="flex items-center gap-2" disabled={loading}>
                   <Plus className="h-4 w-4" />
-                  Add Farm
+                  {loading ? 'Adding Farm...' : 'Add Farm'}
                 </Button>
                 <Button
                   type="button"

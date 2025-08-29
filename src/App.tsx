@@ -20,6 +20,7 @@ import Farm from "./pages/Farm";
 import Services from "./pages/Services";
 import Projects from "./pages/Projects";
 import FarmAdd from "./pages/farm/FarmAdd";
+import FarmDetails from "./pages/farm/FarmDetails";
 import FarmAnalytics from "./pages/farm/FarmAnalytics";
 import FarmCrops from "./pages/farm/FarmCrops";
 import Marketplace from "./pages/Marketplace";
@@ -32,6 +33,10 @@ import NotFound from "./pages/NotFound";
 
 // Admin pages
 import FundingApplicationsPage from "./pages/admin/FundingApplications";
+import AdminKnowledge from "./pages/admin/AdminKnowledge";
+import AdminMarketplace from "./pages/admin/AdminMarketplace";
+import AdminMachinery from "./pages/admin/AdminMachinery";
+import AdminTransport from "./pages/admin/AdminTransport";
 
 // Investor pages
 import InvestorProjects from "./pages/investor/InvestorProjects";
@@ -101,6 +106,7 @@ const AppRoutes = () => {
       <Route path="/crops" element={<ProtectedRoute><Farm /></ProtectedRoute>} />
       <Route path="/farm" element={<ProtectedRoute><Farm /></ProtectedRoute>} />
       <Route path="/farm/add" element={<ProtectedRoute><FarmAdd /></ProtectedRoute>} />
+      <Route path="/farm/details/:id" element={<ProtectedRoute><FarmDetails /></ProtectedRoute>} />
       <Route path="/farm/analytics" element={<ProtectedRoute><FarmAnalytics /></ProtectedRoute>} />
       <Route path="/farm/crops" element={<ProtectedRoute><FarmCrops /></ProtectedRoute>} />
       <Route path="/projects" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
@@ -125,6 +131,10 @@ const AppRoutes = () => {
       {/* Admin Dashboard Routes */}
       <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
       <Route path="/admin/funding-applications" element={<ProtectedRoute><FundingApplicationsPage /></ProtectedRoute>} />
+      <Route path="/admin/knowledge" element={<ProtectedRoute><AdminKnowledge /></ProtectedRoute>} />
+      <Route path="/admin/marketplace" element={<ProtectedRoute><AdminMarketplace /></ProtectedRoute>} />
+      <Route path="/admin/machinery" element={<ProtectedRoute><AdminMachinery /></ProtectedRoute>} />
+      <Route path="/admin/transport" element={<ProtectedRoute><AdminTransport /></ProtectedRoute>} />
       
       {/* Catch-all route */}
       <Route path="*" element={<NotFound />} />
