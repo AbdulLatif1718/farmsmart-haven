@@ -26,7 +26,15 @@ import { useNavigate } from 'react-router-dom';
 
 const StartFarmWizard = ({ isOpen, onClose }) => {
   const [currentStep, setCurrentStep] = useState(0);
-  const [answers, setAnswers] = useState({});
+  const [answers, setAnswers] = useState({
+    farmType: '',
+    experience: '',
+    involvement: '',
+    location: '',
+    budget: '',
+    timeline: '',
+    goals: []
+  });
   const [showRecommendations, setShowRecommendations] = useState(false);
 
   const steps = [

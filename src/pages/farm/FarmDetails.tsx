@@ -141,7 +141,7 @@ const FarmDetails = () => {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <h4 className="text-sm font-medium">Irrigation System</h4>
-                    <Badge variant="success">Active</Badge>
+                    <Badge variant="default" className="bg-green-600 text-white">Active</Badge>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <Button variant="outline" className="w-full">
@@ -181,7 +181,7 @@ const FarmDetails = () => {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <h4 className="text-sm font-medium">Greenhouse Climate</h4>
-                    <Badge variant="success">Optimal</Badge>
+                    <Badge variant="default" className="bg-green-600 text-white">Optimal</Badge>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <Button variant="outline" className="w-full">
