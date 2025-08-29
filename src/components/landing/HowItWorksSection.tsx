@@ -29,7 +29,7 @@ const HowItWorksSection = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold mb-6 text-foreground">
-            How It <span className="text-primary">Works</span>
+            How It <span className="text-green-600">Works</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Three simple steps to transform African farming and create sustainable returns
@@ -44,7 +44,7 @@ const HowItWorksSection = () => {
                 <Card className="p-8 text-center h-full border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-lg group">
                   <div className="relative mb-6">
                     <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors duration-300">
-                      <Icon className="h-10 w-10 text-primary" />
+                      <Icon className="h-10 w-10 text-green-600" />
                     </div>
                     <span className="absolute -top-2 -right-2 w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold">
                       {step.step}

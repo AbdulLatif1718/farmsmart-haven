@@ -29,7 +29,7 @@ const HeroSection = () => {
               Smart Farming
             </span>
             <span className="block text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-medium opacity-90">
-              With or Without Owning Land
+              With or Without Owning Farm
             </span>
           </h1>
           
@@ -41,14 +41,14 @@ const HeroSection = () => {
             <Button 
               size="lg" 
               className="gap-3 bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg font-semibold transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl" 
-              onClick={() => document.getElementById('auth-section')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => window.location.href = '/auth'}
             >
               Get Started <ArrowRight className="h-5 w-5" />
             </Button>
             <Button 
               size="lg" 
               variant="outline"
-              className="border-2 border-white/50 text-white hover:bg-white/20 hover:text-white backdrop-blur-sm px-8 py-4 text-lg font-semibold transform hover:scale-105 transition-all duration-300"
+              className="border-2 border-white/50 bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg font-semibold transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
               onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
             >
               <Play className="h-5 w-5 mr-2" />

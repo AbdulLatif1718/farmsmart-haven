@@ -57,15 +57,15 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-wheat-100/80">
                 <MapPin className="h-4 w-4 text-leaf-400" />
-                <span>123 Innovation Way, Lagos, Nigeria</span>
+                <span>Tarkwa, Ghana</span>
               </li>
               <li className="flex items-center gap-2 text-wheat-100/80">
                 <Phone className="h-4 w-4 text-leaf-400" />
-                <span>+233 (0) 302 123 456</span>
+                <span>+233 (0) 591 507 448</span>
               </li>
               <li className="flex items-center gap-2 text-wheat-100/80">
                 <Mail className="h-4 w-4 text-leaf-400" />
-                <span>info@agriverse-africa.com</span>
+                <span>info@techverge.africa</span>
               </li>
             </ul>
             <Button 

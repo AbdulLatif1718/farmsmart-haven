@@ -42,17 +42,17 @@ const Header = () => {
     >
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-<img 
-  src="/images/agriverse dark.png" 
-  alt="AgriVerse Africa Logo" 
-  className="h-12 w-12 transform scale-[2.0] dark:hidden"
-/>
-<img 
-  src="/images/agriverse light.png" 
-  alt="AgriVerse Africa Logo" 
-  className="h-12 w-12 transform scale-[2.0] hidden dark:block"
-/>
+          <div className="flex items-center">
+            <img 
+              src="/images/agriverse dark.png" 
+              alt="AgriVerse Africa Logo" 
+              className="h-12 w-auto transform scale-150 dark:hidden"
+            />
+            <img 
+              src="/images/agriverse light.png" 
+              alt="AgriVerse Africa Logo" 
+              className="h-12 w-auto transform scale-150 hidden dark:block"
+            />
           </div>
           
           {/* Desktop Menu */}
@@ -102,7 +102,7 @@ const Header = () => {
             </Button>
             
             <Button 
-              onClick={() => scrollToSection('auth-section')}
+              onClick={() => window.location.href = '/auth'}
               className="bg-leaf-600 hover:bg-leaf-700 text-white"
             >
               Get Started
@@ -173,7 +173,7 @@ const Header = () => {
               Testimonials
             </a>
             <Button 
-              onClick={() => scrollToSection('auth-section')}
+              onClick={() => window.location.href = '/auth'}
               className="bg-leaf-600 hover:bg-leaf-700 text-white w-full mt-2"
             >
               Get Started

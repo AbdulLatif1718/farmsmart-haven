@@ -10,7 +10,7 @@ const TestimonialsSection = () => {
       name: "Kwame Asante",
       location: "Ghana",
       role: "Youth Farmer",
-      image: "https://randomuser.me/api/portraits/men/32.jpg",
+      image: "https://www.twtf.org.uk/wp-content/uploads/2024/01/dummy-image.jpg",
       quote: "AgriVerse Africa gave me funding and smart tools. My cassava farm now feeds 500 families and generates 40% more income.",
       stars: 5
     },
@@ -18,7 +18,7 @@ const TestimonialsSection = () => {
       name: "Fatima Ibrahim",
       location: "Nigeria",
       role: "Tech Investor",
-      image: "https://randomuser.me/api/portraits/women/44.jpg",
+      image: "https://ctmirror.org/wp-content/uploads/2021/01/dummy-man-570x570-1.png",
       quote: "I invested in 10 farms through AgriVerse and achieved 120% ROI while supporting local communities. Amazing impact!",
       stars: 5
     },
@@ -26,7 +26,7 @@ const TestimonialsSection = () => {
       name: "Joseph Mensah",
       location: "Kenya",
       role: "Agritech Partner",
-      image: "https://randomuser.me/api/portraits/men/62.jpg", 
+      image: "https://www.twtf.org.uk/wp-content/uploads/2024/01/dummy-image.jpg", 
       quote: "Our partnership with AgriVerse expanded our reach across 15 countries. Innovation meets impact at scale.",
       stars: 5
     }
