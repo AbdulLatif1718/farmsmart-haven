@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,13 +6,63 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ShoppingCart, Star, Map, Clock, ChevronRight, Package, TrendingUp, Eye, Edit, Trash2, Plus, Users, Building2, Globe, Store, Truck, Factory } from 'lucide-react';
+import { ShoppingCart, Star, Map, Clock, ChevronRight, Package, TrendingUp, Eye, Edit, Trash2, Plus, Users, Building2, Globe, Store, Truck, Factory, AlertCircle, Phone, MessageCircle, Zap, BarChart3 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const Marketplace = () => {
+  const { toast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedBuyerType, setSelectedBuyerType] = useState('all');
+  const [loading, setLoading] = useState(true);
+  const [marketListings, setMarketListings] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('all');
+  const [priceRange, setPriceRange] = useState({ min: '', max: '' });
+  const [showPriceAlerts, setShowPriceAlerts] = useState(true);
+  
+  // Form states for listing products
+  const [listingForm, setListingForm] = useState({
+    title: '',
+    description: '',
+    product_type: '',
+    price: '',
+    unit: 'kg',
+    quantity_available: '',
+    seller_name: '',
+    location: '',
+    contact_info: '',
+    quality_grade: '',
+    harvest_date: ''
+  });
+
+  useEffect(() => {
+    fetchMarketListings();
+  }, []);
+
+  const fetchMarketListings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('market_listings')
+        .select('*')
+        .eq('status', 'active')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setMarketListings(data || []);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to load market listings",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
   
   const buyingRequests = [
     {
@@ -274,14 +324,93 @@ const Marketplace = () => {
     }
   };
 
+  const handleSubmitListing = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const { error } = await supabase
+        .from('market_listings')
+        .insert({
+          ...listingForm,
+          price: parseFloat(listingForm.price) || 0,
+          quantity_available: parseFloat(listingForm.quantity_available) || 0,
+          harvest_date: listingForm.harvest_date || null
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Your product listing has been published!",
+      });
+      
+      setListingForm({
+        title: '',
+        description: '',
+        product_type: '',
+        price: '',
+        unit: 'kg',
+        quantity_available: '',
+        seller_name: '',
+        location: '',
+        contact_info: '',
+        quality_grade: '',
+        harvest_date: ''
+      });
+      
+      fetchMarketListings();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Filter listings based on search, category, location, and price
+  const filteredListings = marketListings.filter(listing => {
+    const matchesSearch = listing.title?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                         listing.description?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === 'all' || listing.product_type === selectedCategory;
+    const matchesLocation = selectedLocation === 'all' || listing.location?.toLowerCase().includes(selectedLocation.toLowerCase());
+    const matchesPriceMin = !priceRange.min || listing.price >= parseFloat(priceRange.min);
+    const matchesPriceMax = !priceRange.max || listing.price <= parseFloat(priceRange.max);
+    
+    return matchesSearch && matchesCategory && matchesLocation && matchesPriceMin && matchesPriceMax;
+  });
+
+  const averagePrice = filteredListings.length > 0 
+    ? (filteredListings.reduce((sum, item) => sum + item.price, 0) / filteredListings.length).toFixed(2)
+    : '0.00';
+
+  const priceAlerts = [
+    { product: 'Cocoa Beans', currentPrice: '8.50', trend: 'up', change: '+5%', recommendation: 'Good time to sell' },
+    { product: 'Maize', currentPrice: '3.20', trend: 'down', change: '-2%', recommendation: 'Consider waiting' },
+    { product: 'Cashew Nuts', currentPrice: '28.00', trend: 'up', change: '+8%', recommendation: 'Excellent prices now' }
+  ];
+
   return (
     <MainLayout>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-2">Agricultural Marketplace</h1>
+        <h1 className="text-2xl font-bold mb-2">🌾 Fair Price Marketplace</h1>
         <p className="text-muted-foreground">
-          Connect farmers with manufacturers, exporters, retailers, and international buyers. 
-          Trade directly with verified buyers ready to purchase in bulk.
+          Connect directly with verified buyers • Get fair prices • Build lasting partnerships
         </p>
+        
+        {showPriceAlerts && (
+          <Alert className="mt-4 bg-green-50 border-green-200">
+            <BarChart3 className="h-4 w-4" />
+            <AlertDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <strong>Market Insights:</strong> Average price in marketplace: <span className="text-green-600 font-semibold">GH₵ {averagePrice}/kg</span>
+                  <span className="text-sm ml-2">• {filteredListings.length} active listings</span>
+                </div>
+                <Button variant="ghost" size="sm" onClick={() => setShowPriceAlerts(false)}>✕</Button>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
       </div>
       
       <Tabs defaultValue="buying-requests" className="w-full">
@@ -400,165 +529,236 @@ const Marketplace = () => {
         </TabsContent>
         
         <TabsContent value="products">
-          <div className="mb-6">
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+          <div className="mb-6 space-y-4">
+            {/* Enhanced Search and Filters */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <Input
+                placeholder="Search products..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="md:col-span-2"
+              />
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-full sm:w-64">
-                  <SelectValue placeholder="Filter by category" />
+                <SelectTrigger>
+                  <SelectValue placeholder="Category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category.value} value={category.value}>
-                      {category.label}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="all">All Categories</SelectItem>
+                  <SelectItem value="grains">Grains</SelectItem>
+                  <SelectItem value="vegetables">Vegetables</SelectItem>
+                  <SelectItem value="fruits">Fruits</SelectItem>
+                  <SelectItem value="seeds">Seeds</SelectItem>
                 </SelectContent>
               </Select>
-              <div className="text-sm text-muted-foreground">
-                Showing {filteredProducts.length} products from farmers
+              <Input
+                placeholder="Location filter"
+                value={selectedLocation === 'all' ? '' : selectedLocation}
+                onChange={(e) => setSelectedLocation(e.target.value || 'all')}
+              />
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+              <div className="flex gap-2 items-center">
+                <Label className="text-sm">Price Range (GH₵):</Label>
+                <Input
+                  type="number"
+                  placeholder="Min"
+                  value={priceRange.min}
+                  onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
+                  className="w-20"
+                />
+                <span>-</span>
+                <Input
+                  type="number"
+                  placeholder="Max"
+                  value={priceRange.max}
+                  onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
+                  className="w-20"
+                />
               </div>
+              <div className="text-sm text-muted-foreground">
+                Showing {filteredListings.length} products • Avg: GH₵ {averagePrice}/kg
+              </div>
+            </div>
+            
+            {/* Price Alerts for Popular Products */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {priceAlerts.map((alert, index) => (
+                <Card key={index} className="bg-gradient-to-r from-blue-50 to-green-50 border-l-4 border-l-green-500">
+                  <CardContent className="p-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="font-medium text-sm">{alert.product}</div>
+                        <div className="text-lg font-bold text-green-600">GH₵ {alert.currentPrice}/kg</div>
+                      </div>
+                      <div className={`text-sm font-medium ${alert.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
+                        {alert.change}
+                      </div>
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">{alert.recommendation}</div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProducts.map((product) => (
-              <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="h-48 overflow-hidden">
-                  <img 
-                    src={product.image} 
-                    alt={product.title} 
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                  />
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1,2,3,4,5,6].map(i => (
+                <Card key={i} className="animate-pulse">
+                  <div className="h-48 bg-gray-200"></div>
+                  <CardContent className="space-y-2 p-4">
+                    <div className="h-4 bg-gray-200 rounded"></div>
+                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : filteredListings.length === 0 ? (
+            <div className="text-center py-12">
+              <Package className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+              <h3 className="text-lg font-medium mb-2">No products found</h3>
+              <p className="text-muted-foreground mb-4">Try adjusting your search criteria</p>
+              <Button>List Your Product</Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredListings.map((product) => (
+              <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow border-l-4 border-l-green-500">
+                <div className="h-48 overflow-hidden bg-gradient-to-br from-green-50 to-blue-50">
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Package className="h-16 w-16 text-green-600 opacity-50" />
+                  </div>
                 </div>
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start mb-2">
                     <CardTitle className="text-sm font-medium line-clamp-2">
                       {product.title}
                     </CardTitle>
-                    <Badge variant="secondary" className="font-bold text-green-700">
-                      {product.price}/kg
-                    </Badge>
+                    <div className="text-right">
+                      <Badge variant="secondary" className="font-bold text-green-700 mb-1">
+                        GH₵ {product.price}/{product.unit}
+                      </Badge>
+                      {product.quality_grade && (
+                        <Badge variant="outline" className="text-xs block">
+                          {product.quality_grade}
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                   <CardDescription className="text-xs line-clamp-2 mb-2">
                     {product.description}
                   </CardDescription>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="flex items-center">
-                      <Star className="h-3 w-3 text-yellow-400 fill-yellow-400 mr-1" />
-                      {product.rating} ({product.reviews})
-                    </span>
-                    <Badge variant="outline" className="text-xs">
-                      {product.certification}
-                    </Badge>
-                  </div>
                 </CardHeader>
                 <CardContent className="pb-2">
                   <div className="space-y-2 text-xs">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Seller:</span>
-                      <span className="font-medium">{product.seller}</span>
+                      <span className="font-medium">{product.seller_name}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Available:</span>
-                      <span className="font-medium">{product.stock.toLocaleString()} kg</span>
+                      <span className="font-medium text-green-600">
+                        {product.quantity_available ? `${product.quantity_available} ${product.unit}` : 'Contact seller'}
+                      </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Distance:</span>
-                      <span className="font-medium">{product.distance}</span>
+                      <span className="text-muted-foreground">Location:</span>
+                      <span className="font-medium">{product.location}</span>
                     </div>
+                    {product.harvest_date && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Harvest:</span>
+                        <span className="font-medium">{new Date(product.harvest_date).toLocaleDateString()}</span>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
                 <CardFooter className="space-x-2">
                   <Button className="flex-1" size="sm">
                     <ShoppingCart className="h-4 w-4 mr-2" />
-                    Buy Now
+                    Order Now
                   </Button>
                   <Button variant="outline" size="sm">
-                    Contact Seller
+                    <Phone className="h-4 w-4 mr-1" />
+                    Contact
+                  </Button>
+                  <Button variant="ghost" size="sm">
+                    <MessageCircle className="h-4 w-4" />
                   </Button>
                 </CardFooter>
               </Card>
             ))}
           </div>
+          )}
         </TabsContent>
         
         <TabsContent value="sell">
+          {/* Fair Price Guidance */}
+          <Alert className="mb-6 bg-blue-50 border-blue-200">
+            <Zap className="h-4 w-4" />
+            <AlertDescription>
+              <div className="space-y-2">
+                <div className="font-medium">💡 Get Fair Prices - Pricing Guidance</div>
+                <div className="text-sm grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <strong>Cocoa Beans:</strong> GH₵ 7.50 - 9.50/kg
+                    <div className="text-xs text-muted-foreground">Grade 1 fermented</div>
+                  </div>
+                  <div>
+                    <strong>Maize:</strong> GH₵ 2.80 - 4.20/kg
+                    <div className="text-xs text-muted-foreground">Dry, clean grain</div>
+                  </div>
+                  <div>
+                    <strong>Cashews:</strong> GH₵ 25.00 - 30.00/kg
+                    <div className="text-xs text-muted-foreground">Raw, export grade</div>
+                  </div>
+                </div>
+              </div>
+            </AlertDescription>
+          </Alert>
+          
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Plus className="h-5 w-5 mr-2" />
-                List Your Agricultural Product
+                List Your Product - Get Fair Prices
               </CardTitle>
               <CardDescription>
-                Sell directly to manufacturers, exporters, retailers, and international buyers
+                Connect with verified buyers who are ready to purchase your produce at fair market prices
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-6">
+              <form onSubmit={handleSubmitListing} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="title">Product Title *</Label>
                     <Input 
                       id="title" 
-                      placeholder="e.g., Premium Maize Seeds (Obatanpa Variety)"
+                      placeholder="e.g., Premium Grade 1 Cocoa Beans"
+                      value={listingForm.title}
+                      onChange={(e) => setListingForm(prev => ({...prev, title: e.target.value}))}
+                      required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="category">Category *</Label>
-                    <Select>
+                    <Label htmlFor="product_type">Product Type *</Label>
+                    <Select 
+                      value={listingForm.product_type} 
+                      onValueChange={(value) => setListingForm(prev => ({...prev, product_type: value}))}
+                    >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Select product type" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="seeds">Seeds</SelectItem>
-                        <SelectItem value="produce">Fresh Produce</SelectItem>
-                        <SelectItem value="processed">Processed Goods</SelectItem>
-                        <SelectItem value="livestock">Livestock</SelectItem>
+                        <SelectItem value="grains">Grains (Maize, Rice, Millet)</SelectItem>
+                        <SelectItem value="vegetables">Vegetables</SelectItem>
+                        <SelectItem value="fruits">Fruits</SelectItem>
+                        <SelectItem value="cash_crops">Cash Crops (Cocoa, Cashew)</SelectItem>
+                        <SelectItem value="seeds">Seeds & Seedlings</SelectItem>
+                        <SelectItem value="spices">Spices & Herbs</SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="price">Price per kg (GH₵) *</Label>
-                    <Input 
-                      id="price" 
-                      type="number" 
-                      placeholder="0.00"
-                      step="0.01"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="quantity">Total Quantity (kg) *</Label>
-                    <Input 
-                      id="quantity" 
-                      type="number" 
-                      placeholder="e.g., 5000"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="min-order">Minimum Order (kg)</Label>
-                    <Input 
-                      id="min-order" 
-                      type="number" 
-                      placeholder="e.g., 100"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Target Buyers *</Label>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {buyerTypes.slice(1).map((type) => (
-                      <div key={type.value} className="flex items-center space-x-2">
-                        <input type="checkbox" id={type.value} className="rounded" />
-                        <Label htmlFor={type.value} className="text-sm flex items-center">
-                          <type.icon className="h-4 w-4 mr-1" />
-                          {type.label}
-                        </Label>
-                      </div>
-                    ))}
                   </div>
                 </div>
 
@@ -566,50 +766,145 @@ const Marketplace = () => {
                   <Label htmlFor="description">Product Description *</Label>
                   <Textarea 
                     id="description" 
-                    placeholder="Describe quality, variety, growing conditions, certifications, etc."
-                    rows={4}
+                    placeholder="Describe your product quality, variety, growing conditions, certifications..."
+                    rows={3}
+                    value={listingForm.description}
+                    onChange={(e) => setListingForm(prev => ({...prev, description: e.target.value}))}
+                    required
                   />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="price">Price per unit (GH₵) *</Label>
+                    <Input 
+                      id="price" 
+                      type="number" 
+                      placeholder="e.g., 8.50"
+                      step="0.01"
+                      value={listingForm.price}
+                      onChange={(e) => setListingForm(prev => ({...prev, price: e.target.value}))}
+                      required
+                    />
+                    <div className="text-xs text-muted-foreground">
+                      Check market rates above for guidance
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="unit">Unit *</Label>
+                    <Select 
+                      value={listingForm.unit} 
+                      onValueChange={(value) => setListingForm(prev => ({...prev, unit: value}))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="kg">Kilograms (kg)</SelectItem>
+                        <SelectItem value="bag">Bags</SelectItem>
+                        <SelectItem value="ton">Tonnes</SelectItem>
+                        <SelectItem value="piece">Pieces</SelectItem>
+                        <SelectItem value="bunch">Bunches</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="quantity">Available Quantity *</Label>
+                    <Input 
+                      id="quantity" 
+                      type="number" 
+                      placeholder="e.g., 5000"
+                      value={listingForm.quantity_available}
+                      onChange={(e) => setListingForm(prev => ({...prev, quantity_available: e.target.value}))}
+                      required
+                    />
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="location">Farm Location *</Label>
+                    <Label htmlFor="seller_name">Your Name/Farm Name *</Label>
                     <Input 
-                      id="location" 
-                      placeholder="e.g., Tarkwa, Western Region"
+                      id="seller_name" 
+                      placeholder="e.g., Kwame Asante Farms"
+                      value={listingForm.seller_name}
+                      onChange={(e) => setListingForm(prev => ({...prev, seller_name: e.target.value}))}
+                      required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="harvest-date">Harvest/Availability Date *</Label>
+                    <Label htmlFor="location">Farm Location *</Label>
                     <Input 
-                      id="harvest-date" 
+                      id="location" 
+                      placeholder="e.g., Kumasi, Ashanti Region"
+                      value={listingForm.location}
+                      onChange={(e) => setListingForm(prev => ({...prev, location: e.target.value}))}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="contact_info">Contact Information *</Label>
+                    <Input 
+                      id="contact_info" 
+                      placeholder="Phone number or WhatsApp"
+                      value={listingForm.contact_info}
+                      onChange={(e) => setListingForm(prev => ({...prev, contact_info: e.target.value}))}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="harvest_date">Harvest/Availability Date</Label>
+                    <Input 
+                      id="harvest_date" 
                       type="date"
+                      value={listingForm.harvest_date}
+                      onChange={(e) => setListingForm(prev => ({...prev, harvest_date: e.target.value}))}
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="certifications">Certifications</Label>
-                  <Select>
+                  <Label htmlFor="quality_grade">Quality Grade (Optional)</Label>
+                  <Select 
+                    value={listingForm.quality_grade} 
+                    onValueChange={(value) => setListingForm(prev => ({...prev, quality_grade: value}))}
+                  >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select applicable certifications" />
+                      <SelectValue placeholder="Select quality grade" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="premium">Premium Grade</SelectItem>
+                      <SelectItem value="grade-a">Grade A</SelectItem>
+                      <SelectItem value="grade-b">Grade B</SelectItem>
+                      <SelectItem value="export">Export Quality</SelectItem>
                       <SelectItem value="organic">Organic Certified</SelectItem>
-                      <SelectItem value="fair-trade">Fair Trade</SelectItem>
-                      <SelectItem value="gsa">GSA Certified</SelectItem>
-                      <SelectItem value="cocobod">COCOBOD Certified</SelectItem>
-                      <SelectItem value="pprsd">PPRSD Certified</SelectItem>
-                      <SelectItem value="export">Export Grade</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
-                <div className="flex justify-end space-x-4">
-                  <Button variant="outline">Save as Draft</Button>
-                  <Button type="submit">Publish Listing</Button>
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <div className="flex items-start">
+                    <Zap className="h-5 w-5 text-green-600 mt-1 mr-3" />
+                    <div>
+                      <h3 className="font-medium text-green-900 mb-1">Fair Trade Tips</h3>
+                      <ul className="text-sm text-green-800 space-y-1">
+                        <li>• Research current market prices before setting your price</li>
+                        <li>• Highlight quality certifications and growing practices</li>
+                        <li>• Provide accurate quantity and availability information</li>
+                        <li>• Respond quickly to buyer inquiries to build trust</li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
-              </div>
+
+                <div className="flex justify-end space-x-4">
+                  <Button type="button" variant="outline">Save as Draft</Button>
+                  <Button type="submit">🚀 Publish & Find Buyers</Button>
+                </div>
+              </form>
             </CardContent>
           </Card>
         </TabsContent>
