@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { AlertCircle, DollarSign, Home, BarChart3, Plus, TrendingUp, Sprout } from 'lucide-react';
 import { FundingApplicationForm } from '@/components/FundingApplicationForm';
+import { AIAssistantDemo } from '@/components/demo/AIAssistantDemo';
 import { useAuth } from '@/hooks/useAuth';
 import { useLocationSettings } from '@/hooks/useLocationSettings';
 import { useWeather } from '@/hooks/useWeather';
@@ -175,6 +176,11 @@ const Farm = () => {
 
           <TabsContent value="dashboard" className="mt-0">
             <div className="grid grid-cols-1 gap-6">
+              {/* AI Assistant Demo */}
+              <div className="w-full max-w-[400px]">
+                <AIAssistantDemo />
+              </div>
+              
               <div className="w-full max-w-[1200px] mx-auto">
                 <FarmGPT />
               </div>

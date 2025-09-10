@@ -43,6 +43,12 @@
     --sidebar-accent-foreground: 60 20% 98%;
     --sidebar-border: 120 30% 30%;
     --sidebar-ring: 48 60% 55%;
+
+    /* AI Assistant Colors */
+    --ai-primary: 200 100% 60%; /* Electric blue */
+    --ai-secondary: 180 100% 65%; /* Neon cyan */
+    --ai-background: 220 15% 12%; /* Dark blue-gray */
+    --ai-glow: 200 100% 70%; /* Bright glow */
   }
 
   .dark {
@@ -82,6 +88,12 @@
     --sidebar-accent-foreground: 60 20% 98%;
     --sidebar-border: 120 10% 30%;
     --sidebar-ring: 135 50% 25%;
+
+    /* AI Assistant Colors - Dark Mode */
+    --ai-primary: 200 100% 70%; /* Brighter electric blue */
+    --ai-secondary: 180 100% 75%; /* Brighter neon cyan */
+    --ai-background: 220 25% 8%; /* Darker blue-gray */
+    --ai-glow: 200 100% 80%; /* Brighter glow */
   }
 }
 
