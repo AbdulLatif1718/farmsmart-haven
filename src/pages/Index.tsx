@@ -362,6 +362,7 @@ const StartFarmWizard = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
 const Index = () => {
   const [showFundingForm, setShowFundingForm] = useState(false);
   const [showLandMonetizationForm, setShowLandMonetizationForm] = useState(false);
+  const [showWizard, setShowWizard] = useState(false);
   const { profile } = useAuth();
   const navigate = useNavigate();
 
@@ -420,144 +421,175 @@ const Index = () => {
       color: "purple"
     },
     {
-      title: "Get a Farmer",
-      description: "Hire experienced farmers for your land",
-      icon: Users,
-      action: () => navigate('/services?tab=experts'),
+      title: "Learn & Grow",
+      description: "Access farming knowledge and best practices",
+      icon: GraduationCap,
+      action: () => navigate('/knowledge'),
       color: "indigo"
     },
     {
-      title: "Find an Expert",
-      description: "Connect with agricultural consultants",
-      icon: GraduationCap,
-      action: () => navigate('/services?tab=experts'),
-      color: "teal"
+      title: "Rent Equipment",
+      description: "Access modern farming machinery",
+      icon: Settings,
+      action: () => navigate('/machinery'),
+      color: "gray"
     }
   ];
 
   return (
     <MainLayout>
-      <div className="mb-8">
-        <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
-          <CardHeader>
-            <CardTitle className="text-3xl font-extrabold text-green-600">
-              Welcome back, {profile?.full_name?.split(' ')[0] || 'Friend'}! 🌱
-            </CardTitle>
-            <CardDescription className="text-muted-foreground font-bold">
-              Let's build wealth through smart farming.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">
-              You're in the right place to <span className="font-semibold text-primary">grow wealth</span>, 
-              <span className="font-semibold text-green-700"> feed Africa</span>, and 
-              <span className="font-semibold text-emerald-700"> boost our economy</span>.  
-              Let's make farming the future together. 🌍✨
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-          <MapPin className="h-5 w-5" />
-          Quick Actions
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {quickActions.map((action, index) => (
-            <Card 
-              key={index}
-              className={`cursor-pointer transition-all duration-200 hover:shadow-lg ${
-                action.featured ? 'ring-2 ring-primary/20 bg-primary/5' : ''
-              }`}
-              onClick={action.action}
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6">
+        {/* Compact Welcome Section */}
+        <div className="mb-4 md:mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+            <div>
+              <h1 className="text-xl md:text-2xl font-bold text-foreground">
+                Welcome back, {profile?.full_name || 'Farmer'}! 👨‍🌾
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                Ready to grow your agricultural business?
+              </p>
+            </div>
+            <Button 
+              onClick={() => setShowWizard(true)}
+              className="bg-leaf-600 hover:bg-leaf-700 w-full sm:w-auto"
             >
-              <CardContent className="p-6">
-                <div className="flex items-start space-x-4">
-                  <div className={`p-3 rounded-lg bg-${action.color}-100 dark:bg-${action.color}-900/30`}>
-                    <action.icon className={`h-6 w-6 text-${action.color}-600 dark:text-${action.color}-400`} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-sm mb-1">{action.title}</h3>
+              <Sprout className="h-4 w-4 mr-2" />
+              Start Farming
+            </Button>
+          </div>
+
+          {/* Quick Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+            <Card className="p-3">
+              <div className="text-center">
+                <div className="text-lg font-bold text-leaf-600">12</div>
+                <div className="text-xs text-muted-foreground">Active Farms</div>
+              </div>
+            </Card>
+            <Card className="p-3">
+              <div className="text-center">
+                <div className="text-lg font-bold text-orange-600">₵45K</div>
+                <div className="text-xs text-muted-foreground">Monthly Revenue</div>
+              </div>
+            </Card>
+            <Card className="p-3">
+              <div className="text-center">
+                <div className="text-lg font-bold text-blue-600">8</div>
+                <div className="text-xs text-muted-foreground">Projects</div>
+              </div>
+            </Card>
+            <Card className="p-3">
+              <div className="text-center">
+                <div className="text-lg font-bold text-green-600">95%</div>
+                <div className="text-xs text-muted-foreground">Success Rate</div>
+              </div>
+            </Card>
+          </div>
+        </div>
+
+        {/* Quick Actions - Mobile Optimized */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-3">Quick Actions</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {quickActions.filter(action => action.featured).map((action, index) => {
+              const IconComponent = action.icon;
+              return (
+                <Card 
+                  key={index}
+                  className="cursor-pointer hover:shadow-md transition-all duration-200 hover:scale-[1.02] group"
+                  onClick={action.action}
+                >
+                  <CardContent className="p-3 text-center">
+                    <div className={`mx-auto mb-2 w-10 h-10 rounded-full flex items-center justify-center bg-${action.color}-100 text-${action.color}-600 group-hover:bg-${action.color}-600 group-hover:text-white transition-colors`}>
+                      <IconComponent className="h-5 w-5" />
+                    </div>
+                    <h3 className="text-sm font-medium mb-1">{action.title}</h3>
                     <p className="text-xs text-muted-foreground line-clamp-2">{action.description}</p>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* More Services - Compact */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-3">More Services</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {quickActions.filter(action => !action.featured).map((action, index) => {
+              const IconComponent = action.icon;
+              return (
+                <Card 
+                  key={index}
+                  className="cursor-pointer hover:shadow-md transition-all duration-200 group"
+                  onClick={action.action}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center bg-${action.color}-100 text-${action.color}-600 group-hover:bg-${action.color}-600 group-hover:text-white transition-colors`}>
+                        <IconComponent className="h-4 w-4" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-medium">{action.title}</h3>
+                        <p className="text-xs text-muted-foreground line-clamp-1">{action.description}</p>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Today's Opportunities */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-3">Today's Opportunities</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800">
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center">
+                    <DollarSign className="h-5 w-5 text-white" />
                   </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-green-800 dark:text-green-200">New Funding Available</h3>
+                    <p className="text-sm text-green-600 dark:text-green-300">₵2M in agricultural grants now open</p>
+                  </div>
+                  <Button size="sm" variant="outline" className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white">
+                    Apply
+                  </Button>
                 </div>
               </CardContent>
             </Card>
-          ))}
+
+            <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800">
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center">
+                    <Users className="h-5 w-5 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-blue-800 dark:text-blue-200">Join Coop Project</h3>
+                    <p className="text-sm text-blue-600 dark:text-blue-300">5 farmers needed for organic farming</p>
+                  </div>
+                  <Button size="sm" variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
+                    Join
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">For Farmers</CardTitle>
-            <CardDescription>Tools and resources to optimize your farming</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button variant="outline" className="w-full justify-start" onClick={() => navigate('/crops')}>
-              <Sprout className="h-4 w-4 mr-2" />
-              Manage Your Farm
-            </Button>
-            <Button variant="outline" className="w-full justify-start" onClick={() => navigate('/machinery')}>
-              <Settings className="h-4 w-4 mr-2" />
-              Rent Equipment
-            </Button>
-            <Button variant="outline" className="w-full justify-start" onClick={() => navigate('/knowledge')}>
-              <GraduationCap className="h-4 w-4 mr-2" />
-              Learn Best Practices
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">For Investors</CardTitle>
-            <CardDescription>Discover profitable agricultural opportunities</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button variant="outline" className="w-full justify-start" onClick={() => navigate('/services?tab=farms')}>
-              <TrendingUp className="h-4 w-4 mr-2" />
-              Browse Investments
-            </Button>
-            <Button variant="outline" className="w-full justify-start" onClick={() => navigate('/services?tab=land')}>
-              <MapPin className="h-4 w-4 mr-2" />
-              Find Land
-            </Button>
-            <Button variant="outline" className="w-full justify-start" onClick={() => navigate('/services?tab=experts')}>
-              <Users className="h-4 w-4 mr-2" />
-              Connect with Farmers
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">For Everyone</CardTitle>
-            <CardDescription>Join the agricultural community</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button variant="outline" className="w-full justify-start" onClick={() => navigate('/marketplace')}>
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              Shop Fresh Produce
-            </Button>
-            <Button variant="outline" className="w-full justify-start" onClick={() => navigate('/transport')}>
-              <Truck className="h-4 w-4 mr-2" />
-              Logistics Services
-            </Button>
-            <Button variant="outline" className="w-full justify-start" onClick={() => navigate('/knowledge')}>
-              <GraduationCap className="h-4 w-4 mr-2" />
-              Agricultural Knowledge
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-      
+      {/* Modals */}
+      <StartFarmWizard isOpen={showWizard} onClose={() => setShowWizard(false)} />
       <FundingApplicationForm 
         isOpen={showFundingForm}
         onClose={() => setShowFundingForm(false)}
       />
-      
       <LandMonetizationForm 
         isOpen={showLandMonetizationForm}
         onClose={() => setShowLandMonetizationForm(false)}

@@ -31,6 +31,18 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
     setIsDragging(true);
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!assistantRef.current || e.touches.length !== 1) return;
+    
+    const rect = assistantRef.current.getBoundingClientRect();
+    const touch = e.touches[0];
+    setDragOffset({
+      x: touch.clientX - rect.left,
+      y: touch.clientY - rect.top
+    });
+    setIsDragging(true);
+  };
+
   const handleMouseMove = (e: MouseEvent) => {
     if (!isDragging) return;
     
@@ -47,7 +59,29 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
     });
   };
 
+  const handleTouchMove = (e: TouchEvent) => {
+    if (!isDragging || e.touches.length !== 1) return;
+    
+    e.preventDefault();
+    const touch = e.touches[0];
+    const newX = touch.clientX - dragOffset.x;
+    const newY = touch.clientY - dragOffset.y;
+    
+    // Keep within viewport bounds
+    const maxX = window.innerWidth - 120;
+    const maxY = window.innerHeight - 120;
+    
+    setPosition({
+      x: Math.max(0, Math.min(newX, maxX)),
+      y: Math.max(0, Math.min(newY, maxY))
+    });
+  };
+
   const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleTouchEnd = () => {
     setIsDragging(false);
   };
 
@@ -55,10 +89,14 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+      document.addEventListener('touchend', handleTouchEnd);
       
       return () => {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener('touchmove', handleTouchMove);
+        document.removeEventListener('touchend', handleTouchEnd);
       };
     }
   }, [isDragging, dragOffset]);
@@ -77,6 +115,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
         filter: 'drop-shadow(0 10px 25px rgba(0, 0, 0, 0.3))'
       }}
       onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
     >
       {/* Outer Glow Ring */}
       <div

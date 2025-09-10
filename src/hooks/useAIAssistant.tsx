@@ -11,7 +11,7 @@ interface AIAssistantContextType {
 const AIAssistantContext = createContext<AIAssistantContextType | undefined>(undefined);
 
 export const AIAssistantProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const [isListening, setIsListening] = useState(false);
 
   const toggleVisibility = () => {
