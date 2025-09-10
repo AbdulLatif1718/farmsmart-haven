@@ -2,12 +2,15 @@
 import React, { ReactNode, useEffect } from 'react';
 import Header from './Header';
 import Footer from './Footer';
+import { AIAssistant } from '@/components/ui/ai-assistant';
+import { useAIAssistant } from '@/hooks/useAIAssistant';
 
 interface LandingLayoutProps {
   children: ReactNode;
 }
 
 const LandingLayout = ({ children }: LandingLayoutProps) => {
+  const { isVisible, isListening, toggleListening, hideAssistant } = useAIAssistant();
   useEffect(() => {
     if (window.location.hash) {
       const id = window.location.hash.substring(1);
@@ -27,6 +30,15 @@ const LandingLayout = ({ children }: LandingLayoutProps) => {
         {children}
       </main>
       <Footer />
+      
+      {/* Global AI Assistant */}
+      {isVisible && (
+        <AIAssistant
+          isListening={isListening}
+          onToggleListening={toggleListening}
+          onClose={hideAssistant}
+        />
+      )}
     </div>
   );
 };

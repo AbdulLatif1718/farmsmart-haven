@@ -1,13 +1,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Sun, Moon } from 'lucide-react';
+import { Menu, X, Sun, Moon, Bot } from 'lucide-react';
 import { getCurrentTheme, toggleTheme } from '@/utils/themeUtils';
+import { useAIAssistant } from '@/hooks/useAIAssistant';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light'>(getCurrentTheme);
+  const { toggleVisibility, isVisible } = useAIAssistant();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -101,6 +103,17 @@ const Header = () => {
               <span className="sr-only">Toggle theme</span>
             </Button>
             
+            {/* AI Assistant Toggle - Desktop */}
+            <Button
+              variant={isVisible ? "default" : "ghost"}
+              size="icon"
+              onClick={toggleVisibility}
+              className="hover:bg-leaf-100 hover:text-leaf-700"
+            >
+              <Bot className="h-5 w-5" />
+              <span className="sr-only">Toggle AI Assistant</span>
+            </Button>
+            
             <Button 
               onClick={() => window.location.href = '/auth'}
               className="bg-leaf-600 hover:bg-leaf-700 text-white"
@@ -123,6 +136,17 @@ const Header = () => {
                 <Moon className="h-5 w-5" />
               )}
               <span className="sr-only">Toggle theme</span>
+            </Button>
+            
+            {/* AI Assistant Toggle - Mobile */}
+            <Button
+              variant={isVisible ? "default" : "ghost"}
+              size="icon"
+              onClick={toggleVisibility}
+              className="hover:bg-leaf-100 hover:text-leaf-700"
+            >
+              <Bot className="h-5 w-5" />
+              <span className="sr-only">Toggle AI Assistant</span>
             </Button>
             
             {/* Mobile menu button */}

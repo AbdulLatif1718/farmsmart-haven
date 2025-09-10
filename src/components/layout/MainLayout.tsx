@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { NavBar } from './NavBar';
 import { Sidebar } from './Sidebar';
 import { Footer } from './Footer';
+import { AIAssistant } from '@/components/ui/ai-assistant';
+import { useAIAssistant } from '@/hooks/useAIAssistant';
 import { cn } from '@/lib/utils';
 
 interface MainLayoutProps {
@@ -11,6 +13,7 @@ interface MainLayoutProps {
 
 export const MainLayout = ({ children }: MainLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { isVisible, isListening, toggleListening, hideAssistant } = useAIAssistant();
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   // Handle online/offline status
@@ -51,6 +54,15 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
       </div>
       
       <Footer />
+      
+      {/* Global AI Assistant */}
+      {isVisible && (
+        <AIAssistant
+          isListening={isListening}
+          onToggleListening={toggleListening}
+          onClose={hideAssistant}
+        />
+      )}
     </div>
   );
 };

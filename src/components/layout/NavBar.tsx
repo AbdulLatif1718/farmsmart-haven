@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, Sun, Moon, Bell, LogOut } from "lucide-react";
+import { Menu, Sun, Moon, Bell, LogOut, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
+import { useAIAssistant } from "@/hooks/useAIAssistant";
 
 interface NavBarProps {
   onMenuToggle: () => void;
@@ -18,6 +19,7 @@ interface NavBarProps {
 
 export const NavBar = ({ onMenuToggle }: NavBarProps) => {
   const { user, profile, signOut } = useAuth();
+  const { toggleVisibility, isVisible } = useAIAssistant();
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem("theme") || "light";
   });
@@ -121,6 +123,16 @@ export const NavBar = ({ onMenuToggle }: NavBarProps) => {
             <Sun className="h-5 w-5" />
           )}
           <span className="sr-only">Toggle theme</span>
+        </Button>
+
+        <Button
+          variant={isVisible ? "default" : "ghost"}
+          size="icon"
+          onClick={toggleVisibility}
+          className="text-muted-foreground hover:text-foreground"
+        >
+          <Bot className="h-5 w-5" />
+          <span className="sr-only">Toggle AI Assistant</span>
         </Button>
 
         <DropdownMenu>
