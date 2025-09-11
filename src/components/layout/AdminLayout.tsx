@@ -28,22 +28,18 @@ interface AdminLayoutProps {
 }
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
+  const { signOut } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const navigate = useNavigate();
-  const { signOut, profile } = useAuth();
   const { theme, setTheme } = useTheme();
+  const navigate = useNavigate();
+  
+  const displayName = 'Admin User';
+  const initials = 'AU';
 
-  const displayName = profile?.full_name || 'Admin';
-  const initials = profile?.full_name ? profile.full_name.split(' ').map(n => n[0]).join('').toUpperCase() : 'AD';
-
-  const handleLogout = async () => {
-    try {
-      await signOut();
-      navigate('/');
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
+  const handleLogout = () => {
+    signOut();
+    navigate('/admin/login');
   };
 
   return (
