@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,12 +9,38 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Plus, Truck, Edit, Trash } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+
+// Mock transport data
+const mockTransports = [
+  {
+    id: '1',
+    title: 'Produce Transportation Service',
+    description: 'Reliable transport service for fresh produce with refrigerated trucks. Covers Accra to Kumasi route with scheduled deliveries.',
+    service_type: 'cold-storage',
+    provider_name: 'Ghana Fresh Transport Ltd',
+    location: 'Accra to Kumasi Corridor',
+    contact_info: '+233244123456',
+    price_range: 'GHS 150-400 per trip',
+    availability_status: 'available',
+    created_at: '2024-11-25T09:00:00Z'
+  },
+  {
+    id: '2',
+    title: 'Bulk Grain Transport',
+    description: 'Specialized in transporting bulk grains and cereals. Large capacity trucks available for major harvest seasons.',
+    service_type: 'bulk-transport',
+    provider_name: 'Northern Logistics Co-op',
+    location: 'Northern Region Coverage',
+    contact_info: '+233201987654',
+    price_range: 'GHS 200-600 per load',
+    availability_status: 'busy',
+    created_at: '2024-11-20T15:30:00Z'
+  }
+];
 
 const AdminTransport = () => {
   const { toast } = useToast();
-  const [transports, setTransports] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [transports, setTransports] = useState<any[]>(mockTransports);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -27,38 +53,16 @@ const AdminTransport = () => {
     availability_status: 'available'
   });
 
-  useEffect(() => {
-    fetchTransports();
-  }, []);
-
-  const fetchTransports = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('transport_logistics')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setTransports(data || []);
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { error } = await supabase
-        .from('transport_logistics')
-        .insert(formData);
+      const newTransport = {
+        id: String(Date.now()),
+        ...formData,
+        created_at: new Date().toISOString()
+      };
 
-      if (error) throw error;
+      setTransports(prev => [newTransport, ...prev]);
 
       toast({
         title: "Success",
@@ -76,11 +80,10 @@ const AdminTransport = () => {
         price_range: '',
         availability_status: 'available'
       });
-      fetchTransports();
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message,
+        description: "Failed to create transport service",
         variant: "destructive",
       });
     }
@@ -222,11 +225,7 @@ const AdminTransport = () => {
             <CardDescription>Manage existing transport and logistics providers</CardDescription>
           </CardHeader>
           <CardContent>
-            {loading ? (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">Loading services...</p>
-              </div>
-            ) : transports.length === 0 ? (
+            {transports.length === 0 ? (
               <div className="text-center py-8">
                 <Truck className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                 <p className="text-muted-foreground mb-4">No transport services yet</p>

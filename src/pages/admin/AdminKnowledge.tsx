@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,62 +7,62 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Search, Edit, Trash, BookOpen } from 'lucide-react';
+import { Plus, Edit, Trash, BookOpen } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/hooks/useAuth';
+
+// Mock articles data
+const mockArticles = [
+  {
+    id: '1',
+    title: 'Sustainable Farming Practices in Ghana',
+    content: 'Comprehensive guide to sustainable farming methods including crop rotation, organic fertilizers, and water conservation techniques.',
+    summary: 'Learn essential sustainable farming practices for better yields and environmental protection.',
+    category: 'crop-management',
+    author_name: 'Dr. Kwame Nkrumah',
+    featured: true,
+    reading_time_minutes: 8,
+    status: 'published',
+    created_at: '2024-11-15T10:00:00Z'
+  },
+  {
+    id: '2',
+    title: 'Integrated Pest Management for Cocoa',
+    content: 'Detailed guide on managing cocoa pests using integrated approaches that combine biological, cultural, and minimal chemical methods.',
+    summary: 'Effective pest control strategies for cocoa farmers to maintain healthy crops.',
+    category: 'pest-control',
+    author_name: 'Prof. Ama Asante',
+    featured: false,
+    reading_time_minutes: 12,
+    status: 'published',
+    created_at: '2024-11-10T14:30:00Z'
+  }
+];
 
 const AdminKnowledge = () => {
-  const { profile } = useAuth();
   const { toast } = useToast();
-  const [articles, setArticles] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [articles, setArticles] = useState<any[]>(mockArticles);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     content: '',
     summary: '',
     category: '',
-    author_name: '',
+    author_name: 'Admin',
     featured: false,
     reading_time_minutes: 5
   });
 
-  useEffect(() => {
-    fetchArticles();
-  }, []);
-
-  const fetchArticles = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('knowledge_articles')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setArticles(data || []);
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { error } = await supabase
-        .from('knowledge_articles')
-        .insert({
-          ...formData,
-          author_name: profile?.full_name || 'Admin'
-        });
+      const newArticle = {
+        id: String(Date.now()),
+        ...formData,
+        status: 'published',
+        created_at: new Date().toISOString()
+      };
 
-      if (error) throw error;
+      setArticles(prev => [newArticle, ...prev]);
 
       toast({
         title: "Success",
@@ -75,15 +75,14 @@ const AdminKnowledge = () => {
         content: '',
         summary: '',
         category: '',
-        author_name: '',
+        author_name: 'Admin',
         featured: false,
         reading_time_minutes: 5
       });
-      fetchArticles();
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message,
+        description: "Failed to create article",
         variant: "destructive",
       });
     }
@@ -206,11 +205,7 @@ const AdminKnowledge = () => {
             <CardDescription>Manage existing knowledge base content</CardDescription>
           </CardHeader>
           <CardContent>
-            {loading ? (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">Loading articles...</p>
-              </div>
-            ) : articles.length === 0 ? (
+            {articles.length === 0 ? (
               <div className="text-center py-8">
                 <BookOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                 <p className="text-muted-foreground mb-4">No articles yet</p>

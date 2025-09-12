@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,12 +9,40 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Plus, Wrench, Edit, Trash } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+
+// Mock machinery data
+const mockMachinery = [
+  {
+    id: '1',
+    title: 'John Deere 5055E Tractor',
+    description: '55HP utility tractor with 4WD, perfect for small to medium farm operations. Includes loader attachment and implements.',
+    machine_type: 'tractor',
+    provider_name: 'Farm Equipment Ghana Ltd',
+    location: 'Kumasi, Ashanti Region',
+    contact_info: '+233244567890',
+    hourly_rate: 45.00,
+    daily_rate: 300.00,
+    availability_status: 'available',
+    created_at: '2024-11-20T10:00:00Z'
+  },
+  {
+    id: '2',
+    title: 'Rice Combine Harvester',
+    description: 'Modern combine harvester specifically designed for rice harvesting. High efficiency with minimal grain loss.',
+    machine_type: 'harvester',
+    provider_name: 'Northern Mechanization Co-op',
+    location: 'Tamale, Northern Region',
+    contact_info: '+233201234567',
+    hourly_rate: null,
+    daily_rate: 800.00,
+    availability_status: 'rented',
+    created_at: '2024-11-15T14:30:00Z'
+  }
+];
 
 const AdminMachinery = () => {
   const { toast } = useToast();
-  const [machinery, setMachinery] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [machinery, setMachinery] = useState<any[]>(mockMachinery);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -28,42 +56,18 @@ const AdminMachinery = () => {
     availability_status: 'available'
   });
 
-  useEffect(() => {
-    fetchMachinery();
-  }, []);
-
-  const fetchMachinery = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('machinery_rentals')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setMachinery(data || []);
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { error } = await supabase
-        .from('machinery_rentals')
-        .insert({
-          ...formData,
-          hourly_rate: formData.hourly_rate ? parseFloat(formData.hourly_rate) : null,
-          daily_rate: formData.daily_rate ? parseFloat(formData.daily_rate) : null
-        });
+      const newMachine = {
+        id: String(Date.now()),
+        ...formData,
+        hourly_rate: formData.hourly_rate ? parseFloat(formData.hourly_rate) : null,
+        daily_rate: formData.daily_rate ? parseFloat(formData.daily_rate) : null,
+        created_at: new Date().toISOString()
+      };
 
-      if (error) throw error;
+      setMachinery(prev => [newMachine, ...prev]);
 
       toast({
         title: "Success",
@@ -82,11 +86,10 @@ const AdminMachinery = () => {
         daily_rate: '',
         availability_status: 'available'
       });
-      fetchMachinery();
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message,
+        description: "Failed to create machinery listing",
         variant: "destructive",
       });
     }
@@ -240,11 +243,7 @@ const AdminMachinery = () => {
             <CardDescription>Manage existing machinery and equipment listings</CardDescription>
           </CardHeader>
           <CardContent>
-            {loading ? (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">Loading machinery...</p>
-              </div>
-            ) : machinery.length === 0 ? (
+            {machinery.length === 0 ? (
               <div className="text-center py-8">
                 <Wrench className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                 <p className="text-muted-foreground mb-4">No machinery listed yet</p>

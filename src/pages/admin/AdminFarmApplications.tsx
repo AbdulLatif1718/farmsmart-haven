@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -11,8 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Eye, Phone, Mail, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/hooks/useAuth';
 
 interface FarmApplication {
   id: string;
@@ -32,103 +29,84 @@ interface FarmApplication {
   contact_phone?: string;
   contact_email?: string;
   created_at: string;
-  profiles?: {
-    full_name: string;
-    email: string;
-  };
+  applicant_name: string;
+  applicant_email: string;
 }
+
+// Mock data for demonstration
+const mockFarmApplications: FarmApplication[] = [
+  {
+    id: '1',
+    applicant_id: 'farmer-001',
+    name: 'Green Valley Farm',
+    location: 'Eastern Region, Ghana',
+    size_acres: 12,
+    size_unit: 'acres',
+    farm_type: 'Mixed Crop',
+    description: 'A sustainable mixed crop farm focusing on maize, beans, and vegetables using organic farming methods.',
+    soil_type: 'Clay Loam',
+    irrigation_type: 'Drip Irrigation',
+    coordinates_lat: '6.2833',
+    coordinates_lng: '-0.5667',
+    status: 'pending',
+    contact_phone: '+233241234567',
+    contact_email: 'greenvalley@email.com',
+    created_at: '2024-12-01T08:30:00Z',
+    applicant_name: 'John Mensah',
+    applicant_email: 'john.mensah@email.com'
+  },
+  {
+    id: '2',
+    applicant_id: 'farmer-002',
+    name: 'Sunrise Poultry & Crops',
+    location: 'Volta Region, Ghana',
+    size_acres: 8,
+    size_unit: 'acres',
+    farm_type: 'Poultry & Crops',
+    description: 'Integrated farming system combining poultry production with crop cultivation for maximum efficiency.',
+    soil_type: 'Sandy Loam',
+    irrigation_type: 'Sprinkler',
+    status: 'approved',
+    contact_phone: '+233207654321',
+    contact_email: 'sunrise@email.com',
+    created_at: '2024-11-28T10:15:00Z',
+    admin_notes: 'Excellent business plan with good market analysis. Approved for integrated farming approach.',
+    applicant_name: 'Sarah Adjei',
+    applicant_email: 'sarah.adjei@email.com'
+  }
+];
 
 const AdminFarmApplications = () => {
   const { toast } = useToast();
-  const { profile } = useAuth();
-  const [applications, setApplications] = useState<FarmApplication[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [applications, setApplications] = useState<FarmApplication[]>(mockFarmApplications);
   const [selectedApplication, setSelectedApplication] = useState<FarmApplication | null>(null);
   const [reviewNotes, setReviewNotes] = useState('');
   const [reviewStatus, setReviewStatus] = useState<'approved' | 'rejected'>('approved');
 
-  useEffect(() => {
-    fetchApplications();
-  }, []);
-
-  const fetchApplications = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('farm_applications')
-        .select(`
-          *,
-          profiles:applicant_id (
-            full_name,
-            email
-          )
-        `)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setApplications((data as any) || []);
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleReview = async (applicationId: string, status: 'approved' | 'rejected', notes: string) => {
     try {
-      const updateData: any = {
-        status,
-        admin_notes: notes,
-        reviewed_at: new Date().toISOString(),
-        reviewed_by: profile?.id
-      };
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-      const { error } = await supabase
-        .from('farm_applications')
-        .update(updateData)
-        .eq('id', applicationId);
-
-      if (error) throw error;
-
-      // If approved, create the actual farm
-      if (status === 'approved') {
-        const application = applications.find(app => app.id === applicationId);
-        if (application) {
-          const farmData = {
-            farmer_id: application.applicant_id,
-            name: application.name,
-            location: application.location,
-            size_acres: application.size_acres,
-            description: application.description,
-            soil_type: application.soil_type,
-            irrigation_type: application.irrigation_type,
-            crop_types: [application.farm_type].filter(Boolean),
-            status: 'active'
-          };
-
-          const { error: farmError } = await supabase
-            .from('farms')
-            .insert(farmData);
-
-          if (farmError) throw farmError;
-        }
-      }
+      setApplications(prevApplications => 
+        prevApplications.map(app => 
+          app.id === applicationId 
+            ? { ...app, status, admin_notes: notes }
+            : app
+        )
+      );
 
       toast({
         title: `Application ${status}`,
         description: `Farm application has been ${status}.`,
       });
 
-      fetchApplications();
       setSelectedApplication(null);
       setReviewNotes('');
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message,
+        description: "Failed to update application",
         variant: "destructive",
       });
     }
@@ -147,13 +125,6 @@ const AdminFarmApplications = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <AdminLayout>
-        <div className="p-6">Loading applications...</div>
-      </AdminLayout>
-    );
-  }
 
   return (
     <AdminLayout>
@@ -191,8 +162,8 @@ const AdminFarmApplications = () => {
                   <TableRow key={application.id}>
                     <TableCell>
                       <div>
-                        <div className="font-medium">{application.profiles?.full_name}</div>
-                        <div className="text-sm text-muted-foreground">{application.profiles?.email}</div>
+                        <div className="font-medium">{application.applicant_name}</div>
+                        <div className="text-sm text-muted-foreground">{application.applicant_email}</div>
                       </div>
                     </TableCell>
                     <TableCell className="font-medium">{application.name}</TableCell>
@@ -221,14 +192,14 @@ const AdminFarmApplications = () => {
                             {selectedApplication && (
                               <div className="space-y-4">
                                 <div className="grid grid-cols-2 gap-4">
-                                  <div>
-                                    <Label>Applicant</Label>
-                                    <p className="font-medium">{selectedApplication.profiles?.full_name}</p>
-                                  </div>
-                                  <div>
-                                    <Label>Email</Label>
-                                    <p>{selectedApplication.profiles?.email}</p>
-                                  </div>
+                                   <div>
+                                     <Label>Applicant</Label>
+                                     <p className="font-medium">{selectedApplication.applicant_name}</p>
+                                   </div>
+                                   <div>
+                                     <Label>Email</Label>
+                                     <p>{selectedApplication.applicant_email}</p>
+                                   </div>
                                 </div>
                                 
                                 <div className="grid grid-cols-2 gap-4">

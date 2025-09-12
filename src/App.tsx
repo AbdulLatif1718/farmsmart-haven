@@ -40,6 +40,8 @@ import AdminKnowledge from "./pages/admin/AdminKnowledge";
 import AdminMarketplace from "./pages/admin/AdminMarketplace";
 import AdminMachinery from "./pages/admin/AdminMachinery";
 import AdminTransport from "./pages/admin/AdminTransport";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminProtectedRoute from "./components/admin/AdminProtectedRoute";
 
 // Investor pages
 import InvestorProjects from "./pages/investor/InvestorProjects";
@@ -131,16 +133,17 @@ const AppRoutes = () => {
       <Route path="/investor/network" element={<ProtectedRoute><InvestorNetwork /></ProtectedRoute>} />
       <Route path="/investor/messages" element={<ProtectedRoute><InvestorMessages /></ProtectedRoute>} />
       
-      {/* Admin Routes (No regular auth required) */}
+      {/* Admin Routes */}
       <Route path="/admin/login" element={<AdminLogin />} />
-      <Route path="/admin" element={<AdminDashboard />} />
-      <Route path="/admin/dashboard" element={<AdminDashboard />} />
-      <Route path="/admin/farm-applications" element={<AdminFarmApplications />} />
-      <Route path="/admin/funding-applications" element={<FundingApplicationsPage />} />
-      <Route path="/admin/knowledge" element={<AdminKnowledge />} />
-      <Route path="/admin/marketplace" element={<AdminMarketplace />} />
-      <Route path="/admin/machinery" element={<AdminMachinery />} />
-      <Route path="/admin/transport" element={<AdminTransport />} />
+      <Route path="/admin" element={<AdminProtectedRoute><AdminDashboard /></AdminProtectedRoute>} />
+      <Route path="/admin/dashboard" element={<AdminProtectedRoute><AdminDashboard /></AdminProtectedRoute>} />
+      <Route path="/admin/farm-applications" element={<AdminProtectedRoute><AdminFarmApplications /></AdminProtectedRoute>} />
+      <Route path="/admin/funding-applications" element={<AdminProtectedRoute><FundingApplicationsPage /></AdminProtectedRoute>} />
+      <Route path="/admin/knowledge" element={<AdminProtectedRoute><AdminKnowledge /></AdminProtectedRoute>} />
+      <Route path="/admin/marketplace" element={<AdminProtectedRoute><AdminMarketplace /></AdminProtectedRoute>} />
+      <Route path="/admin/machinery" element={<AdminProtectedRoute><AdminMachinery /></AdminProtectedRoute>} />
+      <Route path="/admin/transport" element={<AdminProtectedRoute><AdminTransport /></AdminProtectedRoute>} />
+      <Route path="/admin/users" element={<AdminProtectedRoute><AdminUsers /></AdminProtectedRoute>} />
       
       {/* Catch-all route */}
       <Route path="*" element={<NotFound />} />

@@ -1,7 +1,4 @@
-import { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
+import { useState } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -42,90 +39,87 @@ interface FundingApplication {
   project_duration_months: number;
   expected_roi_percentage?: number;
   admin_notes?: string;
-  profiles?: {
-    full_name: string;
-    email: string;
-  };
+  applicant_name: string;
+  applicant_email: string;
 }
 
+// Mock data for demonstration
+const mockApplications: FundingApplication[] = [
+  {
+    id: '1',
+    project_title: 'Sustainable Tomato Farming Initiative',
+    funding_amount_requested: 75000,
+    status: 'pending',
+    created_at: '2024-12-01T10:30:00Z',
+    applicant_id: 'farmer-001',
+    project_description: 'A comprehensive tomato farming project focused on sustainable practices including drip irrigation, organic fertilizers, and integrated pest management. The project aims to produce high-quality tomatoes for both local and export markets while maintaining environmental sustainability.',
+    farm_location: 'Ashanti Region, Ghana',
+    crop_type: 'Tomatoes',
+    farm_size_acres: 15,
+    farming_experience_years: 8,
+    project_duration_months: 12,
+    expected_roi_percentage: 25,
+    applicant_name: 'Kwame Asante',
+    applicant_email: 'kwame.asante@email.com'
+  },
+  {
+    id: '2',
+    project_title: 'Rice Production Expansion',
+    funding_amount_requested: 120000,
+    status: 'pending',
+    created_at: '2024-11-28T14:15:00Z',
+    applicant_id: 'farmer-002',
+    project_description: 'Expanding rice production using modern irrigation techniques and improved seed varieties. The project includes land preparation, seed procurement, and machinery rental for efficient farming operations.',
+    farm_location: 'Northern Region, Ghana',
+    crop_type: 'Rice',
+    farm_size_acres: 25,
+    farming_experience_years: 12,
+    project_duration_months: 18,
+    expected_roi_percentage: 30,
+    applicant_name: 'Fatima Mohammed',
+    applicant_email: 'fatima.mohammed@email.com'
+  },
+  {
+    id: '3',
+    project_title: 'Cocoa Farm Rehabilitation',
+    funding_amount_requested: 95000,
+    status: 'approved',
+    created_at: '2024-11-25T09:45:00Z',
+    applicant_id: 'farmer-003',
+    project_description: 'Rehabilitation of an existing cocoa farm including replanting with disease-resistant varieties, soil improvement, and implementation of proper shade management techniques.',
+    farm_location: 'Western Region, Ghana',
+    crop_type: 'Cocoa',
+    farm_size_acres: 20,
+    farming_experience_years: 15,
+    project_duration_months: 24,
+    expected_roi_percentage: 20,
+    admin_notes: 'Approved due to strong business plan and experienced farmer. Project aligns with national cocoa improvement initiatives.',
+    applicant_name: 'Emmanuel Osei',
+    applicant_email: 'emmanuel.osei@email.com'
+  }
+];
+
 const FundingApplicationsPage = () => {
-  const { user, profile, loading } = useAuth();
-  const [applications, setApplications] = useState<FundingApplication[]>([]);
+  const [applications, setApplications] = useState<FundingApplication[]>(mockApplications);
   const [selectedApplication, setSelectedApplication] = useState<FundingApplication | null>(null);
   const [adminNotes, setAdminNotes] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
   const { toast } = useToast();
 
-  if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
-  }
-
-  if (!user || profile?.role !== 'admin') {
-    return <Navigate to="/" replace />;
-  }
-
-  useEffect(() => {
-    fetchApplications();
-  }, []);
-
-  const fetchApplications = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('funding_applications')
-        .select(`
-          *,
-          profiles!inner(full_name, email)
-        `)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setApplications(data || []);
-    } catch (error) {
-      console.error('Error fetching applications:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load funding applications",
-        variant: "destructive",
-      });
-    }
-  };
-
   const updateApplicationStatus = async (applicationId: string, status: 'approved' | 'rejected') => {
     setActionLoading(true);
     try {
-      const { error } = await supabase
-        .from('funding_applications')
-        .update({ 
-          status,
-          admin_notes: adminNotes || null
-        })
-        .eq('id', applicationId);
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      setApplications(prevApplications => 
+        prevApplications.map(app => 
+          app.id === applicationId 
+            ? { ...app, status, admin_notes: adminNotes || undefined }
+            : app
+        )
+      );
 
-      if (error) throw error;
-
-      // If approved, create investment opportunity
-      if (status === 'approved' && selectedApplication) {
-        const { error: opportunityError } = await supabase
-          .from('investment_opportunities')
-          .insert({
-            title: selectedApplication.project_title,
-            description: selectedApplication.project_description,
-            target_amount: selectedApplication.funding_amount_requested,
-            farmer_id: selectedApplication.applicant_id,
-            application_id: selectedApplication.id,
-            location: selectedApplication.farm_location,
-            crop_type: selectedApplication.crop_type,
-            duration_months: selectedApplication.project_duration_months,
-            roi_percentage: selectedApplication.expected_roi_percentage || 0,
-            farm_size_acres: selectedApplication.farm_size_acres,
-          });
-
-        if (opportunityError) {
-          console.error('Error creating investment opportunity:', opportunityError);
-        }
-      }
-
-      await fetchApplications();
       setSelectedApplication(null);
       setAdminNotes('');
       
@@ -134,7 +128,6 @@ const FundingApplicationsPage = () => {
         description: `Application ${status} successfully`,
       });
     } catch (error) {
-      console.error('Error updating application:', error);
       toast({
         title: "Error",
         description: "Failed to update application",
@@ -195,12 +188,12 @@ const FundingApplicationsPage = () => {
                   <TableRow key={application.id}>
                     <TableCell>
                       <div>
-                        <p className="font-medium">{application.profiles?.full_name}</p>
-                        <p className="text-sm text-muted-foreground">{application.profiles?.email}</p>
+                        <p className="font-medium">{application.applicant_name}</p>
+                        <p className="text-sm text-muted-foreground">{application.applicant_email}</p>
                       </div>
                     </TableCell>
                     <TableCell className="font-medium">{application.project_title}</TableCell>
-                    <TableCell>${application.funding_amount_requested.toLocaleString()}</TableCell>
+                    <TableCell>GHS {application.funding_amount_requested.toLocaleString()}</TableCell>
                     <TableCell>{getStatusBadge(application.status)}</TableCell>
                     <TableCell>{new Date(application.created_at).toLocaleDateString()}</TableCell>
                     <TableCell>
@@ -222,7 +215,7 @@ const FundingApplicationsPage = () => {
                           <DialogHeader>
                             <DialogTitle>{selectedApplication?.project_title}</DialogTitle>
                             <DialogDescription>
-                              Application from {selectedApplication?.profiles?.full_name}
+                              Application from {selectedApplication?.applicant_name}
                             </DialogDescription>
                           </DialogHeader>
                           
@@ -231,15 +224,15 @@ const FundingApplicationsPage = () => {
                               <div className="grid grid-cols-2 gap-4">
                                 <div>
                                   <Label className="text-sm font-medium">Applicant</Label>
-                                  <p className="text-sm">{selectedApplication.profiles?.full_name}</p>
+                                  <p className="text-sm">{selectedApplication.applicant_name}</p>
                                 </div>
                                 <div>
                                   <Label className="text-sm font-medium">Email</Label>
-                                  <p className="text-sm">{selectedApplication.profiles?.email}</p>
+                                  <p className="text-sm">{selectedApplication.applicant_email}</p>
                                 </div>
                                 <div>
                                   <Label className="text-sm font-medium">Amount Requested</Label>
-                                  <p className="text-sm">${selectedApplication.funding_amount_requested.toLocaleString()}</p>
+                                  <p className="text-sm">GHS {selectedApplication.funding_amount_requested.toLocaleString()}</p>
                                 </div>
                                 <div>
                                   <Label className="text-sm font-medium">Project Duration</Label>

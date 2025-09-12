@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,12 +9,46 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Plus, Store, Edit, Trash } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+
+// Mock marketplace data
+const mockListings = [
+  {
+    id: '1',
+    title: 'Fresh Organic Tomatoes',
+    description: 'High-quality organic tomatoes harvested this week. Perfect for both local consumption and export.',
+    product_type: 'vegetables',
+    price: 8.50,
+    unit: 'kg',
+    quantity_available: 500,
+    seller_name: 'Kwame Farms Ltd',
+    location: 'Ashanti Region, Ghana',
+    contact_info: '+233241234567',
+    quality_grade: 'premium',
+    harvest_date: '2024-12-01',
+    status: 'active',
+    created_at: '2024-12-01T10:00:00Z'
+  },
+  {
+    id: '2',
+    title: 'Premium White Rice',
+    description: 'Locally grown premium white rice, processed and ready for distribution.',
+    product_type: 'grains',
+    price: 12.00,
+    unit: 'bag',
+    quantity_available: 200,
+    seller_name: 'Northern Rice Co-op',
+    location: 'Northern Region, Ghana',
+    contact_info: '+233207654321',
+    quality_grade: 'grade-a',
+    harvest_date: '2024-11-15',
+    status: 'active',
+    created_at: '2024-11-28T08:30:00Z'
+  }
+];
 
 const AdminMarketplace = () => {
   const { toast } = useToast();
-  const [listings, setListings] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [listings, setListings] = useState<any[]>(mockListings);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -30,43 +64,20 @@ const AdminMarketplace = () => {
     harvest_date: ''
   });
 
-  useEffect(() => {
-    fetchListings();
-  }, []);
-
-  const fetchListings = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('market_listings')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setListings(data || []);
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { error } = await supabase
-        .from('market_listings')
-        .insert({
-          ...formData,
-          price: parseFloat(formData.price) || 0,
-          quantity_available: parseFloat(formData.quantity_available) || 0,
-          harvest_date: formData.harvest_date || null
-        });
+      const newListing = {
+        id: String(Date.now()),
+        ...formData,
+        price: parseFloat(formData.price) || 0,
+        quantity_available: parseFloat(formData.quantity_available) || 0,
+        harvest_date: formData.harvest_date || null,
+        status: 'active',
+        created_at: new Date().toISOString()
+      };
 
-      if (error) throw error;
+      setListings(prev => [newListing, ...prev]);
 
       toast({
         title: "Success",
@@ -87,11 +98,10 @@ const AdminMarketplace = () => {
         quality_grade: '',
         harvest_date: ''
       });
-      fetchListings();
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message,
+        description: "Failed to create listing",
         variant: "destructive",
       });
     }
@@ -272,11 +282,7 @@ const AdminMarketplace = () => {
             <CardDescription>Manage existing marketplace listings</CardDescription>
           </CardHeader>
           <CardContent>
-            {loading ? (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">Loading listings...</p>
-              </div>
-            ) : listings.length === 0 ? (
+            {listings.length === 0 ? (
               <div className="text-center py-8">
                 <Store className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                 <p className="text-muted-foreground mb-4">No listings yet</p>
