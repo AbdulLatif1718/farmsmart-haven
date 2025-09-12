@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import AdminLayout from '@/components/layout/AdminLayout';
@@ -15,14 +16,14 @@ import {
 } from 'lucide-react';
 
 const AdminDashboard = () => {
-  const { isAuthenticated, loading } = useAuth();
+  const { user, profile, loading } = useAuth();
 
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/admin/login" replace />;
+  if (!user || profile?.role !== 'admin') {
+    return <Navigate to="/" replace />;
   }
 
   const statsCards = [
