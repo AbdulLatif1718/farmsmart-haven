@@ -12,6 +12,7 @@ import { AuthProvider, useAuth } from "@/hooks/useAuth";
 // Import pages
 import LandingPage from "./pages/LandingPage";
 import Auth from "./pages/Auth";
+import AdminLogin from "./pages/AdminLogin";
 import Index from "./pages/Index";
 import InvestorDashboard from "./pages/InvestorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -130,14 +131,16 @@ const AppRoutes = () => {
       <Route path="/investor/network" element={<ProtectedRoute><InvestorNetwork /></ProtectedRoute>} />
       <Route path="/investor/messages" element={<ProtectedRoute><InvestorMessages /></ProtectedRoute>} />
       
-      {/* Admin Dashboard Routes */}
-      <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
-      <Route path="/admin/farm-applications" element={<ProtectedRoute><AdminFarmApplications /></ProtectedRoute>} />
-      <Route path="/admin/funding-applications" element={<ProtectedRoute><FundingApplicationsPage /></ProtectedRoute>} />
-      <Route path="/admin/knowledge" element={<ProtectedRoute><AdminKnowledge /></ProtectedRoute>} />
-      <Route path="/admin/marketplace" element={<ProtectedRoute><AdminMarketplace /></ProtectedRoute>} />
-      <Route path="/admin/machinery" element={<ProtectedRoute><AdminMachinery /></ProtectedRoute>} />
-      <Route path="/admin/transport" element={<ProtectedRoute><AdminTransport /></ProtectedRoute>} />
+      {/* Admin Routes (No regular auth required) */}
+      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/admin" element={<AdminDashboard />} />
+      <Route path="/admin/dashboard" element={<AdminDashboard />} />
+      <Route path="/admin/farm-applications" element={<AdminFarmApplications />} />
+      <Route path="/admin/funding-applications" element={<FundingApplicationsPage />} />
+      <Route path="/admin/knowledge" element={<AdminKnowledge />} />
+      <Route path="/admin/marketplace" element={<AdminMarketplace />} />
+      <Route path="/admin/machinery" element={<AdminMachinery />} />
+      <Route path="/admin/transport" element={<AdminTransport />} />
       
       {/* Catch-all route */}
       <Route path="*" element={<NotFound />} />
