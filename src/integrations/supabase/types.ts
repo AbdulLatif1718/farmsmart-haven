@@ -14,157 +14,112 @@ export type Database = {
   }
   public: {
     Tables: {
-      audit_logs: {
+      admin_users: {
         Row: {
-          action: string
-          admin_id: string
           created_at: string | null
-          details: Json | null
           id: string
-          target_user_id: string | null
+          password_hash: string
+          updated_at: string | null
+          username: string
         }
         Insert: {
-          action: string
-          admin_id: string
           created_at?: string | null
-          details?: Json | null
           id?: string
-          target_user_id?: string | null
+          password_hash: string
+          updated_at?: string | null
+          username: string
         }
         Update: {
-          action?: string
-          admin_id?: string
           created_at?: string | null
-          details?: Json | null
           id?: string
-          target_user_id?: string | null
+          password_hash?: string
+          updated_at?: string | null
+          username?: string
         }
         Relationships: []
       }
       farm_applications: {
         Row: {
           admin_notes: string | null
-          applicant_id: string
-          contact_email: string | null
-          contact_phone: string | null
-          coordinates_lat: string | null
-          coordinates_lng: string | null
-          created_at: string
-          description: string | null
+          applicant_name: string
+          certification: string | null
+          challenges: string | null
+          created_at: string | null
+          crops: string | null
+          email: string
+          equipment: string | null
+          farm_name: string
+          farm_size: number
           farm_type: string
+          farming_experience: number | null
+          goals: string | null
           id: string
-          irrigation_type: string | null
+          livestock: string | null
           location: string
-          name: string
+          phone: string
+          previous_yield: string | null
           reviewed_at: string | null
           reviewed_by: string | null
-          size_acres: number
-          size_unit: string
-          soil_type: string | null
-          status: string
-          updated_at: string
+          status: string | null
+          updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           admin_notes?: string | null
-          applicant_id: string
-          contact_email?: string | null
-          contact_phone?: string | null
-          coordinates_lat?: string | null
-          coordinates_lng?: string | null
-          created_at?: string
-          description?: string | null
+          applicant_name: string
+          certification?: string | null
+          challenges?: string | null
+          created_at?: string | null
+          crops?: string | null
+          email: string
+          equipment?: string | null
+          farm_name: string
+          farm_size: number
           farm_type: string
+          farming_experience?: number | null
+          goals?: string | null
           id?: string
-          irrigation_type?: string | null
+          livestock?: string | null
           location: string
-          name: string
+          phone: string
+          previous_yield?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
-          size_acres: number
-          size_unit?: string
-          soil_type?: string | null
-          status?: string
-          updated_at?: string
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           admin_notes?: string | null
-          applicant_id?: string
-          contact_email?: string | null
-          contact_phone?: string | null
-          coordinates_lat?: string | null
-          coordinates_lng?: string | null
-          created_at?: string
-          description?: string | null
+          applicant_name?: string
+          certification?: string | null
+          challenges?: string | null
+          created_at?: string | null
+          crops?: string | null
+          email?: string
+          equipment?: string | null
+          farm_name?: string
+          farm_size?: number
           farm_type?: string
+          farming_experience?: number | null
+          goals?: string | null
           id?: string
-          irrigation_type?: string | null
+          livestock?: string | null
           location?: string
-          name?: string
+          phone?: string
+          previous_yield?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
-          size_acres?: number
-          size_unit?: string
-          soil_type?: string | null
-          status?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      farms: {
-        Row: {
-          created_at: string
-          crop_types: string[] | null
-          description: string | null
-          established_date: string | null
-          farm_image_url: string | null
-          farmer_id: string
-          id: string
-          irrigation_type: string | null
-          location: string
-          name: string
-          size_acres: number
-          soil_type: string | null
-          status: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          crop_types?: string[] | null
-          description?: string | null
-          established_date?: string | null
-          farm_image_url?: string | null
-          farmer_id: string
-          id?: string
-          irrigation_type?: string | null
-          location: string
-          name: string
-          size_acres: number
-          soil_type?: string | null
-          status?: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          crop_types?: string[] | null
-          description?: string | null
-          established_date?: string | null
-          farm_image_url?: string | null
-          farmer_id?: string
-          id?: string
-          irrigation_type?: string | null
-          location?: string
-          name?: string
-          size_acres?: number
-          soil_type?: string | null
-          status?: string
-          updated_at?: string
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "farms_farmer_id_fkey"
-            columns: ["farmer_id"]
+            foreignKeyName: "farm_applications_reviewed_by_fkey"
+            columns: ["reviewed_by"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "admin_users"
             referencedColumns: ["id"]
           },
         ]
@@ -172,431 +127,344 @@ export type Database = {
       funding_applications: {
         Row: {
           admin_notes: string | null
-          applicant_id: string
-          business_plan_url: string | null
-          created_at: string
-          crop_type: string
-          expected_roi_percentage: number | null
-          farm_location: string
-          farm_size_acres: number | null
-          farming_experience_years: number | null
-          funding_amount_requested: number
+          business_plan: string | null
+          collateral: string | null
+          created_at: string | null
+          email: string
+          expected_roi: number | null
+          full_name: string
+          funding_amount: number
           id: string
-          interview_date: string | null
+          phone: string
           project_description: string
-          project_duration_months: number
           project_title: string
-          status: string
-          updated_at: string
+          purpose: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          timeline: string
+          updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           admin_notes?: string | null
-          applicant_id: string
-          business_plan_url?: string | null
-          created_at?: string
-          crop_type: string
-          expected_roi_percentage?: number | null
-          farm_location: string
-          farm_size_acres?: number | null
-          farming_experience_years?: number | null
-          funding_amount_requested: number
+          business_plan?: string | null
+          collateral?: string | null
+          created_at?: string | null
+          email: string
+          expected_roi?: number | null
+          full_name: string
+          funding_amount: number
           id?: string
-          interview_date?: string | null
+          phone: string
           project_description: string
-          project_duration_months: number
           project_title: string
-          status?: string
-          updated_at?: string
+          purpose: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          timeline: string
+          updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           admin_notes?: string | null
-          applicant_id?: string
-          business_plan_url?: string | null
-          created_at?: string
-          crop_type?: string
-          expected_roi_percentage?: number | null
-          farm_location?: string
-          farm_size_acres?: number | null
-          farming_experience_years?: number | null
-          funding_amount_requested?: number
+          business_plan?: string | null
+          collateral?: string | null
+          created_at?: string | null
+          email?: string
+          expected_roi?: number | null
+          full_name?: string
+          funding_amount?: number
           id?: string
-          interview_date?: string | null
+          phone?: string
           project_description?: string
-          project_duration_months?: number
           project_title?: string
-          status?: string
-          updated_at?: string
+          purpose?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          timeline?: string
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "funding_applications_applicant_id_fkey"
-            columns: ["applicant_id"]
+            foreignKeyName: "funding_applications_reviewed_by_fkey"
+            columns: ["reviewed_by"]
             isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      investment_opportunities: {
-        Row: {
-          application_id: string
-          created_at: string
-          crop_type: string
-          current_amount: number
-          description: string
-          duration_months: number
-          end_date: string | null
-          farm_size_acres: number | null
-          farmer_id: string
-          id: string
-          location: string
-          risk_level: string | null
-          roi_percentage: number
-          start_date: string | null
-          status: string
-          target_amount: number
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          application_id: string
-          created_at?: string
-          crop_type: string
-          current_amount?: number
-          description: string
-          duration_months: number
-          end_date?: string | null
-          farm_size_acres?: number | null
-          farmer_id: string
-          id?: string
-          location: string
-          risk_level?: string | null
-          roi_percentage: number
-          start_date?: string | null
-          status?: string
-          target_amount: number
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          application_id?: string
-          created_at?: string
-          crop_type?: string
-          current_amount?: number
-          description?: string
-          duration_months?: number
-          end_date?: string | null
-          farm_size_acres?: number | null
-          farmer_id?: string
-          id?: string
-          location?: string
-          risk_level?: string | null
-          roi_percentage?: number
-          start_date?: string | null
-          status?: string
-          target_amount?: number
-          title?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "investment_opportunities_application_id_fkey"
-            columns: ["application_id"]
-            isOneToOne: false
-            referencedRelation: "funding_applications"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "investment_opportunities_farmer_id_fkey"
-            columns: ["farmer_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      investments: {
-        Row: {
-          amount: number
-          created_at: string
-          id: string
-          investment_date: string
-          investor_id: string
-          opportunity_id: string
-          returns_earned: number | null
-          status: string
-          updated_at: string
-        }
-        Insert: {
-          amount: number
-          created_at?: string
-          id?: string
-          investment_date?: string
-          investor_id: string
-          opportunity_id: string
-          returns_earned?: number | null
-          status?: string
-          updated_at?: string
-        }
-        Update: {
-          amount?: number
-          created_at?: string
-          id?: string
-          investment_date?: string
-          investor_id?: string
-          opportunity_id?: string
-          returns_earned?: number | null
-          status?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "investments_investor_id_fkey"
-            columns: ["investor_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "investments_opportunity_id_fkey"
-            columns: ["opportunity_id"]
-            isOneToOne: false
-            referencedRelation: "investment_opportunities"
+            referencedRelation: "admin_users"
             referencedColumns: ["id"]
           },
         ]
       }
       knowledge_articles: {
         Row: {
-          author_name: string
+          author: string
           category: string
           content: string
-          created_at: string
-          featured: boolean
+          created_at: string | null
+          featured_image: string | null
           id: string
-          image_url: string | null
-          reading_time_minutes: number | null
-          status: string
+          published: boolean | null
           summary: string | null
+          tags: string[] | null
           title: string
-          updated_at: string
+          updated_at: string | null
+          views: number | null
         }
         Insert: {
-          author_name: string
+          author: string
           category: string
           content: string
-          created_at?: string
-          featured?: boolean
+          created_at?: string | null
+          featured_image?: string | null
           id?: string
-          image_url?: string | null
-          reading_time_minutes?: number | null
-          status?: string
+          published?: boolean | null
           summary?: string | null
+          tags?: string[] | null
           title: string
-          updated_at?: string
+          updated_at?: string | null
+          views?: number | null
         }
         Update: {
-          author_name?: string
+          author?: string
           category?: string
           content?: string
-          created_at?: string
-          featured?: boolean
+          created_at?: string | null
+          featured_image?: string | null
           id?: string
-          image_url?: string | null
-          reading_time_minutes?: number | null
-          status?: string
+          published?: boolean | null
           summary?: string | null
+          tags?: string[] | null
           title?: string
-          updated_at?: string
+          updated_at?: string | null
+          views?: number | null
         }
         Relationships: []
       }
       machinery_rentals: {
         Row: {
-          availability_status: string
-          contact_info: string | null
-          created_at: string
+          available: boolean | null
+          brand: string | null
+          condition: string | null
+          created_at: string | null
           daily_rate: number | null
           description: string
-          hourly_rate: number | null
           id: string
-          image_url: string | null
+          images: string[] | null
           location: string
-          machine_type: string
-          provider_name: string
+          model: string | null
+          monthly_rate: number | null
+          provider: string
+          specifications: Json | null
           title: string
-          updated_at: string
+          type: string
+          updated_at: string | null
+          weekly_rate: number | null
+          year: number | null
         }
         Insert: {
-          availability_status?: string
-          contact_info?: string | null
-          created_at?: string
+          available?: boolean | null
+          brand?: string | null
+          condition?: string | null
+          created_at?: string | null
           daily_rate?: number | null
           description: string
-          hourly_rate?: number | null
           id?: string
-          image_url?: string | null
+          images?: string[] | null
           location: string
-          machine_type: string
-          provider_name: string
+          model?: string | null
+          monthly_rate?: number | null
+          provider: string
+          specifications?: Json | null
           title: string
-          updated_at?: string
+          type: string
+          updated_at?: string | null
+          weekly_rate?: number | null
+          year?: number | null
         }
         Update: {
-          availability_status?: string
-          contact_info?: string | null
-          created_at?: string
+          available?: boolean | null
+          brand?: string | null
+          condition?: string | null
+          created_at?: string | null
           daily_rate?: number | null
           description?: string
-          hourly_rate?: number | null
           id?: string
-          image_url?: string | null
+          images?: string[] | null
           location?: string
-          machine_type?: string
-          provider_name?: string
+          model?: string | null
+          monthly_rate?: number | null
+          provider?: string
+          specifications?: Json | null
           title?: string
-          updated_at?: string
+          type?: string
+          updated_at?: string | null
+          weekly_rate?: number | null
+          year?: number | null
         }
         Relationships: []
       }
       market_listings: {
         Row: {
-          contact_info: string | null
-          created_at: string
+          category: string
+          certified: boolean | null
+          created_at: string | null
           description: string
+          expiry_date: string | null
           harvest_date: string | null
           id: string
-          image_url: string | null
+          images: string[] | null
           location: string
+          organic: boolean | null
           price: number
-          product_type: string
           quality_grade: string | null
-          quantity_available: number | null
+          quantity: number | null
+          seller_contact: string
           seller_name: string
-          status: string
+          status: string | null
           title: string
           unit: string
-          updated_at: string
+          updated_at: string | null
+          user_id: string | null
         }
         Insert: {
-          contact_info?: string | null
-          created_at?: string
+          category: string
+          certified?: boolean | null
+          created_at?: string | null
           description: string
+          expiry_date?: string | null
           harvest_date?: string | null
           id?: string
-          image_url?: string | null
+          images?: string[] | null
           location: string
+          organic?: boolean | null
           price: number
-          product_type: string
           quality_grade?: string | null
-          quantity_available?: number | null
+          quantity?: number | null
+          seller_contact: string
           seller_name: string
-          status?: string
+          status?: string | null
           title: string
           unit: string
-          updated_at?: string
+          updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
-          contact_info?: string | null
-          created_at?: string
+          category?: string
+          certified?: boolean | null
+          created_at?: string | null
           description?: string
+          expiry_date?: string | null
           harvest_date?: string | null
           id?: string
-          image_url?: string | null
+          images?: string[] | null
           location?: string
+          organic?: boolean | null
           price?: number
-          product_type?: string
           quality_grade?: string | null
-          quantity_available?: number | null
+          quantity?: number | null
+          seller_contact?: string
           seller_name?: string
-          status?: string
+          status?: string | null
           title?: string
           unit?: string
-          updated_at?: string
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
       profiles: {
         Row: {
-          avatar_url: string | null
-          bio: string | null
-          created_at: string
-          email: string
-          full_name: string
+          created_at: string | null
+          email: string | null
+          full_name: string | null
           id: string
+          last_login: string | null
           location: string | null
           phone: string | null
-          role: string
-          updated_at: string
-          user_id: string
+          role: string | null
+          status: string | null
+          updated_at: string | null
         }
         Insert: {
-          avatar_url?: string | null
-          bio?: string | null
-          created_at?: string
-          email: string
-          full_name: string
-          id?: string
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id: string
+          last_login?: string | null
           location?: string | null
           phone?: string | null
-          role: string
-          updated_at?: string
-          user_id: string
+          role?: string | null
+          status?: string | null
+          updated_at?: string | null
         }
         Update: {
-          avatar_url?: string | null
-          bio?: string | null
-          created_at?: string
-          email?: string
-          full_name?: string
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
           id?: string
+          last_login?: string | null
           location?: string | null
           phone?: string | null
-          role?: string
-          updated_at?: string
-          user_id?: string
+          role?: string | null
+          status?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
       transport_logistics: {
         Row: {
-          availability_status: string
-          contact_info: string | null
-          created_at: string
+          available: boolean | null
+          capacity: string | null
+          contact: string
+          coverage_area: string | null
+          created_at: string | null
           description: string
           id: string
           location: string
           price_range: string | null
-          provider_name: string
+          provider: string
+          rating: number | null
           service_type: string
           title: string
-          updated_at: string
+          updated_at: string | null
+          vehicle_type: string | null
         }
         Insert: {
-          availability_status?: string
-          contact_info?: string | null
-          created_at?: string
+          available?: boolean | null
+          capacity?: string | null
+          contact: string
+          coverage_area?: string | null
+          created_at?: string | null
           description: string
           id?: string
           location: string
           price_range?: string | null
-          provider_name: string
+          provider: string
+          rating?: number | null
           service_type: string
           title: string
-          updated_at?: string
+          updated_at?: string | null
+          vehicle_type?: string | null
         }
         Update: {
-          availability_status?: string
-          contact_info?: string | null
-          created_at?: string
+          available?: boolean | null
+          capacity?: string | null
+          contact?: string
+          coverage_area?: string | null
+          created_at?: string | null
           description?: string
           id?: string
           location?: string
           price_range?: string | null
-          provider_name?: string
+          provider?: string
+          rating?: number | null
           service_type?: string
           title?: string
-          updated_at?: string
+          updated_at?: string | null
+          vehicle_type?: string | null
         }
         Relationships: []
       }
@@ -605,12 +473,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      create_admin_user: {
-        Args: { _email: string; _full_name: string }
-        Returns: undefined
-      }
       is_admin: {
-        Args: { user_id?: string }
+        Args: Record<PropertyKey, never>
         Returns: boolean
       }
     }
