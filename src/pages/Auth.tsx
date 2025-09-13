@@ -82,16 +82,16 @@ const Auth = () => {
             .eq('user_id', user.id)
             .maybeSingle();
 
-          if (!existingProfile) {
-            await supabase
-              .from('profiles')
-              .insert({
-                user_id: user.id,
-                email: user.email,
-                full_name: (user.user_metadata?.full_name as string) || '',
-                role: (user.user_metadata?.role as 'farmer' | 'investor' | 'admin') || 'farmer'
-              });
-          }
+        if (!existingProfile) {
+          await supabase
+            .from('profiles')
+            .insert({
+              id: user.id,
+              email: user.email,
+              full_name: (user.user_metadata?.full_name as string) || '',
+              role: (user.user_metadata?.role as 'farmer' | 'investor' | 'admin') || 'farmer'
+            });
+        }
 
           // Admin override by email
           const adminEmails = ['tva@agriverse.africa', 'admin@agriverse.africa'];

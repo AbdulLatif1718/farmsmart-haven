@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,62 +7,101 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Truck, Edit, Trash } from 'lucide-react';
+import { Plus, Truck, Edit, Trash, Loader } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
-// Mock transport data
-const mockTransports = [
-  {
-    id: '1',
-    title: 'Produce Transportation Service',
-    description: 'Reliable transport service for fresh produce with refrigerated trucks. Covers Accra to Kumasi route with scheduled deliveries.',
-    service_type: 'cold-storage',
-    provider_name: 'Ghana Fresh Transport Ltd',
-    location: 'Accra to Kumasi Corridor',
-    contact_info: '+233244123456',
-    price_range: 'GHS 150-400 per trip',
-    availability_status: 'available',
-    created_at: '2024-11-25T09:00:00Z'
-  },
-  {
-    id: '2',
-    title: 'Bulk Grain Transport',
-    description: 'Specialized in transporting bulk grains and cereals. Large capacity trucks available for major harvest seasons.',
-    service_type: 'bulk-transport',
-    provider_name: 'Northern Logistics Co-op',
-    location: 'Northern Region Coverage',
-    contact_info: '+233201987654',
-    price_range: 'GHS 200-600 per load',
-    availability_status: 'busy',
-    created_at: '2024-11-20T15:30:00Z'
-  }
-];
+interface TransportService {
+  id: string;
+  title: string;
+  description: string;
+  service_type: 'pickup' | 'delivery' | 'storage' | 'processing';
+  provider: string;
+  contact: string;
+  location: string;
+  coverage_area: string | null;
+  price_range: string | null;
+  capacity: string | null;
+  vehicle_type: string | null;
+  available: boolean;
+  rating: number | null;
+  created_at: string;
+  updated_at: string;
+}
 
 const AdminTransport = () => {
   const { toast } = useToast();
-  const [transports, setTransports] = useState<any[]>(mockTransports);
+  const [transports, setTransports] = useState<TransportService[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    service_type: '',
-    provider_name: '',
+    service_type: 'pickup' as 'pickup' | 'delivery' | 'storage' | 'processing',
+    provider: '',
+    contact: '',
     location: '',
-    contact_info: '',
+    coverage_area: '',
     price_range: '',
-    availability_status: 'available'
+    capacity: '',
+    vehicle_type: '',
+    available: true
   });
+
+  useEffect(() => {
+    fetchTransports();
+  }, []);
+
+  const fetchTransports = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('transport_logistics')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setTransports(data || []);
+    } catch (error) {
+      console.error('Error fetching transport services:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch transport services",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
     try {
       const newTransport = {
-        id: String(Date.now()),
-        ...formData,
-        created_at: new Date().toISOString()
+        title: formData.title,
+        description: formData.description,
+        service_type: formData.service_type,
+        provider: formData.provider,
+        contact: formData.contact,
+        location: formData.location,
+        coverage_area: formData.coverage_area || null,
+        price_range: formData.price_range || null,
+        capacity: formData.capacity || null,
+        vehicle_type: formData.vehicle_type || null,
+        available: formData.available,
+        rating: 0
       };
 
-      setTransports(prev => [newTransport, ...prev]);
+      const { data, error } = await supabase
+        .from('transport_logistics')
+        .insert([newTransport])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setTransports(prev => [data, ...prev]);
 
       toast({
         title: "Success",
@@ -73,21 +112,62 @@ const AdminTransport = () => {
       setFormData({
         title: '',
         description: '',
-        service_type: '',
-        provider_name: '',
+        service_type: 'pickup',
+        provider: '',
+        contact: '',
         location: '',
-        contact_info: '',
+        coverage_area: '',
         price_range: '',
-        availability_status: 'available'
+        capacity: '',
+        vehicle_type: '',
+        available: true
       });
     } catch (error: any) {
+      console.error('Error creating transport service:', error);
       toast({
         title: "Error",
         description: "Failed to create transport service",
         variant: "destructive",
       });
+    } finally {
+      setSubmitting(false);
     }
   };
+
+  const deleteTransport = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('transport_logistics')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setTransports(prev => prev.filter(transport => transport.id !== id));
+      
+      toast({
+        title: "Success",
+        description: "Transport service deleted successfully",
+      });
+    } catch (error) {
+      console.error('Error deleting transport service:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete transport service",
+        variant: "destructive",
+      });
+    }
+  };
+
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <Loader className="h-8 w-8 animate-spin" />
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
@@ -123,18 +203,15 @@ const AdminTransport = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="service_type">Service Type *</Label>
-                    <Select value={formData.service_type} onValueChange={(value) => setFormData(prev => ({...prev, service_type: value}))}>
+                    <Select value={formData.service_type} onValueChange={(value: 'pickup' | 'delivery' | 'storage' | 'processing') => setFormData(prev => ({...prev, service_type: value}))}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select service type" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="truck-transport">Truck Transport</SelectItem>
-                        <SelectItem value="pickup-delivery">Pickup & Delivery</SelectItem>
-                        <SelectItem value="cold-storage">Cold Storage Transport</SelectItem>
-                        <SelectItem value="bulk-transport">Bulk Transport</SelectItem>
-                        <SelectItem value="logistics">Logistics Services</SelectItem>
-                        <SelectItem value="warehouse">Warehousing</SelectItem>
-                        <SelectItem value="last-mile">Last Mile Delivery</SelectItem>
+                        <SelectItem value="pickup">Pickup</SelectItem>
+                        <SelectItem value="delivery">Delivery</SelectItem>
+                        <SelectItem value="storage">Storage</SelectItem>
+                        <SelectItem value="processing">Processing</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -153,21 +230,21 @@ const AdminTransport = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="provider_name">Provider Name *</Label>
+                    <Label htmlFor="provider">Provider Name *</Label>
                     <Input
-                      id="provider_name"
-                      value={formData.provider_name}
-                      onChange={(e) => setFormData(prev => ({...prev, provider_name: e.target.value}))}
+                      id="provider"
+                      value={formData.provider}
+                      onChange={(e) => setFormData(prev => ({...prev, provider: e.target.value}))}
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="location">Service Location *</Label>
+                    <Label htmlFor="contact">Contact Information *</Label>
                     <Input
-                      id="location"
-                      placeholder="Coverage area or base location"
-                      value={formData.location}
-                      onChange={(e) => setFormData(prev => ({...prev, location: e.target.value}))}
+                      id="contact"
+                      placeholder="Phone number or email"
+                      value={formData.contact}
+                      onChange={(e) => setFormData(prev => ({...prev, contact: e.target.value}))}
                       required
                     />
                   </div>
@@ -175,14 +252,26 @@ const AdminTransport = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="contact_info">Contact Information</Label>
+                    <Label htmlFor="location">Base Location *</Label>
                     <Input
-                      id="contact_info"
-                      placeholder="Phone number or email"
-                      value={formData.contact_info}
-                      onChange={(e) => setFormData(prev => ({...prev, contact_info: e.target.value}))}
+                      id="location"
+                      value={formData.location}
+                      onChange={(e) => setFormData(prev => ({...prev, location: e.target.value}))}
+                      required
                     />
                   </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="coverage_area">Coverage Area</Label>
+                    <Input
+                      id="coverage_area"
+                      placeholder="Service coverage area"
+                      value={formData.coverage_area}
+                      onChange={(e) => setFormData(prev => ({...prev, coverage_area: e.target.value}))}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="price_range">Price Range</Label>
                     <Input
@@ -192,24 +281,31 @@ const AdminTransport = () => {
                       onChange={(e) => setFormData(prev => ({...prev, price_range: e.target.value}))}
                     />
                   </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="availability_status">Availability Status</Label>
-                  <Select value={formData.availability_status} onValueChange={(value) => setFormData(prev => ({...prev, availability_status: value}))}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="available">Available</SelectItem>
-                      <SelectItem value="busy">Currently Busy</SelectItem>
-                      <SelectItem value="unavailable">Unavailable</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="space-y-2">
+                    <Label htmlFor="capacity">Capacity</Label>
+                    <Input
+                      id="capacity"
+                      placeholder="e.g., 5 tons, 20 bags"
+                      value={formData.capacity}
+                      onChange={(e) => setFormData(prev => ({...prev, capacity: e.target.value}))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="vehicle_type">Vehicle Type</Label>
+                    <Input
+                      id="vehicle_type"
+                      placeholder="e.g., Truck, Van, Refrigerated"
+                      value={formData.vehicle_type}
+                      onChange={(e) => setFormData(prev => ({...prev, vehicle_type: e.target.value}))}
+                    />
+                  </div>
                 </div>
 
                 <div className="flex gap-4">
-                  <Button type="submit">Add Service</Button>
+                  <Button type="submit" disabled={submitting}>
+                    {submitting ? <Loader className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
+                    {submitting ? 'Adding...' : 'Add Service'}
+                  </Button>
                   <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
                     Cancel
                   </Button>
@@ -242,14 +338,16 @@ const AdminTransport = () => {
                       <div className="flex items-center gap-3 mb-2">
                         <h3 className="font-medium">{transport.title}</h3>
                         <Badge variant="outline">{transport.service_type}</Badge>
-                        <Badge variant={transport.availability_status === 'available' ? 'default' : 'secondary'}>
-                          {transport.availability_status}
+                        <Badge variant={transport.available ? 'default' : 'secondary'}>
+                          {transport.available ? 'Available' : 'Unavailable'}
                         </Badge>
                       </div>
                       <p className="text-sm text-muted-foreground mb-2">{transport.description}</p>
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        <span>Provider: {transport.provider_name}</span>
+                        <span>Provider: {transport.provider}</span>
                         <span>{transport.location}</span>
+                        <span>Contact: {transport.contact}</span>
+                        {transport.capacity && <span>Capacity: {transport.capacity}</span>}
                         {transport.price_range && <span>{transport.price_range}</span>}
                       </div>
                     </div>
@@ -257,7 +355,11 @@ const AdminTransport = () => {
                       <Button variant="ghost" size="sm">
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="sm">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => deleteTransport(transport.id)}
+                      >
                         <Trash className="h-4 w-4" />
                       </Button>
                     </div>

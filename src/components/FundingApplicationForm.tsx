@@ -52,12 +52,16 @@ export const FundingApplicationForm = ({ isOpen, onClose }: FundingApplicationFo
       const { error } = await supabase
         .from('funding_applications')
         .insert({
-          applicant_id: profile.id,
+          user_id: profile.id,
+          full_name: formData.full_name,
+          email: formData.email,
+          phone: formData.phone,
           project_title: formData.project_title,
           project_description: formData.project_description,
-          funding_amount_requested: parseFloat(formData.funding_amount_requested),
-          project_duration_months: parseInt(formData.project_duration_months),
-          expected_roi_percentage: formData.expected_roi_percentage ? parseFloat(formData.expected_roi_percentage) : null,
+          funding_amount: parseFloat(formData.funding_amount_requested),
+          purpose: formData.purpose,
+          timeline: formData.project_duration_months + ' months',
+          expected_roi: formData.expected_roi_percentage ? parseFloat(formData.expected_roi_percentage) : null,
           farm_location: formData.farm_location,
           farm_size_acres: formData.farm_size_acres ? parseFloat(formData.farm_size_acres) : null,
           farming_experience_years: formData.farming_experience_years ? parseInt(formData.farming_experience_years) : null,

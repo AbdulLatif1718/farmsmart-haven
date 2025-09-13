@@ -31,16 +31,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProfile = async (userId: string) => {
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', userId)
-        .maybeSingle();
-      
-      setProfile(profileData as Profile);
-      setLoading(false);
-    };
+  const fetchProfile = async (userId: string) => {
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .maybeSingle();
+    
+    setProfile(profileData as Profile);
+    setLoading(false);
+  };
 
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(

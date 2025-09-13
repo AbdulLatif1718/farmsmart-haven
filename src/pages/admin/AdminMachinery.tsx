@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,67 +7,107 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Wrench, Edit, Trash } from 'lucide-react';
+import { Plus, Wrench, Edit, Trash, Loader } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
-// Mock machinery data
-const mockMachinery = [
-  {
-    id: '1',
-    title: 'John Deere 5055E Tractor',
-    description: '55HP utility tractor with 4WD, perfect for small to medium farm operations. Includes loader attachment and implements.',
-    machine_type: 'tractor',
-    provider_name: 'Farm Equipment Ghana Ltd',
-    location: 'Kumasi, Ashanti Region',
-    contact_info: '+233244567890',
-    hourly_rate: 45.00,
-    daily_rate: 300.00,
-    availability_status: 'available',
-    created_at: '2024-11-20T10:00:00Z'
-  },
-  {
-    id: '2',
-    title: 'Rice Combine Harvester',
-    description: 'Modern combine harvester specifically designed for rice harvesting. High efficiency with minimal grain loss.',
-    machine_type: 'harvester',
-    provider_name: 'Northern Mechanization Co-op',
-    location: 'Tamale, Northern Region',
-    contact_info: '+233201234567',
-    hourly_rate: null,
-    daily_rate: 800.00,
-    availability_status: 'rented',
-    created_at: '2024-11-15T14:30:00Z'
-  }
-];
+interface MachineryRental {
+  id: string;
+  title: string;
+  description: string;
+  type: string;
+  brand: string | null;
+  model: string | null;
+  year: number | null;
+  condition: string;
+  provider: string;
+  location: string;
+  daily_rate: number | null;
+  weekly_rate: number | null;
+  monthly_rate: number | null;
+  available: boolean;
+  images: string[] | null;
+  specifications: any;
+  created_at: string;
+  updated_at: string;
+}
 
 const AdminMachinery = () => {
   const { toast } = useToast();
-  const [machinery, setMachinery] = useState<any[]>(mockMachinery);
+  const [machinery, setMachinery] = useState<MachineryRental[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    machine_type: '',
-    provider_name: '',
+    type: '',
+    brand: '',
+    model: '',
+    year: '',
+    condition: 'good',
+    provider: '',
     location: '',
-    contact_info: '',
-    hourly_rate: '',
     daily_rate: '',
-    availability_status: 'available'
+    weekly_rate: '',
+    monthly_rate: '',
+    available: true
   });
+
+  useEffect(() => {
+    fetchMachinery();
+  }, []);
+
+  const fetchMachinery = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('machinery_rentals')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setMachinery(data || []);
+    } catch (error) {
+      console.error('Error fetching machinery:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch machinery rentals",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
     try {
       const newMachine = {
-        id: String(Date.now()),
-        ...formData,
-        hourly_rate: formData.hourly_rate ? parseFloat(formData.hourly_rate) : null,
+        title: formData.title,
+        description: formData.description,
+        type: formData.type,
+        brand: formData.brand || null,
+        model: formData.model || null,
+        year: formData.year ? parseInt(formData.year) : null,
+        condition: formData.condition,
+        provider: formData.provider,
+        location: formData.location,
         daily_rate: formData.daily_rate ? parseFloat(formData.daily_rate) : null,
-        created_at: new Date().toISOString()
+        weekly_rate: formData.weekly_rate ? parseFloat(formData.weekly_rate) : null,
+        monthly_rate: formData.monthly_rate ? parseFloat(formData.monthly_rate) : null,
+        available: formData.available
       };
 
-      setMachinery(prev => [newMachine, ...prev]);
+      const { data, error } = await supabase
+        .from('machinery_rentals')
+        .insert([newMachine])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setMachinery(prev => [data, ...prev]);
 
       toast({
         title: "Success",
@@ -78,22 +118,64 @@ const AdminMachinery = () => {
       setFormData({
         title: '',
         description: '',
-        machine_type: '',
-        provider_name: '',
+        type: '',
+        brand: '',
+        model: '',
+        year: '',
+        condition: 'good',
+        provider: '',
         location: '',
-        contact_info: '',
-        hourly_rate: '',
         daily_rate: '',
-        availability_status: 'available'
+        weekly_rate: '',
+        monthly_rate: '',
+        available: true
       });
     } catch (error: any) {
+      console.error('Error creating machinery:', error);
       toast({
         title: "Error",
         description: "Failed to create machinery listing",
         variant: "destructive",
       });
+    } finally {
+      setSubmitting(false);
     }
   };
+
+  const deleteMachinery = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('machinery_rentals')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setMachinery(prev => prev.filter(machine => machine.id !== id));
+      
+      toast({
+        title: "Success",
+        description: "Machinery deleted successfully",
+      });
+    } catch (error) {
+      console.error('Error deleting machinery:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete machinery",
+        variant: "destructive",
+      });
+    }
+  };
+
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <Loader className="h-8 w-8 animate-spin" />
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
@@ -128,8 +210,8 @@ const AdminMachinery = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="machine_type">Machine Type *</Label>
-                    <Select value={formData.machine_type} onValueChange={(value) => setFormData(prev => ({...prev, machine_type: value}))}>
+                    <Label htmlFor="type">Machine Type *</Label>
+                    <Select value={formData.type} onValueChange={(value) => setFormData(prev => ({...prev, type: value}))}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select machine type" />
                       </SelectTrigger>
@@ -158,13 +240,41 @@ const AdminMachinery = () => {
                   />
                 </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="brand">Brand</Label>
+                    <Input
+                      id="brand"
+                      value={formData.brand}
+                      onChange={(e) => setFormData(prev => ({...prev, brand: e.target.value}))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="model">Model</Label>
+                    <Input
+                      id="model"
+                      value={formData.model}
+                      onChange={(e) => setFormData(prev => ({...prev, model: e.target.value}))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="year">Year</Label>
+                    <Input
+                      id="year"
+                      type="number"
+                      value={formData.year}
+                      onChange={(e) => setFormData(prev => ({...prev, year: e.target.value}))}
+                    />
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="provider_name">Provider Name *</Label>
+                    <Label htmlFor="provider">Provider Name *</Label>
                     <Input
-                      id="provider_name"
-                      value={formData.provider_name}
-                      onChange={(e) => setFormData(prev => ({...prev, provider_name: e.target.value}))}
+                      id="provider"
+                      value={formData.provider}
+                      onChange={(e) => setFormData(prev => ({...prev, provider: e.target.value}))}
                       required
                     />
                   </div>
@@ -179,27 +289,7 @@ const AdminMachinery = () => {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="contact_info">Contact Information</Label>
-                  <Input
-                    id="contact_info"
-                    placeholder="Phone number or email"
-                    value={formData.contact_info}
-                    onChange={(e) => setFormData(prev => ({...prev, contact_info: e.target.value}))}
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="hourly_rate">Hourly Rate (GHS)</Label>
-                    <Input
-                      id="hourly_rate"
-                      type="number"
-                      step="0.01"
-                      value={formData.hourly_rate}
-                      onChange={(e) => setFormData(prev => ({...prev, hourly_rate: e.target.value}))}
-                    />
-                  </div>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="daily_rate">Daily Rate (GHS)</Label>
                     <Input
@@ -211,23 +301,46 @@ const AdminMachinery = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="availability_status">Availability Status</Label>
-                    <Select value={formData.availability_status} onValueChange={(value) => setFormData(prev => ({...prev, availability_status: value}))}>
+                    <Label htmlFor="weekly_rate">Weekly Rate (GHS)</Label>
+                    <Input
+                      id="weekly_rate"
+                      type="number"
+                      step="0.01"
+                      value={formData.weekly_rate}
+                      onChange={(e) => setFormData(prev => ({...prev, weekly_rate: e.target.value}))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="monthly_rate">Monthly Rate (GHS)</Label>
+                    <Input
+                      id="monthly_rate"
+                      type="number"
+                      step="0.01"
+                      value={formData.monthly_rate}
+                      onChange={(e) => setFormData(prev => ({...prev, monthly_rate: e.target.value}))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="condition">Condition</Label>
+                    <Select value={formData.condition} onValueChange={(value) => setFormData(prev => ({...prev, condition: value}))}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="available">Available</SelectItem>
-                        <SelectItem value="rented">Currently Rented</SelectItem>
-                        <SelectItem value="maintenance">Under Maintenance</SelectItem>
-                        <SelectItem value="unavailable">Unavailable</SelectItem>
+                        <SelectItem value="excellent">Excellent</SelectItem>
+                        <SelectItem value="good">Good</SelectItem>
+                        <SelectItem value="fair">Fair</SelectItem>
+                        <SelectItem value="needs_repair">Needs Repair</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
 
                 <div className="flex gap-4">
-                  <Button type="submit">Add Machinery</Button>
+                  <Button type="submit" disabled={submitting}>
+                    {submitting ? <Loader className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
+                    {submitting ? 'Adding...' : 'Add Machinery'}
+                  </Button>
                   <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
                     Cancel
                   </Button>
@@ -259,24 +372,31 @@ const AdminMachinery = () => {
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
                         <h3 className="font-medium">{machine.title}</h3>
-                        <Badge variant="outline">{machine.machine_type}</Badge>
-                        <Badge variant={machine.availability_status === 'available' ? 'default' : 'secondary'}>
-                          {machine.availability_status}
+                        <Badge variant="outline">{machine.type}</Badge>
+                        <Badge variant={machine.available ? 'default' : 'secondary'}>
+                          {machine.available ? 'Available' : 'Unavailable'}
                         </Badge>
+                        <Badge variant="outline">{machine.condition}</Badge>
                       </div>
                       <p className="text-sm text-muted-foreground mb-2">{machine.description}</p>
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        <span>Provider: {machine.provider_name}</span>
+                        <span>Provider: {machine.provider}</span>
                         <span>{machine.location}</span>
-                        {machine.hourly_rate && <span>GHS {machine.hourly_rate}/hour</span>}
+                        {machine.brand && <span>{machine.brand} {machine.model}</span>}
                         {machine.daily_rate && <span>GHS {machine.daily_rate}/day</span>}
+                        {machine.weekly_rate && <span>GHS {machine.weekly_rate}/week</span>}
+                        {machine.monthly_rate && <span>GHS {machine.monthly_rate}/month</span>}
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <Button variant="ghost" size="sm">
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="sm">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => deleteMachinery(machine.id)}
+                      >
                         <Trash className="h-4 w-4" />
                       </Button>
                     </div>

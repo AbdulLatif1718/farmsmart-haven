@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,90 +8,88 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Eye, Phone, Mail, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Eye, Phone, Mail, CheckCircle, XCircle, Clock, Loader } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface FarmApplication {
   id: string;
-  applicant_id: string;
-  name: string;
-  location: string;
-  size_acres: number;
-  size_unit: string;
-  farm_type: string;
-  description?: string;
-  soil_type?: string;
-  irrigation_type?: string;
-  coordinates_lat?: string;
-  coordinates_lng?: string;
-  status: string;
-  admin_notes?: string;
-  contact_phone?: string;
-  contact_email?: string;
-  created_at: string;
+  user_id: string | null;
   applicant_name: string;
-  applicant_email: string;
+  email: string;
+  phone: string;
+  farm_name: string;
+  location: string;
+  farm_size: number;
+  farm_type: string;
+  crops: string | null;
+  livestock: string | null;
+  farming_experience: number | null;
+  equipment: string | null;
+  certification: string | null;
+  previous_yield: string | null;
+  challenges: string | null;
+  goals: string | null;
+  status: 'pending' | 'approved' | 'rejected';
+  admin_notes: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
-
-// Mock data for demonstration
-const mockFarmApplications: FarmApplication[] = [
-  {
-    id: '1',
-    applicant_id: 'farmer-001',
-    name: 'Green Valley Farm',
-    location: 'Eastern Region, Ghana',
-    size_acres: 12,
-    size_unit: 'acres',
-    farm_type: 'Mixed Crop',
-    description: 'A sustainable mixed crop farm focusing on maize, beans, and vegetables using organic farming methods.',
-    soil_type: 'Clay Loam',
-    irrigation_type: 'Drip Irrigation',
-    coordinates_lat: '6.2833',
-    coordinates_lng: '-0.5667',
-    status: 'pending',
-    contact_phone: '+233241234567',
-    contact_email: 'greenvalley@email.com',
-    created_at: '2024-12-01T08:30:00Z',
-    applicant_name: 'John Mensah',
-    applicant_email: 'john.mensah@email.com'
-  },
-  {
-    id: '2',
-    applicant_id: 'farmer-002',
-    name: 'Sunrise Poultry & Crops',
-    location: 'Volta Region, Ghana',
-    size_acres: 8,
-    size_unit: 'acres',
-    farm_type: 'Poultry & Crops',
-    description: 'Integrated farming system combining poultry production with crop cultivation for maximum efficiency.',
-    soil_type: 'Sandy Loam',
-    irrigation_type: 'Sprinkler',
-    status: 'approved',
-    contact_phone: '+233207654321',
-    contact_email: 'sunrise@email.com',
-    created_at: '2024-11-28T10:15:00Z',
-    admin_notes: 'Excellent business plan with good market analysis. Approved for integrated farming approach.',
-    applicant_name: 'Sarah Adjei',
-    applicant_email: 'sarah.adjei@email.com'
-  }
-];
 
 const AdminFarmApplications = () => {
   const { toast } = useToast();
-  const [applications, setApplications] = useState<FarmApplication[]>(mockFarmApplications);
+  const [applications, setApplications] = useState<FarmApplication[]>([]);
   const [selectedApplication, setSelectedApplication] = useState<FarmApplication | null>(null);
   const [reviewNotes, setReviewNotes] = useState('');
   const [reviewStatus, setReviewStatus] = useState<'approved' | 'rejected'>('approved');
+  const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
+
+  useEffect(() => {
+    fetchApplications();
+  }, []);
+
+  const fetchApplications = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('farm_applications')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setApplications(data || []);
+    } catch (error) {
+      console.error('Error fetching farm applications:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch farm applications",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleReview = async (applicationId: string, status: 'approved' | 'rejected', notes: string) => {
+    setActionLoading(true);
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const { error } = await supabase
+        .from('farm_applications')
+        .update({ 
+          status, 
+          admin_notes: notes || null,
+          reviewed_at: new Date().toISOString()
+        })
+        .eq('id', applicationId);
+
+      if (error) throw error;
 
       setApplications(prevApplications => 
         prevApplications.map(app => 
           app.id === applicationId 
-            ? { ...app, status, admin_notes: notes }
+            ? { ...app, status, admin_notes: notes || null }
             : app
         )
       );
@@ -104,11 +102,14 @@ const AdminFarmApplications = () => {
       setSelectedApplication(null);
       setReviewNotes('');
     } catch (error: any) {
+      console.error('Error updating farm application:', error);
       toast({
         title: "Error",
         description: "Failed to update application",
         variant: "destructive",
       });
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -125,6 +126,15 @@ const AdminFarmApplications = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <Loader className="h-8 w-8 animate-spin" />
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
@@ -144,167 +154,203 @@ const AdminFarmApplications = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Applicant</TableHead>
-                  <TableHead>Farm Name</TableHead>
-                  <TableHead>Location</TableHead>
-                  <TableHead>Size</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Submitted</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {applications.map((application) => (
-                  <TableRow key={application.id}>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{application.applicant_name}</div>
-                        <div className="text-sm text-muted-foreground">{application.applicant_email}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-medium">{application.name}</TableCell>
-                    <TableCell>{application.location}</TableCell>
-                    <TableCell>{application.size_acres} {application.size_unit}</TableCell>
-                    <TableCell>{application.farm_type}</TableCell>
-                    <TableCell>{getStatusBadge(application.status)}</TableCell>
-                    <TableCell>{new Date(application.created_at).toLocaleDateString()}</TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => setSelectedApplication(application)}
-                            >
-                              <Eye className="w-4 h-4 mr-1" />
-                              Review
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-2xl">
-                            <DialogHeader>
-                              <DialogTitle>Review Farm Application</DialogTitle>
-                            </DialogHeader>
-                            {selectedApplication && (
-                              <div className="space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                   <div>
-                                     <Label>Applicant</Label>
-                                     <p className="font-medium">{selectedApplication.applicant_name}</p>
-                                   </div>
-                                   <div>
-                                     <Label>Email</Label>
-                                     <p>{selectedApplication.applicant_email}</p>
-                                   </div>
-                                </div>
-                                
-                                <div className="grid grid-cols-2 gap-4">
-                                  <div>
-                                    <Label>Farm Name</Label>
-                                    <p className="font-medium">{selectedApplication.name}</p>
-                                  </div>
-                                  <div>
-                                    <Label>Farm Type</Label>
-                                    <p>{selectedApplication.farm_type}</p>
-                                  </div>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                  <div>
-                                    <Label>Location</Label>
-                                    <p>{selectedApplication.location}</p>
-                                  </div>
-                                  <div>
-                                    <Label>Size</Label>
-                                    <p>{selectedApplication.size_acres} {selectedApplication.size_unit}</p>
-                                  </div>
-                                </div>
-
-                                {selectedApplication.description && (
-                                  <div>
-                                    <Label>Description</Label>
-                                    <p className="text-sm">{selectedApplication.description}</p>
-                                  </div>
-                                )}
-
-                                <div className="grid grid-cols-2 gap-4">
-                                  <div>
-                                    <Label>Contact Phone</Label>
-                                    <div className="flex items-center gap-2">
-                                      <Phone className="w-4 h-4" />
-                                      <p>{selectedApplication.contact_phone || 'Not provided'}</p>
-                                    </div>
-                                  </div>
-                                  <div>
-                                    <Label>Contact Email</Label>
-                                    <div className="flex items-center gap-2">
-                                      <Mail className="w-4 h-4" />
-                                      <p>{selectedApplication.contact_email || 'Not provided'}</p>
-                                    </div>
-                                  </div>
-                                </div>
-
-                                {selectedApplication.status === 'pending' && (
-                                  <div className="space-y-4 pt-4 border-t">
-                                    <div>
-                                      <Label htmlFor="reviewStatus">Decision</Label>
-                                      <Select value={reviewStatus} onValueChange={(value: 'approved' | 'rejected') => setReviewStatus(value)}>
-                                        <SelectTrigger>
-                                          <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                          <SelectItem value="approved">Approve</SelectItem>
-                                          <SelectItem value="rejected">Reject</SelectItem>
-                                        </SelectContent>
-                                      </Select>
-                                    </div>
-                                    
-                                    <div>
-                                      <Label htmlFor="reviewNotes">Notes</Label>
-                                      <Textarea
-                                        id="reviewNotes"
-                                        placeholder="Add notes about your decision..."
-                                        value={reviewNotes}
-                                        onChange={(e) => setReviewNotes(e.target.value)}
-                                        rows={3}
-                                      />
-                                    </div>
-
-                                    <div className="flex gap-2 pt-2">
-                                      <Button 
-                                        onClick={() => handleReview(selectedApplication.id, reviewStatus, reviewNotes)}
-                                        className="flex items-center gap-2"
-                                      >
-                                        {reviewStatus === 'approved' ? (
-                                          <><CheckCircle className="w-4 h-4" />Approve Application</>
-                                        ) : (
-                                          <><XCircle className="w-4 h-4" />Reject Application</>
-                                        )}
-                                      </Button>
-                                    </div>
-                                  </div>
-                                )}
-
-                                {selectedApplication.admin_notes && (
-                                  <div className="pt-4 border-t">
-                                    <Label>Admin Notes</Label>
-                                    <p className="text-sm bg-muted p-2 rounded">{selectedApplication.admin_notes}</p>
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                          </DialogContent>
-                        </Dialog>
-                      </div>
-                    </TableCell>
+            {applications.length === 0 ? (
+              <div className="text-center py-8">
+                <Mail className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                <p className="text-muted-foreground">No farm applications found</p>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Applicant</TableHead>
+                    <TableHead>Farm Name</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>Size</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Submitted</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {applications.map((application) => (
+                    <TableRow key={application.id}>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{application.applicant_name}</div>
+                          <div className="text-sm text-muted-foreground">{application.email}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium">{application.farm_name}</TableCell>
+                      <TableCell>{application.location}</TableCell>
+                      <TableCell>{application.farm_size} acres</TableCell>
+                      <TableCell>{application.farm_type}</TableCell>
+                      <TableCell>{getStatusBadge(application.status)}</TableCell>
+                      <TableCell>{new Date(application.created_at).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedApplication(application);
+                                  setReviewNotes(application.admin_notes || '');
+                                }}
+                              >
+                                <Eye className="w-4 h-4 mr-1" />
+                                Review
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                              <DialogHeader>
+                                <DialogTitle>Review Farm Application</DialogTitle>
+                              </DialogHeader>
+                              {selectedApplication && (
+                                <div className="space-y-4">
+                                  <div className="grid grid-cols-2 gap-4">
+                                     <div>
+                                       <Label>Applicant</Label>
+                                       <p className="font-medium">{selectedApplication.applicant_name}</p>
+                                     </div>
+                                     <div>
+                                       <Label>Email</Label>
+                                       <p>{selectedApplication.email}</p>
+                                     </div>
+                                     <div>
+                                       <Label>Phone</Label>
+                                       <p>{selectedApplication.phone}</p>
+                                     </div>
+                                  </div>
+                                  
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                      <Label>Farm Name</Label>
+                                      <p className="font-medium">{selectedApplication.farm_name}</p>
+                                    </div>
+                                    <div>
+                                      <Label>Farm Type</Label>
+                                      <p>{selectedApplication.farm_type}</p>
+                                    </div>
+                                  </div>
+
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                      <Label>Location</Label>
+                                      <p>{selectedApplication.location}</p>
+                                    </div>
+                                    <div>
+                                      <Label>Size</Label>
+                                      <p>{selectedApplication.farm_size} acres</p>
+                                    </div>
+                                  </div>
+
+                                  {selectedApplication.crops && (
+                                    <div>
+                                      <Label>Crops</Label>
+                                      <p className="text-sm">{selectedApplication.crops}</p>
+                                    </div>
+                                  )}
+
+                                  {selectedApplication.livestock && (
+                                    <div>
+                                      <Label>Livestock</Label>
+                                      <p className="text-sm">{selectedApplication.livestock}</p>
+                                    </div>
+                                  )}
+
+                                  {selectedApplication.farming_experience && (
+                                    <div>
+                                      <Label>Farming Experience</Label>
+                                      <p className="text-sm">{selectedApplication.farming_experience} years</p>
+                                    </div>
+                                  )}
+
+                                  {selectedApplication.equipment && (
+                                    <div>
+                                      <Label>Equipment</Label>
+                                      <p className="text-sm">{selectedApplication.equipment}</p>
+                                    </div>
+                                  )}
+
+                                  {selectedApplication.challenges && (
+                                    <div>
+                                      <Label>Challenges</Label>
+                                      <p className="text-sm">{selectedApplication.challenges}</p>
+                                    </div>
+                                  )}
+
+                                  {selectedApplication.goals && (
+                                    <div>
+                                      <Label>Goals</Label>
+                                      <p className="text-sm">{selectedApplication.goals}</p>
+                                    </div>
+                                  )}
+
+                                  {selectedApplication.status === 'pending' && (
+                                    <div className="space-y-4 pt-4 border-t">
+                                      <div>
+                                        <Label htmlFor="reviewStatus">Decision</Label>
+                                        <Select value={reviewStatus} onValueChange={(value: 'approved' | 'rejected') => setReviewStatus(value)}>
+                                          <SelectTrigger>
+                                            <SelectValue />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            <SelectItem value="approved">Approve</SelectItem>
+                                            <SelectItem value="rejected">Reject</SelectItem>
+                                          </SelectContent>
+                                        </Select>
+                                      </div>
+                                      
+                                      <div>
+                                        <Label htmlFor="reviewNotes">Notes</Label>
+                                        <Textarea
+                                          id="reviewNotes"
+                                          placeholder="Add notes about your decision..."
+                                          value={reviewNotes}
+                                          onChange={(e) => setReviewNotes(e.target.value)}
+                                          rows={3}
+                                        />
+                                      </div>
+
+                                      <div className="flex gap-2 pt-2">
+                                        <Button 
+                                          onClick={() => handleReview(selectedApplication.id, reviewStatus, reviewNotes)}
+                                          disabled={actionLoading}
+                                          className="flex items-center gap-2"
+                                        >
+                                          {actionLoading ? (
+                                            <Loader className="w-4 h-4 animate-spin" />
+                                          ) : reviewStatus === 'approved' ? (
+                                            <CheckCircle className="w-4 h-4" />
+                                          ) : (
+                                            <XCircle className="w-4 h-4" />
+                                          )}
+                                          {actionLoading ? 'Processing...' : `${reviewStatus === 'approved' ? 'Approve' : 'Reject'} Application`}
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {selectedApplication.admin_notes && (
+                                    <div className="pt-4 border-t">
+                                      <Label>Admin Notes</Label>
+                                      <p className="text-sm bg-muted p-2 rounded">{selectedApplication.admin_notes}</p>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </DialogContent>
+                          </Dialog>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
           </CardContent>
         </Card>
       </div>

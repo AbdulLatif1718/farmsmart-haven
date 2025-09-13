@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,77 +7,112 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Store, Edit, Trash } from 'lucide-react';
+import { Plus, Store, Edit, Trash, Loader } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
-// Mock marketplace data
-const mockListings = [
-  {
-    id: '1',
-    title: 'Fresh Organic Tomatoes',
-    description: 'High-quality organic tomatoes harvested this week. Perfect for both local consumption and export.',
-    product_type: 'vegetables',
-    price: 8.50,
-    unit: 'kg',
-    quantity_available: 500,
-    seller_name: 'Kwame Farms Ltd',
-    location: 'Ashanti Region, Ghana',
-    contact_info: '+233241234567',
-    quality_grade: 'premium',
-    harvest_date: '2024-12-01',
-    status: 'active',
-    created_at: '2024-12-01T10:00:00Z'
-  },
-  {
-    id: '2',
-    title: 'Premium White Rice',
-    description: 'Locally grown premium white rice, processed and ready for distribution.',
-    product_type: 'grains',
-    price: 12.00,
-    unit: 'bag',
-    quantity_available: 200,
-    seller_name: 'Northern Rice Co-op',
-    location: 'Northern Region, Ghana',
-    contact_info: '+233207654321',
-    quality_grade: 'grade-a',
-    harvest_date: '2024-11-15',
-    status: 'active',
-    created_at: '2024-11-28T08:30:00Z'
-  }
-];
+interface MarketListing {
+  id: string;
+  user_id: string | null;
+  title: string;
+  description: string;
+  category: string;
+  price: number;
+  unit: string;
+  quantity: number;
+  location: string;
+  seller_name: string;
+  seller_contact: string;
+  images: string[] | null;
+  quality_grade: string | null;
+  harvest_date: string | null;
+  expiry_date: string | null;
+  organic: boolean;
+  certified: boolean;
+  status: 'active' | 'sold' | 'expired' | 'removed';
+  created_at: string;
+  updated_at: string;
+}
 
 const AdminMarketplace = () => {
   const { toast } = useToast();
-  const [listings, setListings] = useState<any[]>(mockListings);
+  const [listings, setListings] = useState<MarketListing[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    product_type: '',
+    category: '',
     price: '',
     unit: '',
-    quantity_available: '',
+    quantity: '',
     seller_name: '',
+    seller_contact: '',
     location: '',
-    contact_info: '',
     quality_grade: '',
-    harvest_date: ''
+    harvest_date: '',
+    expiry_date: '',
+    organic: false,
+    certified: false
   });
+
+  useEffect(() => {
+    fetchListings();
+  }, []);
+
+  const fetchListings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('market_listings')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setListings(data || []);
+    } catch (error) {
+      console.error('Error fetching listings:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch marketplace listings",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
     try {
       const newListing = {
-        id: String(Date.now()),
-        ...formData,
-        price: parseFloat(formData.price) || 0,
-        quantity_available: parseFloat(formData.quantity_available) || 0,
+        title: formData.title,
+        description: formData.description,
+        category: formData.category,
+        price: parseFloat(formData.price),
+        unit: formData.unit,
+        quantity: parseInt(formData.quantity) || 1,
+        seller_name: formData.seller_name,
+        seller_contact: formData.seller_contact,
+        location: formData.location,
+        quality_grade: formData.quality_grade || null,
         harvest_date: formData.harvest_date || null,
-        status: 'active',
-        created_at: new Date().toISOString()
+        expiry_date: formData.expiry_date || null,
+        organic: formData.organic,
+        certified: formData.certified,
+        status: 'active' as const
       };
 
-      setListings(prev => [newListing, ...prev]);
+      const { data, error } = await supabase
+        .from('market_listings')
+        .insert([newListing])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setListings(prev => [data, ...prev]);
 
       toast({
         title: "Success",
@@ -88,24 +123,65 @@ const AdminMarketplace = () => {
       setFormData({
         title: '',
         description: '',
-        product_type: '',
+        category: '',
         price: '',
         unit: '',
-        quantity_available: '',
+        quantity: '',
         seller_name: '',
+        seller_contact: '',
         location: '',
-        contact_info: '',
         quality_grade: '',
-        harvest_date: ''
+        harvest_date: '',
+        expiry_date: '',
+        organic: false,
+        certified: false
       });
     } catch (error: any) {
+      console.error('Error creating listing:', error);
       toast({
         title: "Error",
         description: "Failed to create listing",
         variant: "destructive",
       });
+    } finally {
+      setSubmitting(false);
     }
   };
+
+  const deleteListing = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('market_listings')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setListings(prev => prev.filter(listing => listing.id !== id));
+      
+      toast({
+        title: "Success",
+        description: "Listing deleted successfully",
+      });
+    } catch (error) {
+      console.error('Error deleting listing:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete listing",
+        variant: "destructive",
+      });
+    }
+  };
+
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <Loader className="h-8 w-8 animate-spin" />
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
@@ -140,10 +216,10 @@ const AdminMarketplace = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="product_type">Product Type *</Label>
-                    <Select value={formData.product_type} onValueChange={(value) => setFormData(prev => ({...prev, product_type: value}))}>
+                    <Label htmlFor="category">Category *</Label>
+                    <Select value={formData.category} onValueChange={(value) => setFormData(prev => ({...prev, category: value}))}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select product type" />
+                        <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="grains">Grains</SelectItem>
@@ -171,7 +247,7 @@ const AdminMarketplace = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="price">Price *</Label>
+                    <Label htmlFor="price">Price (GHS) *</Label>
                     <Input
                       id="price"
                       type="number"
@@ -198,12 +274,12 @@ const AdminMarketplace = () => {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="quantity_available">Quantity Available</Label>
+                    <Label htmlFor="quantity">Quantity Available</Label>
                     <Input
-                      id="quantity_available"
+                      id="quantity"
                       type="number"
-                      value={formData.quantity_available}
-                      onChange={(e) => setFormData(prev => ({...prev, quantity_available: e.target.value}))}
+                      value={formData.quantity}
+                      onChange={(e) => setFormData(prev => ({...prev, quantity: e.target.value}))}
                     />
                   </div>
                 </div>
@@ -219,11 +295,11 @@ const AdminMarketplace = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="location">Location *</Label>
+                    <Label htmlFor="seller_contact">Seller Contact *</Label>
                     <Input
-                      id="location"
-                      value={formData.location}
-                      onChange={(e) => setFormData(prev => ({...prev, location: e.target.value}))}
+                      id="seller_contact"
+                      value={formData.seller_contact}
+                      onChange={(e) => setFormData(prev => ({...prev, seller_contact: e.target.value}))}
                       required
                     />
                   </div>
@@ -231,12 +307,12 @@ const AdminMarketplace = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="contact_info">Contact Information</Label>
+                    <Label htmlFor="location">Location *</Label>
                     <Input
-                      id="contact_info"
-                      placeholder="Phone or email"
-                      value={formData.contact_info}
-                      onChange={(e) => setFormData(prev => ({...prev, contact_info: e.target.value}))}
+                      id="location"
+                      value={formData.location}
+                      onChange={(e) => setFormData(prev => ({...prev, location: e.target.value}))}
+                      required
                     />
                   </div>
                   <div className="space-y-2">
@@ -255,18 +331,32 @@ const AdminMarketplace = () => {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="harvest_date">Harvest Date</Label>
-                  <Input
-                    id="harvest_date"
-                    type="date"
-                    value={formData.harvest_date}
-                    onChange={(e) => setFormData(prev => ({...prev, harvest_date: e.target.value}))}
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="harvest_date">Harvest Date</Label>
+                    <Input
+                      id="harvest_date"
+                      type="date"
+                      value={formData.harvest_date}
+                      onChange={(e) => setFormData(prev => ({...prev, harvest_date: e.target.value}))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="expiry_date">Expiry Date</Label>
+                    <Input
+                      id="expiry_date"
+                      type="date"
+                      value={formData.expiry_date}
+                      onChange={(e) => setFormData(prev => ({...prev, expiry_date: e.target.value}))}
+                    />
+                  </div>
                 </div>
 
                 <div className="flex gap-4">
-                  <Button type="submit">Create Listing</Button>
+                  <Button type="submit" disabled={submitting}>
+                    {submitting ? <Loader className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
+                    {submitting ? 'Creating...' : 'Create Listing'}
+                  </Button>
                   <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
                     Cancel
                   </Button>
@@ -298,25 +388,31 @@ const AdminMarketplace = () => {
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
                         <h3 className="font-medium">{listing.title}</h3>
-                        <Badge variant="outline">{listing.product_type}</Badge>
+                        <Badge variant="outline">{listing.category}</Badge>
                         <Badge variant="outline">{listing.status}</Badge>
                         {listing.quality_grade && (
                           <Badge variant="secondary">{listing.quality_grade}</Badge>
                         )}
+                        {listing.organic && <Badge variant="outline">Organic</Badge>}
+                        {listing.certified && <Badge variant="outline">Certified</Badge>}
                       </div>
                       <p className="text-sm text-muted-foreground mb-2">{listing.description}</p>
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         <span>GHS {listing.price}/{listing.unit}</span>
                         <span>By {listing.seller_name}</span>
                         <span>{listing.location}</span>
-                        {listing.quantity_available && <span>{listing.quantity_available} {listing.unit}s available</span>}
+                        <span>{listing.quantity} {listing.unit}s available</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <Button variant="ghost" size="sm">
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="sm">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => deleteListing(listing.id)}
+                      >
                         <Trash className="h-4 w-4" />
                       </Button>
                     </div>
