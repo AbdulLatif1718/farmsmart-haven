@@ -48,7 +48,7 @@ const InvestorProjects = () => {
       const { data, error } = await supabase
         .from('funding_applications')
         .select('*')
-        .eq('investor_id', profile.id)
+        .eq('status', 'approved')
         .order('created_at', { ascending: false });
       if (!error) setInvestments(data || []);
     };
