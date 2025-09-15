@@ -25,14 +25,11 @@ export const FundingApplicationForm = ({ isOpen, onClose }: FundingApplicationFo
     project_title: '',
     project_description: '',
     purpose: '',
-    funding_amount_requested: '',
-    project_duration_months: '',
-    expected_roi_percentage: '',
-    farm_location: '',
-    farm_size_acres: '',
-    farming_experience_years: '',
-    crop_type: '',
-    business_plan_url: ''
+    funding_amount: '',
+    timeline: '',
+    expected_roi: '',
+    collateral: '',
+    business_plan: ''
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -62,15 +59,12 @@ export const FundingApplicationForm = ({ isOpen, onClose }: FundingApplicationFo
           phone: formData.phone,
           project_title: formData.project_title,
           project_description: formData.project_description,
-          funding_amount: parseFloat(formData.funding_amount_requested),
+          funding_amount: parseFloat(formData.funding_amount),
           purpose: formData.purpose,
-          timeline: formData.project_duration_months + ' months',
-          expected_roi: formData.expected_roi_percentage ? parseFloat(formData.expected_roi_percentage) : null,
-          farm_location: formData.farm_location,
-          farm_size_acres: formData.farm_size_acres ? parseFloat(formData.farm_size_acres) : null,
-          farming_experience_years: formData.farming_experience_years ? parseInt(formData.farming_experience_years) : null,
-          crop_type: formData.crop_type,
-          business_plan_url: formData.business_plan_url || null
+          timeline: formData.timeline,
+          expected_roi: formData.expected_roi ? parseFloat(formData.expected_roi) : null,
+          collateral: formData.collateral || null,
+          business_plan: formData.business_plan || null
         });
 
       if (error) throw error;
@@ -88,14 +82,11 @@ export const FundingApplicationForm = ({ isOpen, onClose }: FundingApplicationFo
         project_title: '',
         project_description: '',
         purpose: '',
-        funding_amount_requested: '',
-        project_duration_months: '',
-        expected_roi_percentage: '',
-        farm_location: '',
-        farm_size_acres: '',
-        farming_experience_years: '',
-        crop_type: '',
-        business_plan_url: ''
+        funding_amount: '',
+        timeline: '',
+        expected_roi: '',
+        collateral: '',
+        business_plan: ''
       });
       onClose();
     } catch (error: any) {
@@ -164,17 +155,6 @@ export const FundingApplicationForm = ({ isOpen, onClose }: FundingApplicationFo
                 required
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="crop_type">Crop Type *</Label>
-              <Input
-                id="crop_type"
-                name="crop_type"
-                value={formData.crop_type}
-                onChange={handleInputChange}
-                placeholder="e.g., Maize, Rice, Vegetables"
-                required
-              />
-            </div>
           </div>
 
           <div className="space-y-2">
@@ -205,12 +185,12 @@ export const FundingApplicationForm = ({ isOpen, onClose }: FundingApplicationFo
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="funding_amount_requested">Funding Amount Requested ($) *</Label>
+              <Label htmlFor="funding_amount">Funding Amount Requested ($) *</Label>
               <Input
-                id="funding_amount_requested"
-                name="funding_amount_requested"
+                id="funding_amount"
+                name="funding_amount"
                 type="number"
-                value={formData.funding_amount_requested}
+                value={formData.funding_amount}
                 onChange={handleInputChange}
                 min="0"
                 step="0.01"
@@ -218,14 +198,13 @@ export const FundingApplicationForm = ({ isOpen, onClose }: FundingApplicationFo
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="project_duration_months">Project Duration (months) *</Label>
+              <Label htmlFor="timeline">Timeline *</Label>
               <Input
-                id="project_duration_months"
-                name="project_duration_months"
-                type="number"
-                value={formData.project_duration_months}
+                id="timeline"
+                name="timeline"
+                value={formData.timeline}
                 onChange={handleInputChange}
-                min="1"
+                placeholder="e.g., 6 months, 1 year"
                 required
               />
             </div>
@@ -233,65 +212,39 @@ export const FundingApplicationForm = ({ isOpen, onClose }: FundingApplicationFo
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="expected_roi_percentage">Expected ROI (%)</Label>
+              <Label htmlFor="expected_roi">Expected ROI (%)</Label>
               <Input
-                id="expected_roi_percentage"
-                name="expected_roi_percentage"
+                id="expected_roi"
+                name="expected_roi"
                 type="number"
-                value={formData.expected_roi_percentage}
+                value={formData.expected_roi}
                 onChange={handleInputChange}
                 min="0"
                 step="0.1"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="farm_location">Farm Location *</Label>
-              <Input
-                id="farm_location"
-                name="farm_location"
-                value={formData.farm_location}
+              <Label htmlFor="collateral">Collateral (optional)</Label>
+              <Textarea
+                id="collateral"
+                name="collateral"
+                value={formData.collateral}
                 onChange={handleInputChange}
-                placeholder="City, Region, Country"
-                required
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="farm_size_acres">Farm Size (acres)</Label>
-              <Input
-                id="farm_size_acres"
-                name="farm_size_acres"
-                type="number"
-                value={formData.farm_size_acres}
-                onChange={handleInputChange}
-                min="0"
-                step="0.1"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="farming_experience_years">Farming Experience (years)</Label>
-              <Input
-                id="farming_experience_years"
-                name="farming_experience_years"
-                type="number"
-                value={formData.farming_experience_years}
-                onChange={handleInputChange}
-                min="0"
+                placeholder="Describe any collateral you can offer..."
+                rows={2}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="business_plan_url">Business Plan URL (optional)</Label>
-            <Input
-              id="business_plan_url"
-              name="business_plan_url"
-              type="url"
-              value={formData.business_plan_url}
+            <Label htmlFor="business_plan">Business Plan (optional)</Label>
+            <Textarea
+              id="business_plan"
+              name="business_plan"
+              value={formData.business_plan}
               onChange={handleInputChange}
-              placeholder="https://..."
+              placeholder="Attach or describe your business plan..."
+              rows={3}
             />
           </div>
 

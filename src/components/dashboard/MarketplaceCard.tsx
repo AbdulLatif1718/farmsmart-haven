@@ -1,8 +1,9 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShoppingCart, TrendingUp, TrendingDown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
 
 interface MarketplaceCardProps {
   isLoading?: boolean;
@@ -33,12 +34,30 @@ export const MarketplaceCard = ({ isLoading = false }: MarketplaceCardProps) => 
     );
   }
   
-  // Mock market price data
-  const marketPrices = [
-    { crop: "Maize", price: "₵450", change: 5.2, unit: "per 100kg" },
-    { crop: "Rice", price: "₵670", change: -2.1, unit: "per 100kg" },
-    { crop: "Cassava", price: "₵320", change: 1.8, unit: "per 100kg" },
-  ];
+  const [marketPrices, setMarketPrices] = useState([]);
+
+  useEffect(() => {
+    const fetchMarketPrices = async () => {
+      const { data } = await supabase
+        .from('market_listings')
+        .select('title, price, unit, category, created_at')
+        .eq('status', 'active')
+        .order('created_at', { ascending: false })
+        .limit(3);
+      
+      if (data) {
+        const processedPrices = data.map(item => ({
+          crop: item.title,
+          price: `₵${Number(item.price).toLocaleString()}`,
+          change: Math.random() * 10 - 5, // Mock change for now
+          unit: `per ${item.unit}`
+        }));
+        setMarketPrices(processedPrices);
+      }
+    };
+    
+    fetchMarketPrices();
+  }, []);
   
   return (
     <Card>
