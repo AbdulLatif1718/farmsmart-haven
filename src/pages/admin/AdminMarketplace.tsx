@@ -29,7 +29,7 @@ interface MarketListing {
   expiry_date: string | null;
   organic: boolean;
   certified: boolean;
-  status: 'active' | 'sold' | 'expired' | 'removed';
+  status: string;
   created_at: string;
   updated_at: string;
 }

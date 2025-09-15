@@ -45,19 +45,22 @@ const FarmAdd = () => {
     setLoading(true);
     try {
       const applicationData = {
-        applicant_id: profile.id,
-        name: formData.name,
+        user_id: profile.id,
+        applicant_name: profile.full_name || 'Unknown',
+        email: profile.email || formData.contactEmail,
+        phone: formData.contactPhone,
+        farm_name: formData.name,
         location: formData.location,
-        size_acres: parseFloat(formData.size) || 0,
-        size_unit: formData.sizeUnit,
+        farm_size: parseFloat(formData.size) || 0,
         farm_type: formData.farmType,
-        description: formData.description,
-        soil_type: formData.soilType,
-        irrigation_type: formData.waterSource,
-        coordinates_lat: formData.coordinates.lat,
-        coordinates_lng: formData.coordinates.lng,
-        contact_phone: formData.contactPhone,
-        contact_email: formData.contactEmail,
+        crops: '',
+        livestock: '',
+        farming_experience: 0,
+        equipment: '',
+        certification: '',
+        previous_yield: '',
+        challenges: formData.description,
+        goals: '',
         status: 'pending'
       };
 

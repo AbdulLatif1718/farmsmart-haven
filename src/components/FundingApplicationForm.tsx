@@ -19,8 +19,12 @@ export const FundingApplicationForm = ({ isOpen, onClose }: FundingApplicationFo
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
+    full_name: '',
+    email: '',
+    phone: '',
     project_title: '',
     project_description: '',
+    purpose: '',
     funding_amount_requested: '',
     project_duration_months: '',
     expected_roi_percentage: '',
@@ -78,8 +82,12 @@ export const FundingApplicationForm = ({ isOpen, onClose }: FundingApplicationFo
 
       // Reset form
       setFormData({
+        full_name: '',
+        email: '',
+        phone: '',
         project_title: '',
         project_description: '',
+        purpose: '',
         funding_amount_requested: '',
         project_duration_months: '',
         expected_roi_percentage: '',
@@ -113,6 +121,40 @@ export const FundingApplicationForm = ({ isOpen, onClose }: FundingApplicationFo
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
+              <Label htmlFor="full_name">Full Name *</Label>
+              <Input
+                id="full_name"
+                name="full_name"
+                value={formData.full_name}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email *</Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="phone">Phone *</Label>
+              <Input
+                id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="project_title">Project Title *</Label>
               <Input
                 id="project_title"
@@ -144,6 +186,19 @@ export const FundingApplicationForm = ({ isOpen, onClose }: FundingApplicationFo
               onChange={handleInputChange}
               placeholder="Describe your farming project in detail..."
               rows={4}
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="purpose">Purpose of Funding *</Label>
+            <Textarea
+              id="purpose"
+              name="purpose"
+              value={formData.purpose}
+              onChange={handleInputChange}
+              placeholder="What will you use the funding for?"
+              rows={3}
               required
             />
           </div>

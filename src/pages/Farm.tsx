@@ -29,9 +29,9 @@ const FarmsTabContent = ({ navigate }: { navigate: any }) => {
       
       try {
         const { data, error } = await supabase
-          .from('farms')
+          .from('farm_applications')
           .select('*')
-          .eq('farmer_id', profile.id)
+          .eq('user_id', profile.id)
           .order('created_at', { ascending: false });
 
         if (error) throw error;

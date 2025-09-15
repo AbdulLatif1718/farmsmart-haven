@@ -30,7 +30,7 @@ interface FarmApplication {
   previous_yield: string | null;
   challenges: string | null;
   goals: string | null;
-  status: 'pending' | 'approved' | 'rejected';
+  status: string;
   admin_notes: string | null;
   reviewed_by: string | null;
   reviewed_at: string | null;

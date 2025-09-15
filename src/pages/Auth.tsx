@@ -79,7 +79,7 @@ const Auth = () => {
           const { data: existingProfile } = await supabase
             .from('profiles')
             .select('*')
-            .eq('user_id', user.id)
+            .eq('id', user.id)
             .maybeSingle();
 
         if (!existingProfile) {
@@ -99,7 +99,7 @@ const Auth = () => {
             await supabase
               .from('profiles')
               .update({ role: 'admin' })
-              .eq('user_id', user.id);
+              .eq('id', user.id);
             // Use full page reload to ensure clean state
             window.location.href = '/admin';
             return;

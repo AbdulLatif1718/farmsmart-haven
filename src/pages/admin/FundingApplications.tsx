@@ -39,7 +39,7 @@ interface FundingApplication {
   expected_roi: number | null;
   collateral: string | null;
   business_plan: string | null;
-  status: 'pending' | 'approved' | 'rejected';
+  status: string;
   admin_notes: string | null;
   reviewed_by: string | null;
   reviewed_at: string | null;

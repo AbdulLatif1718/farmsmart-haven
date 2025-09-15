@@ -15,7 +15,7 @@ interface TransportService {
   id: string;
   title: string;
   description: string;
-  service_type: 'pickup' | 'delivery' | 'storage' | 'processing';
+  service_type: string;
   provider: string;
   contact: string;
   location: string;

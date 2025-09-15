@@ -34,7 +34,7 @@ const InvestorProjects = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       const { data, error } = await supabase
-        .from('investment_opportunities')
+        .from('funding_applications')
         .select('*')
         .order('created_at', { ascending: false });
       if (!error) setProjects(data || []);
@@ -46,7 +46,7 @@ const InvestorProjects = () => {
     const fetchInvestments = async () => {
       if (!profile?.id) return;
       const { data, error } = await supabase
-        .from('investments')
+        .from('funding_applications')
         .select('*')
         .eq('investor_id', profile.id)
         .order('created_at', { ascending: false });

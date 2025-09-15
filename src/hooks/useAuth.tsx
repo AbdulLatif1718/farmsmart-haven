@@ -5,13 +5,15 @@ import { cleanupAuthState } from '@/utils/authCleanup';
 
 interface Profile {
   id: string;
-  user_id: string;
-  full_name: string;
-  email: string;
-  role: 'farmer' | 'investor' | 'admin';
+  full_name?: string;
+  email?: string;
+  phone?: string;
   location?: string;
-  bio?: string;
-  avatar_url?: string;
+  role?: string;
+  status?: string;
+  created_at?: string;
+  updated_at?: string;
+  last_login?: string;
 }
 
 interface AuthContextType {
@@ -38,7 +40,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       .eq('id', userId)
       .maybeSingle();
     
-    setProfile(profileData as Profile);
+    setProfile(profileData);
     setLoading(false);
   };
 
