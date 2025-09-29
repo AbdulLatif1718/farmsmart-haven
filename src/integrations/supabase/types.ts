@@ -38,6 +38,87 @@ export type Database = {
         }
         Relationships: []
       }
+      expert_applications: {
+        Row: {
+          admin_notes: string | null
+          availability: string | null
+          bio: string | null
+          certifications: string[] | null
+          created_at: string | null
+          documents: string[] | null
+          education: string | null
+          email: string
+          experience_years: number
+          full_name: string
+          hourly_rate: number | null
+          id: string
+          languages: string[] | null
+          location: string
+          phone: string
+          profile_image: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          services_offered: string[] | null
+          specialization: string
+          status: string | null
+          title: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          availability?: string | null
+          bio?: string | null
+          certifications?: string[] | null
+          created_at?: string | null
+          documents?: string[] | null
+          education?: string | null
+          email: string
+          experience_years: number
+          full_name: string
+          hourly_rate?: number | null
+          id?: string
+          languages?: string[] | null
+          location: string
+          phone: string
+          profile_image?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          services_offered?: string[] | null
+          specialization: string
+          status?: string | null
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          availability?: string | null
+          bio?: string | null
+          certifications?: string[] | null
+          created_at?: string | null
+          documents?: string[] | null
+          education?: string | null
+          email?: string
+          experience_years?: number
+          full_name?: string
+          hourly_rate?: number | null
+          id?: string
+          languages?: string[] | null
+          location?: string
+          phone?: string
+          profile_image?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          services_offered?: string[] | null
+          specialization?: string
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       farm_applications: {
         Row: {
           admin_notes: string | null
@@ -362,6 +443,87 @@ export type Database = {
           title?: string
           updated_at?: string | null
           views?: number | null
+        }
+        Relationships: []
+      }
+      land_applications: {
+        Row: {
+          admin_notes: string | null
+          created_at: string | null
+          description: string
+          duration: string | null
+          has_power_supply: boolean | null
+          has_road_access: boolean | null
+          has_water_source: boolean | null
+          id: string
+          images: string[] | null
+          land_documents: string[] | null
+          land_size: number
+          location: string
+          monetization_type: string
+          owner_contact: string
+          owner_name: string
+          previous_crops: string[] | null
+          price: number
+          reviewed_at: string | null
+          reviewed_by: string | null
+          size_unit: string
+          soil_type: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string | null
+          description: string
+          duration?: string | null
+          has_power_supply?: boolean | null
+          has_road_access?: boolean | null
+          has_water_source?: boolean | null
+          id?: string
+          images?: string[] | null
+          land_documents?: string[] | null
+          land_size: number
+          location: string
+          monetization_type: string
+          owner_contact: string
+          owner_name: string
+          previous_crops?: string[] | null
+          price: number
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          size_unit?: string
+          soil_type?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string | null
+          description?: string
+          duration?: string | null
+          has_power_supply?: boolean | null
+          has_road_access?: boolean | null
+          has_water_source?: boolean | null
+          id?: string
+          images?: string[] | null
+          land_documents?: string[] | null
+          land_size?: number
+          location?: string
+          monetization_type?: string
+          owner_contact?: string
+          owner_name?: string
+          previous_crops?: string[] | null
+          price?: number
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          size_unit?: string
+          soil_type?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }

@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { supabase } from '@/integrations/supabase/client';
+import { LandMonetizationForm } from '@/components/LandMonetizationForm';
+import { ExpertApplicationForm } from '@/components/ExpertApplicationForm';
+import { toast } from '@/hooks/use-toast';
 import { 
   Home, 
   MapPin, 
@@ -25,12 +29,65 @@ import {
   CheckCircle,
   Clock,
   DollarSign,
-  Ruler
+  Ruler,
+  Plus
 } from 'lucide-react';
 
 const ServicesPage = () => {
   const [activeTab, setActiveTab] = useState('farms');
   const [searchQuery, setSearchQuery] = useState('');
+  const [lands, setLands] = useState<any[]>([]);
+  const [experts, setExperts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showLandForm, setShowLandForm] = useState(false);
+  const [showExpertForm, setShowExpertForm] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    checkAuth();
+    fetchData();
+  }, []);
+
+  const checkAuth = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    setIsAuthenticated(!!user);
+  };
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+
+      // Fetch approved land applications
+      const { data: landData, error: landError } = await supabase
+        .from('land_applications')
+        .select('*')
+        .eq('status', 'approved')
+        .order('created_at', { ascending: false });
+
+      if (landError) throw landError;
+
+      // Fetch approved expert applications
+      const { data: expertData, error: expertError } = await supabase
+        .from('expert_applications')
+        .select('*')
+        .eq('status', 'approved')
+        .order('created_at', { ascending: false });
+
+      if (expertError) throw expertError;
+
+      setLands(landData || []);
+      setExperts(expertData || []);
+    } catch (error: any) {
+      console.error('Error fetching services data:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load services data",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Tabs component for service categories
   const Tabs = ({ value, onValueChange, tabs }) => {
@@ -51,8 +108,8 @@ const ServicesPage = () => {
     );
   };
 
-  // Sample data for farms
-  const farms = [
+  // Mock farms data
+  const mockFarms = [
     {
       id: 1,
       title: "Green Valley Farm",
@@ -69,88 +126,10 @@ const ServicesPage = () => {
       description: "Fertile farmland perfect for crop cultivation and livestock rearing.",
       crops: ["Maize", "Cassava", "Yam"]
     },
-    {
-      id: 2,
-      title: "Sunrise Poultry Farm",
-      location: "Ashanti Region, Ghana",
-      type: "Poultry",
-      size: "15 acres",
-      price: "₵45,000/year lease",
-      image: "🐔",
-      features: ["Modern Coops", "Feed Storage", "Processing Unit"],
-      rating: 4.6,
-      reviews: 18,
-      owner: "Grace Asante",
-      verified: true,
-      description: "Established poultry farm with modern facilities and equipment.",
-      crops: ["Broilers", "Layers", "Ducks"]
-    },
-    {
-      id: 3,
-      title: "Cocoa Paradise Farm",
-      location: "Western Region, Ghana",
-      type: "Tree Crops",
-      size: "80 acres",
-      price: "₵120,000/year lease",
-      image: "🌳",
-      features: ["Mature Cocoa Trees", "Drying Facilities", "Access Road"],
-      rating: 4.9,
-      reviews: 31,
-      owner: "Emmanuel Kuffour",
-      verified: true,
-      description: "Prime cocoa plantation with mature trees and excellent yield history.",
-      crops: ["Cocoa", "Oil Palm", "Plantain"]
-    }
   ];
 
-  // Sample data for land
-  const lands = [
-    {
-      id: 1,
-      title: "Prime Agricultural Land",
-      location: "Eastern Region, Ghana",
-      size: "25 acres",
-      price: "₵180,000 purchase",
-      soilType: "Loamy Soil",
-      waterAccess: "Borehole + River",
-      image: "🌱",
-      features: ["Road Access", "Electricity Nearby", "Survey Plan Available"],
-      owner: "John Osei",
-      verified: true,
-      description: "Excellent agricultural land with fertile soil and reliable water source."
-    },
-    {
-      id: 2,
-      title: "Riverside Farmland",
-      location: "Northern Region, Ghana",
-      size: "40 acres",
-      price: "₵95,000 purchase",
-      soilType: "Clay Loam",
-      waterAccess: "River Frontage",
-      image: "🏞️",
-      features: ["River Access", "Flat Terrain", "No Encumbrance"],
-      owner: "Fatima Abdul",
-      verified: true,
-      description: "Beautiful riverside land perfect for irrigation farming."
-    },
-    {
-      id: 3,
-      title: "Highland Agricultural Plot",
-      location: "Central Region, Ghana",
-      size: "60 acres",
-      price: "₵250,000 purchase",
-      soilType: "Sandy Loam",
-      waterAccess: "Multiple Streams",
-      image: "⛰️",
-      features: ["Elevated Location", "Good Drainage", "Title Ready"],
-      owner: "Peter Amoako",
-      verified: true,
-      description: "Highland plot ideal for various crops with excellent drainage."
-    }
-  ];
-
-  // Sample data for experts
-  const experts = [
+  // Mock experts data (removed - will come from database)
+  const mockExperts = [
     {
       id: 1,
       name: "Dr. Kwame Asante",
@@ -212,7 +191,7 @@ const ServicesPage = () => {
 
   const getCurrentData = () => {
     switch (activeTab) {
-      case 'farms': return farms;
+      case 'farms': return mockFarms;
       case 'land': return lands;
       case 'experts': return experts;
       default: return [];
@@ -278,120 +257,120 @@ const ServicesPage = () => {
     </Card>
   );
 
-  const renderLandCard = (land) => (
-    <Card key={land.id} className="hover:shadow-lg transition-all duration-300">
-      <CardContent className="p-0">
-        <div className="relative">
-          <div className="bg-gradient-to-br from-blue-50 to-sky-100 p-8 text-center">
-            <span className="text-4xl">{land.image}</span>
-          </div>
-          {land.verified && (
+  const renderLandCard = (land) => {
+    const features = [];
+    if (land.has_water_source) features.push('Water Source');
+    if (land.has_road_access) features.push('Road Access');
+    if (land.has_power_supply) features.push('Power Supply');
+
+    return (
+      <Card key={land.id} className="hover:shadow-lg transition-all duration-300">
+        <CardContent className="p-0">
+          <div className="relative">
+            <div className="bg-gradient-to-br from-blue-50 to-sky-100 p-8 text-center">
+              <span className="text-4xl">🏞️</span>
+            </div>
             <Badge className="absolute top-2 right-2 bg-green-600">
               <CheckCircle className="h-3 w-3 mr-1" />
               Verified
             </Badge>
-          )}
-        </div>
-        
-        <div className="p-4 space-y-4">
-          <div>
-            <h3 className="font-semibold text-lg">{land.title}</h3>
-            <div className="flex items-center text-sm text-gray-600 mt-1">
-              <MapPin className="h-4 w-4 mr-1" />
-              {land.location}
-            </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-4 text-sm">
+          <div className="p-4 space-y-4">
             <div>
-              <span className="text-gray-500">Size:</span>
-              <div className="font-medium">{land.size}</div>
+              <h3 className="font-semibold text-lg">{land.land_size} {land.size_unit}</h3>
+              <div className="flex items-center text-sm text-gray-600 mt-1">
+                <MapPin className="h-4 w-4 mr-1" />
+                {land.location}
+              </div>
             </div>
-            <div>
-              <span className="text-gray-500">Price:</span>
-              <div className="font-medium text-green-600">{land.price}</div>
+            
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="text-gray-500">Size:</span>
+                <div className="font-medium">{land.land_size} {land.size_unit}</div>
+              </div>
+              <div>
+                <span className="text-gray-500">Price:</span>
+                <div className="font-medium text-green-600">GH₵ {land.price}</div>
+              </div>
+              <div>
+                <span className="text-gray-500">Soil Type:</span>
+                <div className="font-medium capitalize">{land.soil_type || 'Not specified'}</div>
+              </div>
+              <div>
+                <span className="text-gray-500">Type:</span>
+                <div className="font-medium capitalize">{land.monetization_type}</div>
+              </div>
             </div>
-            <div>
-              <span className="text-gray-500">Soil Type:</span>
-              <div className="font-medium">{land.soilType}</div>
+            
+            <p className="text-sm text-gray-600 line-clamp-2">{land.description}</p>
+            
+            <div className="flex flex-wrap gap-1">
+              {features.map((feature, i) => (
+                <span key={i} className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs">
+                  {feature}
+                </span>
+              ))}
             </div>
-            <div>
-              <span className="text-gray-500">Water Access:</span>
-              <div className="font-medium">{land.waterAccess}</div>
+            
+            <div className="flex items-center justify-between pt-3 border-t">
+              <div className="text-sm text-gray-600">
+                Owner: <span className="font-medium">{land.owner_name}</span>
+              </div>
+              <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                View Details
+              </Button>
             </div>
           </div>
-          
-          <p className="text-sm text-gray-600 line-clamp-2">{land.description}</p>
-          
-          <div className="flex flex-wrap gap-1">
-            {land.features.map((feature, i) => (
-              <span key={i} className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs">
-                {feature}
-              </span>
-            ))}
-          </div>
-          
-          <div className="flex items-center justify-between pt-3 border-t">
-            <div className="text-sm text-gray-600">
-              Owner: <span className="font-medium">{land.owner}</span>
-            </div>
-            <Button size="sm" className="bg-green-600 hover:bg-green-700">
-              View Details
-            </Button>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
+        </CardContent>
+      </Card>
+    );
+  };
 
   const renderExpertCard = (expert) => (
     <Card key={expert.id} className="hover:shadow-lg transition-all duration-300">
       <CardContent className="p-6">
         <div className="flex items-start space-x-4">
           <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-full flex items-center justify-center text-2xl">
-            {expert.image}
+            👨‍🌾
           </div>
           
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="font-semibold text-lg">{expert.name}</h3>
+                <h3 className="font-semibold text-lg">{expert.full_name}</h3>
                 <p className="text-sm text-gray-600">{expert.title}</p>
                 <div className="flex items-center mt-1">
                   <MapPin className="h-4 w-4 text-gray-400 mr-1" />
                   <span className="text-sm text-gray-500">{expert.location}</span>
                 </div>
               </div>
-              {expert.verified && (
-                <Badge className="bg-green-600">
-                  <CheckCircle className="h-3 w-3 mr-1" />
-                  Verified
-                </Badge>
-              )}
+              <Badge className="bg-green-600">
+                <CheckCircle className="h-3 w-3 mr-1" />
+                Verified
+              </Badge>
             </div>
             
             <div className="mt-3">
               <div className="text-sm text-gray-600">
-                <span className="font-medium">Specialization:</span> {expert.specialization}
+                <span className="font-medium">Specialization:</span> {expert.specialization.replace('-', ' ')}
               </div>
               <div className="text-sm text-gray-600 mt-1">
-                <span className="font-medium">Experience:</span> {expert.experience}
+                <span className="font-medium">Experience:</span> {expert.experience_years}+ years
               </div>
             </div>
             
             <div className="flex items-center justify-between mt-4">
               <div className="flex items-center space-x-4">
-                <div className="flex items-center">
-                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  <span className="text-sm font-medium ml-1">{expert.rating}</span>
-                  <span className="text-sm text-gray-500 ml-1">({expert.reviews})</span>
+                <div className="text-sm font-medium text-green-600">
+                  GH₵ {expert.hourly_rate || 'Contact'}/hour
                 </div>
-                <div className="text-sm font-medium text-green-600">{expert.rate}</div>
               </div>
             </div>
             
             <div className="flex flex-wrap gap-1 mt-3">
-              {expert.services.slice(0, 3).map((service, i) => (
+              {expert.services_offered?.slice(0, 3).map((service, i) => (
                 <span key={i} className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs">
                   {service}
                 </span>
@@ -531,43 +510,104 @@ const ServicesPage = () => {
               <p className="text-muted-foreground">Ready-to-use farms for immediate lease</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {farms.map(farm => renderFarmCard(farm))}
+              {mockFarms.map(farm => renderFarmCard(farm))}
             </div>
           </div>
         )}
 
         {activeTab === 'land' && (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-semibold mb-1">Agricultural Land</h2>
-              <p className="text-muted-foreground">Prime farming land for purchase</p>
+            <div className="flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-semibold mb-1">Agricultural Land</h2>
+                <p className="text-muted-foreground">Prime farming land for purchase or lease</p>
+              </div>
+              {isAuthenticated && (
+                <Button onClick={() => setShowLandForm(true)} className="bg-green-600 hover:bg-green-700">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Submit Your Land
+                </Button>
+              )}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {lands.map(land => renderLandCard(land))}
-            </div>
+            {loading ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">Loading land listings...</p>
+              </div>
+            ) : lands.length === 0 ? (
+              <Card>
+                <CardContent className="p-12 text-center">
+                  <p className="text-muted-foreground mb-4">No land listings available yet</p>
+                  {isAuthenticated && (
+                    <Button onClick={() => setShowLandForm(true)} className="bg-green-600 hover:bg-green-700">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Submit Your Land
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {lands.map(land => renderLandCard(land))}
+              </div>
+            )}
           </div>
         )}
 
         {activeTab === 'experts' && (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-semibold mb-1">Agricultural Experts</h2>
-              <p className="text-muted-foreground">Connect with verified farming professionals</p>
+            <div className="flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-semibold mb-1">Agricultural Experts</h2>
+                <p className="text-muted-foreground">Connect with verified farming professionals</p>
+              </div>
+              {isAuthenticated && (
+                <Button onClick={() => setShowExpertForm(true)} className="bg-green-600 hover:bg-green-700">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Become an Expert
+                </Button>
+              )}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {experts.map(expert => renderExpertCard(expert))}
-            </div>
+            {loading ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">Loading experts...</p>
+              </div>
+            ) : experts.length === 0 ? (
+              <Card>
+                <CardContent className="p-12 text-center">
+                  <p className="text-muted-foreground mb-4">No experts available yet</p>
+                  {isAuthenticated && (
+                    <Button onClick={() => setShowExpertForm(true)} className="bg-green-600 hover:bg-green-700">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Become an Expert
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {experts.map(expert => renderExpertCard(expert))}
+              </div>
+            )}
           </div>
         )}
 
-        {/* Load More */}
-        <div className="text-center mt-8">
-          <Button variant="outline" size="lg" className="min-w-[200px]">
-            Load More
-            <ChevronRight className="h-4 w-4 ml-2" />
-          </Button>
-        </div>
       </div>
+
+      {/* Forms */}
+      <LandMonetizationForm 
+        isOpen={showLandForm} 
+        onClose={() => {
+          setShowLandForm(false);
+          fetchData(); // Refresh data after submission
+        }} 
+      />
+      <ExpertApplicationForm 
+        isOpen={showExpertForm} 
+        onClose={() => {
+          setShowExpertForm(false);
+          fetchData(); // Refresh data after submission
+        }} 
+      />
     </MainLayout>
   );
 };

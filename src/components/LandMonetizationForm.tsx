@@ -6,11 +6,23 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { X } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
+import { z } from 'zod';
 
 interface LandMonetizationFormProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+const landSchema = z.object({
+  landSize: z.string().min(1, 'Land size is required'),
+  location: z.string().min(1, 'Location is required'),
+  price: z.string().min(1, 'Price is required'),
+  description: z.string().min(10, 'Description must be at least 10 characters'),
+  ownerName: z.string().min(1, 'Owner name is required'),
+  ownerContact: z.string().min(10, 'Valid contact is required'),
+});
 
 export const LandMonetizationForm = ({ isOpen, onClose }: LandMonetizationFormProps) => {
   const [formData, setFormData] = useState({
@@ -26,9 +38,12 @@ export const LandMonetizationForm = ({ isOpen, onClose }: LandMonetizationFormPr
     hasPowerSupply: false,
     soilType: '',
     previousCrops: '',
+    ownerName: '',
+    ownerContact: '',
     landDocuments: null,
     images: []
   });
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -36,9 +51,83 @@ export const LandMonetizationForm = ({ isOpen, onClose }: LandMonetizationFormPr
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Handle form submission
-    console.log('Form submitted:', formData);
-    onClose();
+    setLoading(true);
+
+    try {
+      // Check if user is authenticated
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Authentication Required",
+          description: "Please log in to submit your land application.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Validate form data
+      landSchema.parse(formData);
+
+      // Submit to database
+      const { error } = await supabase
+        .from('land_applications')
+        .insert({
+          user_id: user.id,
+          land_size: parseFloat(formData.landSize),
+          size_unit: formData.sizeUnit,
+          location: formData.location,
+          monetization_type: formData.monetizationType,
+          price: parseFloat(formData.price),
+          duration: formData.duration || null,
+          description: formData.description,
+          has_water_source: formData.hasWaterSource,
+          has_road_access: formData.hasRoad,
+          has_power_supply: formData.hasPowerSupply,
+          soil_type: formData.soilType || null,
+          previous_crops: formData.previousCrops ? [formData.previousCrops] : [],
+          owner_name: formData.ownerName,
+          owner_contact: formData.ownerContact,
+          status: 'pending'
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success!",
+        description: "Your land application has been submitted for review.",
+      });
+
+      // Reset form and close
+      setFormData({
+        landSize: '',
+        sizeUnit: 'acres',
+        location: '',
+        monetizationType: 'lease',
+        price: '',
+        duration: '',
+        description: '',
+        hasWaterSource: false,
+        hasRoad: false,
+        hasPowerSupply: false,
+        soilType: '',
+        previousCrops: '',
+        ownerName: '',
+        ownerContact: '',
+        landDocuments: null,
+        images: []
+      });
+      onClose();
+    } catch (error: any) {
+      console.error('Error submitting land application:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to submit application. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -202,55 +291,35 @@ export const LandMonetizationForm = ({ isOpen, onClose }: LandMonetizationFormPr
               />
             </div>
 
-            {/* Documents Upload */}
+            {/* Owner Information */}
             <div className="space-y-2">
-              <Label htmlFor="landDocuments">Land Documents</Label>
-              <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-4">
-                <Input
-                  id="landDocuments"
-                  type="file"
-                  onChange={(e) => handleInputChange('landDocuments', e.target.files?.[0])}
-                  accept=".pdf,.doc,.docx"
-                  className="hidden"
-                />
-                <label
-                  htmlFor="landDocuments"
-                  className="flex flex-col items-center justify-center cursor-pointer text-sm text-muted-foreground"
-                >
-                  <span>Click to upload land documents</span>
-                  <span className="text-xs">(PDF, DOC, DOCX)</span>
-                </label>
-              </div>
+              <Label htmlFor="ownerName">Owner Name *</Label>
+              <Input
+                id="ownerName"
+                placeholder="Enter your full name"
+                value={formData.ownerName}
+                onChange={(e) => handleInputChange('ownerName', e.target.value)}
+                required
+              />
             </div>
 
-            {/* Images Upload */}
             <div className="space-y-2">
-              <Label htmlFor="images">Land Images</Label>
-              <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-4">
-                <Input
-                  id="images"
-                  type="file"
-                  multiple
-                  onChange={(e) => handleInputChange('images', Array.from(e.target.files || []))}
-                  accept="image/*"
-                  className="hidden"
-                />
-                <label
-                  htmlFor="images"
-                  className="flex flex-col items-center justify-center cursor-pointer text-sm text-muted-foreground"
-                >
-                  <span>Click to upload land images</span>
-                  <span className="text-xs">(JPG, PNG)</span>
-                </label>
-              </div>
+              <Label htmlFor="ownerContact">Contact Number *</Label>
+              <Input
+                id="ownerContact"
+                placeholder="Enter contact number"
+                value={formData.ownerContact}
+                onChange={(e) => handleInputChange('ownerContact', e.target.value)}
+                required
+              />
             </div>
           </div>
 
           <div className="mt-6 flex gap-4">
-            <Button type="submit" className="flex-1 bg-green-600 hover:bg-green-700">
-              Submit
+            <Button type="submit" className="flex-1 bg-green-600 hover:bg-green-700" disabled={loading}>
+              {loading ? 'Submitting...' : 'Submit for Review'}
             </Button>
-            <Button type="button" variant="outline" className="flex-1" onClick={onClose}>
+            <Button type="button" variant="outline" className="flex-1" onClick={onClose} disabled={loading}>
               Cancel
             </Button>
           </div>

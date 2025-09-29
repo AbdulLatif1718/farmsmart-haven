@@ -10,7 +10,8 @@ import {
   BookOpen,
   Users,
   Settings,
-  BarChart3
+  BarChart3,
+  MapPin
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -29,6 +30,16 @@ const adminNavItems = [
     title: 'Funding Applications',
     href: '/admin/funding-applications',
     icon: FileText,
+  },
+  {
+    title: 'Land Applications',
+    href: '/admin/land-applications',
+    icon: MapPin,
+  },
+  {
+    title: 'Expert Applications',
+    href: '/admin/expert-applications',
+    icon: Users,
   },
   {
     title: 'Transport & Logistics',

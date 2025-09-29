@@ -49,6 +49,18 @@ const AdminDashboard = () => {
         .select('id')
         .eq('status', 'pending');
 
+      // Fetch pending land applications
+      const { data: pendingLand } = await supabase
+        .from('land_applications')
+        .select('id')
+        .eq('status', 'pending');
+
+      // Fetch pending expert applications
+      const { data: pendingExperts } = await supabase
+        .from('expert_applications')
+        .select('id')
+        .eq('status', 'pending');
+
       // Fetch total users
       const { data: users } = await supabase
         .from('profiles')
@@ -77,7 +89,7 @@ const AdminDashboard = () => {
       const totalInvestments = approvedFunding?.reduce((sum, app) => sum + Number(app.funding_amount), 0) || 0;
 
       setStats({
-        pendingApplications: (pendingFunding?.length || 0) + (pendingFarms?.length || 0),
+        pendingApplications: (pendingFunding?.length || 0) + (pendingFarms?.length || 0) + (pendingLand?.length || 0) + (pendingExperts?.length || 0),
         activeUsers: users?.length || 0,
         totalInvestments,
         farmApplications: pendingFarms?.length || 0
