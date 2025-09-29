@@ -1,128 +1,118 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Progress } from '@/components/ui/progress';
 import { 
-  Users, 
   MapPin, 
   Calendar, 
   DollarSign, 
   Target, 
-  Filter,
   Search,
-  Plus,
-  Star,
-  Clock
+  Share2,
+  TrendingUp
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { supabase } from '@/integrations/supabase/client';
+import { InvestmentDialog } from '@/components/projects/InvestmentDialog';
+import { useToast } from '@/hooks/use-toast';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Projects = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [projects, setProjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedProject, setSelectedProject] = useState<any>(null);
+  const [investDialogOpen, setInvestDialogOpen] = useState(false);
+  const { toast } = useToast();
 
   const categories = [
     { id: 'all', label: 'All Projects' },
-    { id: 'crops', label: 'Crop Production' },
+    { id: 'crop', label: 'Crop Farming' },
     { id: 'livestock', label: 'Livestock' },
-    { id: 'technology', label: 'AgriTech' },
-    { id: 'processing', label: 'Food Processing' },
-    { id: 'sustainable', label: 'Sustainable Farming' },
+    { id: 'mixed', label: 'Mixed Farming' },
   ];
 
-  const projects = [
-    {
-      id: 1,
-      title: 'Organic Cocoa Expansion Project',
-      description: 'Expanding organic cocoa production across 500 acres in Ashanti Region with fair trade certification.',
-      location: 'Kumasi, Ashanti Region',
-      category: 'crops',
-      fundingGoal: 250000,
-      currentFunding: 180000,
-      participants: 24,
-      duration: '18 months',
-      organizer: {
-        name: 'Kwame Asante',
-        avatar: '/placeholder-avatar.jpg',
-        rating: 4.8
-      },
-      tags: ['Organic', 'Fair Trade', 'Export', 'High ROI'],
-      status: 'active',
-      featured: true
-    },
-    {
-      id: 2,
-      title: 'Smart Irrigation System Initiative',
-      description: 'Implementing IoT-based irrigation systems to optimize water usage across multiple smallholder farms.',
-      location: 'Tamale, Northern Region',
-      category: 'technology',
-      fundingGoal: 100000,
-      currentFunding: 45000,
-      participants: 12,
-      duration: '12 months',
-      organizer: {
-        name: 'Fatima Ibrahim',
-        avatar: '/placeholder-avatar.jpg',
-        rating: 4.9
-      },
-      tags: ['IoT', 'Water Conservation', 'Tech Innovation'],
-      status: 'active',
-      featured: false
-    },
-    {
-      id: 3,
-      title: 'Community Poultry Farming Collective',
-      description: 'Building a cooperative poultry farming network to supply fresh eggs and meat to local markets.',
-      location: 'Cape Coast, Central Region',
-      category: 'livestock',
-      fundingGoal: 75000,
-      currentFunding: 75000,
-      participants: 45,
-      duration: '24 months',
-      organizer: {
-        name: 'Emmanuel Mensah',
-        avatar: '/placeholder-avatar.jpg',
-        rating: 4.7
-      },
-      tags: ['Community', 'Livestock', 'Local Markets'],
-      status: 'funded',
-      featured: false
-    },
-    {
-      id: 4,
-      title: 'Cassava Processing Plant Setup',
-      description: 'Establishing a modern cassava processing facility to produce high-quality garri and cassava flour.',
-      location: 'Techiman, Brong-Ahafo',
-      category: 'processing',
-      fundingGoal: 300000,
-      currentFunding: 90000,
-      participants: 8,
-      duration: '30 months',
-      organizer: {
-        name: 'Akosua Darko',
-        avatar: '/placeholder-avatar.jpg',
-        rating: 4.6
-      },
-      tags: ['Processing', 'Value Addition', 'Industrial'],
-      status: 'active',
-      featured: true
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
+      
+      // Fetch approved funding applications with their share information
+      const { data: fundingApps, error } = await supabase
+        .from('funding_applications')
+        .select(`
+          *,
+          project_shares (
+            total_shares,
+            available_shares,
+            share_price,
+            minimum_investment
+          )
+        `)
+        .eq('status', 'approved')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      // Transform data to include calculated fields
+      const transformedProjects = (fundingApps || []).map((project) => {
+        const shares = project.project_shares?.[0];
+        const totalShares = shares?.total_shares || 0;
+        const sharesSold = project.shares_sold || 0;
+        const fundingProgress = totalShares > 0 ? (sharesSold / totalShares) * 100 : 0;
+
+        return {
+          ...project,
+          share_price: shares?.share_price || 0,
+          available_shares: shares?.available_shares || 0,
+          minimum_investment: shares?.minimum_investment || 0,
+          total_shares: totalShares,
+          funding_progress: fundingProgress,
+        };
+      });
+
+      setProjects(transformedProjects);
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to load projects',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  const handleInvestClick = (project: any) => {
+    setSelectedProject(project);
+    setInvestDialogOpen(true);
+  };
+
+  const handleInvestmentComplete = () => {
+    fetchProjects();
+  };
 
   const filteredProjects = projects.filter(project => {
-    const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         project.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || project.category === selectedCategory;
+    const matchesSearch = 
+      project.project_title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.project_description?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = 
+      selectedCategory === 'all' || 
+      project.project_type === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300';
-      case 'funded': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300';
-    }
+  const getRiskColor = (roi: number) => {
+    if (roi >= 30) return 'destructive';
+    if (roi >= 20) return 'default';
+    return 'secondary';
   };
 
   return (
@@ -131,15 +121,11 @@ const Projects = () => {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold">Agricultural Projects</h1>
+            <h1 className="text-3xl font-bold">Investment Projects</h1>
             <p className="text-muted-foreground">
-              Join collaborative farming projects and grow together with the community
+              Invest in agricultural projects and own shares in farming initiatives
             </p>
           </div>
-          <Button className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Create Project
-          </Button>
         </div>
 
         {/* Search and Filters */}
@@ -157,7 +143,7 @@ const Projects = () => {
             {categories.map((category) => (
               <Button
                 key={category.id}
-                variant={selectedCategory === category.id ? "default" : "outline"}
+                variant={selectedCategory === category.id ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedCategory(category.id)}
               >
@@ -167,174 +153,202 @@ const Projects = () => {
           </div>
         </div>
 
-        {/* Featured Projects */}
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Featured Projects</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {filteredProjects
-              .filter(project => project.featured)
-              .map((project) => (
-                <Card key={project.id} className="border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Badge className={getStatusColor(project.status)}>
-                            {project.status === 'active' ? 'Seeking Funding' : 'Fully Funded'}
-                          </Badge>
-                          <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                        </div>
-                        <CardTitle className="text-lg">{project.title}</CardTitle>
-                        <CardDescription className="mt-2">{project.description}</CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {/* Project Stats */}
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <MapPin className="h-4 w-4" />
-                            {project.location}
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Calendar className="h-4 w-4" />
-                            {project.duration}
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Users className="h-4 w-4" />
-                            {project.participants} participants
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <DollarSign className="h-4 w-4" />
-                            ${project.currentFunding.toLocaleString()} / ${project.fundingGoal.toLocaleString()}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Funding Progress */}
-                      <div>
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm font-medium">Funding Progress</span>
-                          <span className="text-sm text-muted-foreground">
-                            {Math.round((project.currentFunding / project.fundingGoal) * 100)}%
-                          </span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
-                          <div 
-                            className="bg-primary h-2 rounded-full transition-all duration-300" 
-                            style={{ width: `${(project.currentFunding / project.fundingGoal) * 100}%` }}
-                          ></div>
-                        </div>
-                      </div>
-
-                      {/* Tags */}
-                      <div className="flex flex-wrap gap-2">
-                        {project.tags.map((tag) => (
-                          <Badge key={tag} variant="secondary" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-
-                      {/* Organizer */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-8 w-8">
-                            <AvatarImage src={project.organizer.avatar} />
-                            <AvatarFallback>{project.organizer.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="text-sm font-medium">{project.organizer.name}</p>
-                            <div className="flex items-center gap-1">
-                              <Star className="h-3 w-3 text-yellow-500 fill-current" />
-                              <span className="text-xs text-muted-foreground">{project.organizer.rating}</span>
-                            </div>
-                          </div>
-                        </div>
-                        <Button size="sm">
-                          {project.status === 'active' ? 'Join Project' : 'View Details'}
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-          </div>
-        </div>
-
-        {/* All Projects */}
-        <div>
-          <h2 className="text-xl font-semibold mb-4">All Projects</h2>
+        {/* Loading State */}
+        {loading && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProjects
-              .filter(project => !project.featured)
-              .map((project) => (
-                <Card key={project.id}>
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <Badge className={getStatusColor(project.status)}>
-                        {project.status === 'active' ? 'Active' : 'Funded'}
-                      </Badge>
-                    </div>
-                    <CardTitle className="text-base">{project.title}</CardTitle>
-                    <CardDescription className="text-sm line-clamp-2">{project.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            {[1, 2, 3].map((i) => (
+              <Card key={i}>
+                <CardHeader>
+                  <Skeleton className="h-6 w-3/4 mb-2" />
+                  <Skeleton className="h-4 w-full" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-24 w-full" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {/* No Projects State */}
+        {!loading && filteredProjects.length === 0 && (
+          <Card>
+            <CardContent className="py-12 text-center">
+              <Target className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+              <h3 className="text-lg font-semibold mb-2">No projects found</h3>
+              <p className="text-muted-foreground">
+                {searchTerm || selectedCategory !== 'all'
+                  ? 'Try adjusting your search or filters'
+                  : 'Check back soon for new investment opportunities'}
+              </p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Featured Projects */}
+        {!loading && filteredProjects.length > 0 && (
+          <>
+            <div>
+              <h2 className="text-xl font-semibold mb-4">Featured Projects</h2>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {filteredProjects.slice(0, 2).map((project) => (
+                  <Card key={project.id} className="hover:shadow-lg transition-shadow">
+                    <CardHeader>
+                      <div className="flex justify-between items-start mb-2">
+                        <Badge variant={getRiskColor(project.expected_roi)}>
+                          {project.expected_roi}% ROI
+                        </Badge>
+                        <Badge variant="outline">
+                          {project.project_type}
+                        </Badge>
+                      </div>
+                      <CardTitle className="text-2xl">{project.project_title}</CardTitle>
+                      <CardDescription className="text-base line-clamp-2">
+                        {project.project_description}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="flex items-center gap-2 text-muted-foreground">
                         <MapPin className="h-4 w-4" />
-                        {project.location}
+                        <span className="text-sm">Ghana</span>
                       </div>
                       
-                      <div className="flex justify-between items-center text-sm">
-                        <div className="flex items-center gap-1">
-                          <Users className="h-4 w-4" />
-                          <span>{project.participants}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-4 w-4" />
-                          <span>{project.duration}</span>
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="text-xs text-muted-foreground">Funding</span>
-                          <span className="text-xs text-muted-foreground">
-                            {Math.round((project.currentFunding / project.fundingGoal) * 100)}%
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Share Ownership</span>
+                          <span className="font-semibold">
+                            {project.funding_progress.toFixed(1)}%
                           </span>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
-                          <div 
-                            className="bg-primary h-1.5 rounded-full transition-all duration-300" 
-                            style={{ width: `${(project.currentFunding / project.fundingGoal) * 100}%` }}
-                          ></div>
+                        <Progress value={project.funding_progress} className="h-2" />
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">
+                            {project.available_shares.toLocaleString()} shares available
+                          </span>
+                          <span className="text-muted-foreground">
+                            {project.shares_sold || 0} sold
+                          </span>
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between pt-2">
-                        <div className="flex items-center gap-2">
-                          <Avatar className="h-6 w-6">
-                            <AvatarFallback className="text-xs">
-                              {project.organizer.name.split(' ').map(n => n[0]).join('')}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span className="text-xs text-muted-foreground">{project.organizer.name}</span>
+                      <div className="grid grid-cols-2 gap-4 pt-2">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1 text-muted-foreground">
+                            <DollarSign className="h-4 w-4" />
+                            <span className="text-sm">Share Price</span>
+                          </div>
+                          <p className="text-lg font-semibold">
+                            GH₵{project.share_price?.toLocaleString() || 0}
+                          </p>
                         </div>
-                        <Button size="sm" variant="outline">
-                          View
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1 text-muted-foreground">
+                            <Calendar className="h-4 w-4" />
+                            <span className="text-sm">Timeline</span>
+                          </div>
+                          <p className="text-lg font-semibold">{project.timeline}</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-1 text-muted-foreground">
+                          <Target className="h-4 w-4" />
+                          <span className="text-sm">Minimum Investment</span>
+                        </div>
+                        <p className="text-base font-semibold">
+                          GH₵{project.minimum_investment?.toLocaleString() || 0}
+                        </p>
+                      </div>
+
+                      <div className="pt-4 border-t flex gap-2">
+                        <Button variant="outline" className="flex-1">View Details</Button>
+                        <Button 
+                          className="flex-1 gap-2" 
+                          onClick={() => handleInvestClick(project)}
+                          disabled={project.available_shares === 0}
+                        >
+                          <Share2 className="h-4 w-4" />
+                          {project.available_shares === 0 ? 'Fully Funded' : 'Invest Now'}
                         </Button>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-          </div>
-        </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            {/* All Projects */}
+            <div>
+              <h2 className="text-xl font-semibold mb-4">All Projects</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredProjects.slice(2).map((project) => (
+                  <Card key={project.id} className="hover:shadow-lg transition-shadow">
+                    <CardHeader>
+                      <div className="flex justify-between items-start mb-2">
+                        <Badge variant={getRiskColor(project.expected_roi)}>
+                          {project.expected_roi}% ROI
+                        </Badge>
+                        <Badge variant="outline">
+                          {project.project_type}
+                        </Badge>
+                      </div>
+                      <CardTitle>{project.project_title}</CardTitle>
+                      <CardDescription className="line-clamp-2">
+                        {project.project_description}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Shares</span>
+                          <span className="font-semibold">
+                            {project.funding_progress.toFixed(1)}% owned
+                          </span>
+                        </div>
+                        <Progress value={project.funding_progress} className="h-2" />
+                      </div>
+
+                      <div className="flex justify-between items-center text-sm">
+                        <div className="flex items-center gap-1 text-muted-foreground">
+                          <DollarSign className="h-4 w-4" />
+                          <span>GH₵{project.share_price?.toLocaleString() || 0}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Calendar className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-muted-foreground">{project.timeline}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2 pt-2">
+                        <Button variant="outline" size="sm" className="flex-1">
+                          Details
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          className="flex-1"
+                          onClick={() => handleInvestClick(project)}
+                          disabled={project.available_shares === 0}
+                        >
+                          {project.available_shares === 0 ? 'Funded' : 'Invest'}
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Investment Dialog */}
+        {selectedProject && (
+          <InvestmentDialog
+            open={investDialogOpen}
+            onOpenChange={setInvestDialogOpen}
+            project={selectedProject}
+            onInvestmentComplete={handleInvestmentComplete}
+          />
+        )}
       </div>
     </MainLayout>
   );

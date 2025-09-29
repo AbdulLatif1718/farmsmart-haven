@@ -135,14 +135,22 @@ export type Database = {
           full_name: string
           funding_amount: number
           id: string
+          investment_deadline: string | null
+          investor_count: number | null
+          minimum_investment: number | null
           phone: string
           project_description: string
           project_title: string
+          project_type: string | null
           purpose: string
           reviewed_at: string | null
           reviewed_by: string | null
+          share_price: number | null
+          shares_sold: number | null
           status: string | null
           timeline: string
+          total_invested: number | null
+          total_shares: number | null
           updated_at: string | null
           user_id: string | null
         }
@@ -156,14 +164,22 @@ export type Database = {
           full_name: string
           funding_amount: number
           id?: string
+          investment_deadline?: string | null
+          investor_count?: number | null
+          minimum_investment?: number | null
           phone: string
           project_description: string
           project_title: string
+          project_type?: string | null
           purpose: string
           reviewed_at?: string | null
           reviewed_by?: string | null
+          share_price?: number | null
+          shares_sold?: number | null
           status?: string | null
           timeline: string
+          total_invested?: number | null
+          total_shares?: number | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -177,14 +193,22 @@ export type Database = {
           full_name?: string
           funding_amount?: number
           id?: string
+          investment_deadline?: string | null
+          investor_count?: number | null
+          minimum_investment?: number | null
           phone?: string
           project_description?: string
           project_title?: string
+          project_type?: string | null
           purpose?: string
           reviewed_at?: string | null
           reviewed_by?: string | null
+          share_price?: number | null
+          shares_sold?: number | null
           status?: string | null
           timeline?: string
+          total_invested?: number | null
+          total_shares?: number | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -194,6 +218,104 @@ export type Database = {
             columns: ["reviewed_by"]
             isOneToOne: false
             referencedRelation: "admin_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      investment_transactions: {
+        Row: {
+          amount: number
+          created_at: string | null
+          id: string
+          investment_id: string
+          notes: string | null
+          shares: number | null
+          status: string | null
+          transaction_date: string | null
+          transaction_type: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          id?: string
+          investment_id: string
+          notes?: string | null
+          shares?: number | null
+          status?: string | null
+          transaction_date?: string | null
+          transaction_type: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          id?: string
+          investment_id?: string
+          notes?: string | null
+          shares?: number | null
+          status?: string | null
+          transaction_date?: string | null
+          transaction_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "investment_transactions_investment_id_fkey"
+            columns: ["investment_id"]
+            isOneToOne: false
+            referencedRelation: "investments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      investments: {
+        Row: {
+          amount_invested: number
+          created_at: string | null
+          expected_return: number | null
+          id: string
+          investment_date: string | null
+          investor_id: string
+          project_id: string
+          shares_owned: number
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          amount_invested: number
+          created_at?: string | null
+          expected_return?: number | null
+          id?: string
+          investment_date?: string | null
+          investor_id: string
+          project_id: string
+          shares_owned: number
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          amount_invested?: number
+          created_at?: string | null
+          expected_return?: number | null
+          id?: string
+          investment_date?: string | null
+          investor_id?: string
+          project_id?: string
+          shares_owned?: number
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "investments_investor_id_fkey"
+            columns: ["investor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "investments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "funding_applications"
             referencedColumns: ["id"]
           },
         ]
@@ -413,6 +535,47 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      project_shares: {
+        Row: {
+          available_shares: number
+          created_at: string | null
+          id: string
+          minimum_investment: number
+          project_id: string
+          share_price: number
+          total_shares: number
+          updated_at: string | null
+        }
+        Insert: {
+          available_shares: number
+          created_at?: string | null
+          id?: string
+          minimum_investment: number
+          project_id: string
+          share_price: number
+          total_shares: number
+          updated_at?: string | null
+        }
+        Update: {
+          available_shares?: number
+          created_at?: string | null
+          id?: string
+          minimum_investment?: number
+          project_id?: string
+          share_price?: number
+          total_shares?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_shares_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "funding_applications"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       transport_logistics: {
         Row: {
