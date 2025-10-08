@@ -1,1 +1,13 @@
 project_id = "nryaowcxkhrydiqnnlof"
+
+[functions.get-weather]
+verify_jwt = false
+
+[functions.get-forecast]
+verify_jwt = false
+
+[functions.get-location]
+verify_jwt = false
+
+[functions.investor-ai-assistant]
+verify_jwt = false

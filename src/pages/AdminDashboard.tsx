@@ -22,7 +22,9 @@ const AdminDashboard = () => {
     pendingApplications: 0,
     activeUsers: 0,
     totalInvestments: 0,
-    farmApplications: 0
+    farmApplications: 0,
+    activeInvestors: 0,
+    activeFundingProjects: 0
   });
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -86,13 +88,26 @@ const AdminDashboard = () => {
         .order('created_at', { ascending: false })
         .limit(2);
 
+      // Fetch total investments count
+      const { data: investmentsCount } = await supabase
+        .from('investments')
+        .select('investor_id', { count: 'exact', head: true });
+
+      // Fetch unique investors
+      const { data: uniqueInvestors } = await supabase
+        .from('investments')
+        .select('investor_id');
+
       const totalInvestments = approvedFunding?.reduce((sum, app) => sum + Number(app.funding_amount), 0) || 0;
+      const activeInvestors = new Set(uniqueInvestors?.map(i => i.investor_id)).size || 0;
 
       setStats({
         pendingApplications: (pendingFunding?.length || 0) + (pendingFarms?.length || 0) + (pendingLand?.length || 0) + (pendingExperts?.length || 0),
         activeUsers: users?.length || 0,
         totalInvestments,
-        farmApplications: pendingFarms?.length || 0
+        farmApplications: pendingFarms?.length || 0,
+        activeInvestors,
+        activeFundingProjects: approvedFunding?.length || 0
       });
 
       // Combine recent activities
@@ -163,12 +178,20 @@ const AdminDashboard = () => {
       bgColor: 'bg-green-50 dark:bg-green-950'
     },
     {
-      title: 'Farm Applications',
-      value: loading ? '...' : stats.farmApplications.toString(),
-      description: 'Pending farm registrations',
+      title: 'Active Investors',
+      value: loading ? '...' : stats.activeInvestors.toString(),
+      description: 'Users with active investments',
       icon: TrendingUp,
       color: 'text-purple-600',
       bgColor: 'bg-purple-50 dark:bg-purple-950'
+    },
+    {
+      title: 'Funded Projects',
+      value: loading ? '...' : stats.activeFundingProjects.toString(),
+      description: 'Approved funding opportunities',
+      icon: FileText,
+      color: 'text-indigo-600',
+      bgColor: 'bg-indigo-50 dark:bg-indigo-950'
     }
   ];
 

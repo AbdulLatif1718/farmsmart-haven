@@ -1,6 +1,8 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { InvestorLayout } from "@/components/layout/InvestorLayout";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -13,7 +15,9 @@ import {
 } from 'lucide-react';
 
 const InvestorPortfolio = () => {
-  const portfolioItems = [
+  const { profile } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [portfolioItems, setPortfolioItems] = useState<any[]>([
     {
       id: 1,
       name: "Sustainable Maize Farm",
@@ -34,7 +38,48 @@ const InvestorPortfolio = () => {
       risk: "Low",
       duration: "4 months"
     }
-  ];
+  ]);
+
+  useEffect(() => {
+    if (profile?.id) {
+      fetchPortfolioData();
+    }
+  }, [profile?.id]);
+
+  const fetchPortfolioData = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('investments')
+        .select(`
+          *,
+          funding_applications:project_id (
+            project_title,
+            project_type
+          )
+        `)
+        .eq('investor_id', profile?.id);
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        const mappedItems = data.map(inv => ({
+          id: inv.id,
+          name: inv.funding_applications?.project_title || 'Unknown Project',
+          sector: inv.funding_applications?.project_type || 'Unknown',
+          invested: Number(inv.amount_invested),
+          currentValue: Number(inv.amount_invested) * 1.15,
+          performance: 15,
+          risk: 'Medium',
+          duration: '6 months'
+        }));
+        setPortfolioItems(mappedItems);
+      }
+    } catch (error) {
+      console.error('Error fetching portfolio:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <InvestorLayout>

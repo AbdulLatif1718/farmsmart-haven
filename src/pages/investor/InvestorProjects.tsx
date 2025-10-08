@@ -79,19 +79,12 @@ const InvestorProjects = () => {
     <InvestorLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold">Investment Projects</h1>
-          <p className="text-muted-foreground">Discover and manage agricultural investment opportunities</p>
+          <h1 className="text-3xl font-bold">Browse Investment Projects</h1>
+          <p className="text-muted-foreground">Discover approved agricultural investment opportunities</p>
         </div>
 
-        <Tabs defaultValue="browse" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="browse">Browse Projects</TabsTrigger>
-            <TabsTrigger value="investments">My Investments</TabsTrigger>
-            <TabsTrigger value="favorites">Watchlist</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="browse" className="space-y-6">
-            <div className="flex gap-4 items-center">
+        <div className="space-y-6">
+          <div className="flex gap-4 items-center">
               <div className="relative flex-1 max-w-md">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -194,7 +187,7 @@ const InvestorProjects = () => {
                   </CardContent>
                   <CardFooter className="flex gap-2">
                     <Button variant="outline" size="sm" className="flex-1">
-                      View Details
+                       View Details
                     </Button>
                     <Button size="sm" className="flex-1">
                       Invest Now
@@ -203,85 +196,10 @@ const InvestorProjects = () => {
                 </Card>
               ))}
             </div>
-          </TabsContent>
-
-          <TabsContent value="investments" className="space-y-6">
-            <div className="space-y-4">
-              {investments.map((investment) => (
-                <Card key={investment.id}>
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <CardTitle className="text-lg">{investment.title}</CardTitle>
-                        <CardDescription>Farmer: {investment.farmer}</CardDescription>
-                      </div>
-                      <Badge variant={investment.status === 'Active' ? 'default' : 'secondary'}>
-                        {investment.status}
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                      <div>
-                        <p className="text-sm text-muted-foreground">Invested</p>
-                        <p className="font-medium">₵{investment.invested.toLocaleString()}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Current Value</p>
-                        <p className="font-medium">₵{investment.currentValue.toLocaleString()}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Expected Return</p>
-                        <p className="font-medium text-green-600">
-                          ₵{(investment.status === 'Completed' ? investment.actualReturn : investment.expectedReturn).toLocaleString()}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">
-                          {investment.status === 'Active' ? 'Progress' : 'Final ROI'}
-                        </p>
-                        <p className="font-medium">
-                          {investment.status === 'Active' 
-                            ? `${investment.progress}%` 
-                            : `${(((investment.actualReturn - investment.invested) / investment.invested) * 100).toFixed(1)}%`
-                          }
-                        </p>
-                      </div>
-                    </div>
-                    
-                    {investment.status === 'Active' && (
-                      <>
-                        <Progress value={investment.progress} className="h-2 mb-4" />
-                        <p className="text-sm text-muted-foreground">
-                          Next update expected: {investment.nextUpdate}
-                        </p>
-                      </>
-                    )}
-                  </CardContent>
-                  <CardFooter className="flex gap-2">
-                    <Button variant="outline" size="sm">View Reports</Button>
-                    <Button variant="outline" size="sm">Contact Farmer</Button>
-                    {investment.status === 'Active' && (
-                      <Button size="sm">Track Progress</Button>
-                    )}
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="favorites" className="space-y-6">
-            <div className="text-center py-12">
-              <Star className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">No Projects in Watchlist</h3>
-              <p className="text-muted-foreground mb-4">Save interesting projects to review later</p>
-              <Button>Browse Projects</Button>
-            </div>
-          </TabsContent>
-        </Tabs>
-      </div>
-    </InvestorLayout>
-  );
-};
-
-export default InvestorProjects;
+          </div>
+        </div>
+      </InvestorLayout>
+    );
+  };
+  
+  export default InvestorProjects;

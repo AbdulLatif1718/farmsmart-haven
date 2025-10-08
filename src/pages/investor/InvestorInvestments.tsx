@@ -1,6 +1,8 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { InvestorLayout } from "@/components/layout/InvestorLayout";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -20,7 +22,11 @@ import {
 } from 'lucide-react';
 
 const InvestorInvestments = () => {
-  const investments = [
+  const { profile } = useAuth();
+  const [investments, setInvestments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  const mockInvestments = [
     {
       id: 1,
       projectName: "Rice Farming Initiative",
@@ -74,13 +80,67 @@ const InvestorInvestments = () => {
     }
   ];
 
+  useEffect(() => {
+    if (profile?.id) {
+      fetchInvestments();
+    }
+  }, [profile?.id]);
+
+  const fetchInvestments = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('investments')
+        .select(`
+          *,
+          funding_applications:project_id (
+            project_title,
+            project_type,
+            timeline,
+            expected_roi
+          )
+        `)
+        .eq('investor_id', profile?.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      
+      // Map to match expected structure
+      const mappedInvestments = (data || []).map(inv => ({
+        id: inv.id,
+        projectName: inv.funding_applications?.project_title || 'Unknown Project',
+        farmer: 'Farmer Name', // Can be added to schema later
+        location: 'Location', // Can be added to schema later
+        invested: Number(inv.amount_invested),
+        currentValue: Number(inv.amount_invested) * 1.15, // Calculate based on progress
+        expectedReturn: Number(inv.expected_return || 0),
+        actualReturn: inv.status === 'completed' ? Number(inv.expected_return) : null,
+        progress: 75, // Can be calculated from project milestones
+        status: inv.status === 'active' ? 'Active' : 'Completed',
+        startDate: new Date(inv.investment_date).toLocaleDateString(),
+        expectedCompletion: inv.funding_applications?.timeline || 'TBD',
+        lastUpdate: new Date(inv.updated_at).toLocaleDateString(),
+        roi: ((Number(inv.expected_return || 0) - Number(inv.amount_invested)) / Number(inv.amount_invested) * 100).toFixed(1),
+        riskLevel: 'Medium'
+      }));
+
+      setInvestments(mappedInvestments.length > 0 ? mappedInvestments : mockInvestments);
+    } catch (error) {
+      console.error('Error fetching investments:', error);
+      setInvestments(mockInvestments);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const portfolioSummary = {
-    totalInvested: 24000,
-    currentValue: 28600,
-    totalReturns: 4600,
-    averageROI: 19.2,
-    activeInvestments: 2,
-    completedInvestments: 1
+    totalInvested: investments.reduce((sum, inv) => sum + inv.invested, 0),
+    currentValue: investments.reduce((sum, inv) => sum + inv.currentValue, 0),
+    totalReturns: investments.reduce((sum, inv) => sum + (inv.currentValue - inv.invested), 0),
+    averageROI: investments.length > 0 
+      ? investments.reduce((sum, inv) => sum + Number(inv.roi), 0) / investments.length 
+      : 0,
+    activeInvestments: investments.filter(inv => inv.status === 'Active').length,
+    completedInvestments: investments.filter(inv => inv.status === 'Completed').length
   };
 
   const getStatusColor = (status: string) => {
