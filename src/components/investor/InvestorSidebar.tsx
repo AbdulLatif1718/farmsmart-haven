@@ -31,13 +31,14 @@ const menuItems = [
   { icon: Home, label: 'Dashboard', path: '/investor' },
   { icon: TrendingUp, label: 'Browse Projects', path: '/investor/projects' },
   { icon: Activity, label: 'My Investments', path: '/investor/investments' },
-  { icon: Wallet, label: 'Financials', path: '/investor/financials' },
   { icon: PieChart, label: 'Portfolio', path: '/investor/portfolio' },
-  { icon: FileText, label: 'Contracts', path: '/investor/contracts' },
-  { icon: Map, label: 'Project Map', path: '/investor/map' },
-  { icon: Users, label: 'Network', path: '/investor/network' },
-  { icon: MessageSquare, label: 'Messages', path: '/investor/messages' },
   { icon: Settings, label: 'Settings', path: '/settings' },
+  // Commented out for future implementation
+  // { icon: Wallet, label: 'Financials', path: '/investor/financials' },
+  // { icon: FileText, label: 'Contracts', path: '/investor/contracts' },
+  // { icon: Map, label: 'Project Map', path: '/investor/map' },
+  // { icon: Users, label: 'Network', path: '/investor/network' },
+  // { icon: MessageSquare, label: 'Messages', path: '/investor/messages' },
 ];
 
 export const InvestorSidebar = ({ open, onClose }: InvestorSidebarProps) => {
